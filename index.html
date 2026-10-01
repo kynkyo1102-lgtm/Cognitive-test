@@ -15,79 +15,69 @@
             --accent-color: #2563eb;
             --accent-hover: #1d4ed8;
             --border-color: #e2e8f0;
-            --bg-alt: #f1f5f9;
+            --radius: 12px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-main);
             line-height: 1.6;
-            margin: 0;
             padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
         }
 
         .container {
-            max-width: 800px;
-            margin: 0 auto;
+            width: 100%;
+            max-width: 680px;
             background-color: var(--card-bg);
-            padding: 32px;
-            border-radius: 12px;
+            border-radius: var(--radius);
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 32px;
+            border: 1px solid var(--border-color);
         }
 
-        header {
-            text-align: center;
-            margin-bottom: 32px;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 16px;
+        .hidden {
+            display: none !important;
         }
 
         h1 {
-            font-size: 1.75rem;
-            margin-bottom: 8px;
+            font-size: 1.5rem;
+            margin-bottom: 12px;
             color: var(--text-main);
+            text-align: center;
         }
 
-        .disclaimer-banner {
-            background-color: var(--bg-alt);
-            border-left: 4px solid var(--accent-color);
-            padding: 12px 16px;
-            margin-top: 16px;
-            font-size: 0.85rem;
+        p.description {
             color: var(--text-sub);
-            text-align: left;
-            border-radius: 0 4px 4px 0;
-        }
-
-        /* 画面切替 */
-        .screen {
-            display: none;
-        }
-        .screen.active {
-            display: block;
-        }
-
-        /* スタート画面 */
-        .start-desc {
+            font-size: 0.95rem;
             margin-bottom: 24px;
-            color: var(--text-sub);
+            text-align: center;
         }
 
         .btn {
-            display: inline-block;
+            display: block;
+            width: 100%;
+            padding: 14px 20px;
             background-color: var(--accent-color);
             color: white;
-            padding: 12px 24px;
-            border-radius: 6px;
             border: none;
+            border-radius: 8px;
             font-size: 1rem;
             font-weight: 600;
             cursor: pointer;
             transition: background-color 0.2s;
-            width: 100%;
-            box-sizing: border-box;
             text-align: center;
+            margin-top: 20px;
         }
 
         .btn:hover {
@@ -97,10 +87,10 @@
         /* 質問画面 */
         .progress-bar-container {
             width: 100%;
-            height: 8px;
-            background-color: var(--bg-alt);
-            border-radius: 4px;
-            margin-bottom: 24px;
+            height: 6px;
+            background-color: var(--border-color);
+            border-radius: 3px;
+            margin-bottom: 20px;
             overflow: hidden;
         }
 
@@ -112,16 +102,16 @@
         }
 
         .question-number {
-            font-size: 0.875rem;
+            font-size: 0.85rem;
             color: var(--text-sub);
-            margin-bottom: 8px;
             font-weight: 600;
+            margin-bottom: 8px;
         }
 
         .question-text {
-            font-size: 1.125rem;
+            font-size: 1.1rem;
             font-weight: 600;
-            margin-bottom: 24px;
+            margin-bottom: 20px;
         }
 
         .options-container {
@@ -131,911 +121,679 @@
         }
 
         .option-btn {
-            background-color: var(--card-bg);
+            width: 100%;
+            padding: 14px 16px;
+            background-color: #fff;
             border: 1px solid var(--border-color);
-            padding: 16px;
             border-radius: 8px;
-            text-align: left;
             font-size: 0.95rem;
-            color: var(--text-main);
+            text-align: left;
             cursor: pointer;
             transition: all 0.2s;
+            color: var(--text-main);
         }
 
         .option-btn:hover {
-            border-color: var(--accent-color);
-            background-color: var(--bg-alt);
+            background-color: #f1f5f9;
+            border-color: #cbd5e1;
         }
 
         /* 結果画面 */
         .result-header {
             text-align: center;
-            margin-bottom: 32px;
+            margin-bottom: 24px;
         }
 
-        .profile-title {
-            font-size: 1.5rem;
+        .result-title {
+            font-size: 1.4rem;
             font-weight: 700;
             color: var(--accent-color);
-            margin-top: 8px;
+            margin-bottom: 6px;
+        }
+
+        .result-subtitle {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 12px;
+        }
+
+        .result-distribution-tag {
+            display: inline-block;
+            background-color: #eff6ff;
+            color: var(--accent-color);
+            font-size: 0.85rem;
+            font-weight: 600;
+            padding: 4px 12px;
+            border-radius: 20px;
+            margin-bottom: 16px;
+            border: 1px solid #bfdbfe;
         }
 
         .chart-container {
             position: relative;
             width: 100%;
-            max-width: 500px;
-            margin: 0 auto 32px auto;
+            max-width: 400px;
+            margin: 0 auto 24px auto;
         }
 
-        .result-section {
-            background-color: var(--bg-alt);
+        .section-box {
+            background-color: #f8fafc;
+            border: 1px solid var(--border-color);
             border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 20px;
+            padding: 16px;
+            margin-bottom: 16px;
         }
 
-        .result-section h3 {
-            margin-top: 0;
-            font-size: 1.1rem;
-            border-bottom: 2px solid var(--border-color);
-            padding-bottom: 8px;
+        .section-box h3 {
+            font-size: 1rem;
+            margin-bottom: 8px;
             color: var(--text-main);
         }
 
-        .result-section ul {
-            margin: 0;
+        .section-box ul {
             padding-left: 20px;
+            font-size: 0.9rem;
             color: var(--text-sub);
         }
 
-        .result-section li {
-            margin-bottom: 8px;
-        }
-        .result-section li:last-child {
-            margin-bottom: 0;
-        }
-
-        .distribution-tag {
-            display: inline-block;
-            padding: 4px 12px;
-            background-color: #e0e7ff;
-            color: #3730a3;
-            border-radius: 16px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            margin-bottom: 12px;
+        .section-box li {
+            margin-bottom: 4px;
         }
 
         .note-text {
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             color: var(--text-sub);
-            text-align: center;
             margin-top: 24px;
+            line-height: 1.4;
+            border-top: 1px solid var(--border-color);
+            padding-top: 12px;
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <header>
-        <h1>認知スタイル診断</h1>
-        <div class="disclaimer-banner">
-            ※本診断は心理検査・知能検査ではなく、回答傾向から普段選択しやすい情報処理スタイルを可視化する簡易診断です。
-        </div>
-    </header>
-
     <!-- スタート画面 -->
-    <div id="start-screen" class="screen active">
-        <p class="start-desc">
-            日常や仕事における30の場面に関する質問に答えることで、あなたの「情報処理の癖・傾倒しやすい認知スタイル」を分析します。<br><br>
-            正解・不正解や、能力の優劣はありません。直感的に自分に最も近い選択肢を選んでください。
-        </p>
-        <button class="btn" id="start-btn">診断を開始する</button>
+    <div id="screen-start">
+        <h1>認知スタイル診断</h1>
+        <p class="description">普段自然に選択しやすい「情報処理のスタイル」を可視化する診断です。（全30問）</p>
+        <button class="btn" onclick="startQuiz()">診断を始める</button>
     </div>
 
     <!-- 質問画面 -->
-    <div id="question-screen" class="screen">
+    <div id="screen-quiz" class="hidden">
         <div class="progress-bar-container">
-            <div class="progress-bar" id="progress-bar"></div>
+            <div id="progress-bar" class="progress-bar"></div>
         </div>
-        <div class="question-number" id="question-number">Q.1 / 30</div>
-        <div class="question-text" id="question-text">質問文がここに入ります</div>
-        <div class="options-container" id="options-container">
-            <!-- 選択肢が動的に挿入されます -->
-        </div>
+        <div id="question-number" class="question-number">質問 1 / 30</div>
+        <div id="question-text" class="question-text"></div>
+        <div id="options-container" class="options-container"></div>
     </div>
 
     <!-- 結果画面 -->
-    <div id="result-screen" class="screen">
+    <div id="screen-result" class="hidden">
         <div class="result-header">
-            <div>あなたの情報処理プロファイル</div>
-            <div class="profile-title" id="profile-title">分析中...</div>
+            <p style="font-size:0.85rem; color:var(--text-sub);">あなたの情報処理プロファイル</p>
+            <div id="result-title" class="result-title"></div>
+            <div id="result-distribution-tag" class="result-distribution-tag"></div>
+            <p id="result-overview" class="description" style="text-align:left;"></p>
         </div>
 
         <div class="chart-container">
             <canvas id="radarChart"></canvas>
         </div>
 
-        <div style="text-align: center;">
-            <span class="distribution-tag" id="distribution-tag">分布パターン</span>
+        <div class="section-box">
+            <h3>出やすい処理</h3>
+            <ul id="list-frequent"></ul>
         </div>
 
-        <!-- 1. 概要・処理の特徴 -->
-        <div class="result-section">
-            <h3>出やすい処理の傾向</h3>
-            <p id="trait-desc" style="color: var(--text-sub); margin: 0;"></p>
-        </div>
-
-        <!-- 2. 特に出やすい具体的な処理 -->
-        <div class="result-section">
-            <h3>特に出やすい具体的な行動・思考</h3>
-            <ul id="strong-behaviors"></ul>
-        </div>
-
-        <!-- 3. 認知コストが上がりそうな場面 -->
-        <div class="result-section">
+        <div class="section-box">
             <h3>認知コストが上がりやすそうな場面</h3>
-            <ul id="cost-scenarios"></ul>
+            <ul id="list-costs"></ul>
         </div>
 
-        <!-- 4. 全体のバリエーション（集中型／並行型）に応じた活用アードバイス -->
-        <div class="result-section">
-            <h3>このプロファイルの扱い方・調整のコツ</h3>
-            <p id="usage-advice" style="color: var(--text-sub); margin: 0;"></p>
-        </div>
-
-        <button class="btn" id="restart-btn" style="margin-top: 20px;">もう一度診断する</button>
-        <div class="note-text">自己理解や日々の情報共有・意思決定プロセスの調整のヒントとしてご活用ください。</div>
+        <p class="note-text">※ この診断は個人の情報処理の好みを表すものであり、能力の優劣や適正を特定するものではありません。</p>
+        <button class="btn" onclick="resetQuiz()">もう一度診断する</button>
     </div>
 </div>
 
 <script>
-// --- 1. 軸の定義 ---
+// ==========================================
+// 定義データ
+// ==========================================
+
 const AXES = {
-    STRUCTURE: '構造化',      // 体系化・論理構成
-    VERIFY: '条件・検証',     // 前提確認・妥当性検証
-    CONTEXT: '文脈読解',     // 背景理解・意図察知
-    CAUTION: '保留・慎重',     // 静観・不確実性許容
-    CONCRETE: '具体・参照',    // 実例依存・経験参照
-    SUMMARY: '要約・圧縮'      // ポイント抽出・結論先行
+    STRUCTURE: 'STRUCTURE', // 構造化
+    CONDITION: 'CONDITION', // 条件・検証
+    CONTEXT: 'CONTEXT',     // 文脈
+    HOLD: 'HOLD',           // 保留
+    CONCRETE: 'CONCRETE',   // 具体
+    COMPRESS: 'COMPRESS'    // 圧縮
 };
 
-// 各軸の取りうる理論的最小・最大スコア（30問における配点構造から算出）
-// 質問全体の配点構造から、各軸の配点機会（主軸=+2, 副軸=+1）を集計
-const SCORE_BOUNDS = {
-    [AXES.STRUCTURE]: { min: 0, max: 20 },
-    [AXES.VERIFY]:    { min: 0, max: 18 },
-    [AXES.CONTEXT]:   { min: 0, max: 18 },
-    [AXES.CAUTION]:   { min: 0, max: 17 },
-    [AXES.CONCRETE]:  { min: 0, max: 18 },
-    [AXES.SUMMARY]:   { min: 0, max: 19 }
+const AXIS_NAMES = {
+    [AXES.STRUCTURE]: '構造化',
+    [AXES.CONDITION]: '条件・検証',
+    [AXES.CONTEXT]: '文脈',
+    [AXES.HOLD]: '保留',
+    [AXES.CONCRETE]: '具体',
+    [AXES.COMPRESS]: '圧縮'
 };
 
-// --- 2. 質問データ（30問） ---
-const questions = [
-    {
-        text: "新しい業務やプロジェクトを始めるとき、最初に求める情報は？",
-        options: [
-            { text: "全体の構成や作業フローの全体像", primary: AXES.STRUCTURE, secondary: AXES.SUMMARY },
-            { text: "過去の具体的な失敗例や具体的な手順の例", primary: AXES.CONCRETE, secondary: AXES.VERIFY },
-            { text: "なぜこのプロジェクトが必要になったのかという背景や経緯", primary: AXES.CONTEXT, secondary: AXES.CAUTION },
-            { text: "どのような条件を満たせば成功と言えるのかという定義", primary: AXES.VERIFY, secondary: AXES.STRUCTURE }
-        ]
-    },
-    {
-        text: "複雑な課題について議論しているとき、最もストレスを感じる状態は？",
-        options: [
-            { text: "具体的な例やデータがなく、抽象論ばかりが続く状態", primary: AXES.CONCRETE, secondary: AXES.VERIFY },
-            { text: "発言者の意図や背景が見えず、本音や文脈が不明な状態", primary: AXES.CONTEXT, secondary: AXES.CAUTION },
-            { text: "論点が整理されておらず、話が散らかっている状態", primary: AXES.STRUCTURE, secondary: AXES.SUMMARY },
-            { text: "前提条件や根拠があいまいにされたまま結論が出そうになる状態", primary: AXES.VERIFY, secondary: AXES.CAUTION }
-        ]
-    },
-    {
-        text: "長文のニュース記事やレポートを読むとき、無意識に行っている読み方は？",
-        options: [
-            { text: "要点や結論だけを素早く拾い読みする", primary: AXES.SUMMARY, secondary: AXES.STRUCTURE },
-            { text: "筆者がなぜその結論に至ったのか、文章の背景や意図を探りながら読む", primary: AXES.CONTEXT, secondary: AXES.CAUTION },
-            { text: "書かれているデータや根拠が本当に正しいかを検証しながら読む", primary: AXES.VERIFY, secondary: AXES.STRUCTURE },
-            { text: "自分や知人の具体的な体験談に当てはめながら読む", primary: AXES.CONCRETE, secondary: AXES.CONTEXT }
-        ]
-    },
-    {
-        text: "他人に何かを説明するとき、一番意識していることは？",
-        options: [
-            { text: "結論から話し、できるだけ短くシンプルにまとめること", primary: AXES.SUMMARY, secondary: AXES.STRUCTURE },
-            { text: "相手の理解度や置かれている状況（文脈）に合わせて伝え方を変えること", primary: AXES.CONTEXT, secondary: AXES.CAUTION },
-            { text: "話の筋道を立てて、段階的に体系立てて話すこと", primary: AXES.STRUCTURE, secondary: AXES.SUMMARY },
-            { text: "実際の具体例やイメージしやすい例え話を交えること", primary: AXES.CONCRETE, secondary: AXES.SUMMARY }
-        ]
-    },
-    {
-        text: "意見が分かれる問題に対して、判断を下す際のアプローチは？",
-        options: [
-            { text: "情報が不足している場合は、拙速に決めず判断を保留して様子を見る", primary: AXES.CAUTION, secondary: AXES.VERIFY },
-            { text: "両者の前提や根拠を比較・検証して判断する", primary: AXES.VERIFY, secondary: AXES.STRUCTURE },
-            { text: "全体の状況や関わる人々の関係性・感情的な背景を考慮する", primary: AXES.CONTEXT, secondary: AXES.CAUTION },
-            { text: "過去の類似ケースでうまく行った実績を参考にする", primary: AXES.CONCRETE, secondary: AXES.SUMMARY }
-        ]
-    },
-    {
-        text: "会議で話が脱線したとき、あなたが取りがちな行動は？",
-        options: [
-            { text: "「要するに何の話でしたっけ？」と本質的なテーマに引き戻す", primary: AXES.SUMMARY, secondary: AXES.STRUCTURE },
-            { text: "これまでの発言をホワイトボード等に整理して視覚化する", primary: AXES.STRUCTURE, secondary: AXES.SUMMARY },
-            { text: "なぜ脱線したのか、発言者の関心や背景に理解を示す", primary: AXES.CONTEXT, secondary: AXES.CAUTION },
-            { text: "議論の前提や条件がズレていないかを再確認する", primary: AXES.VERIFY, secondary: AXES.STRUCTURE }
-        ]
-    },
-    {
-        text: "仕事でマニュアルや手順書を作成するとき、重視するポイントは？",
-        options: [
-            { text: "一目で全体像と手順の全体フローがわかる図解や見出し", primary: AXES.STRUCTURE, secondary: AXES.SUMMARY },
-            { text: "「こういうケースではどうするか」という条件分岐の明記", primary: AXES.VERIFY, secondary: AXES.STRUCTURE },
-            { text: "実際の画面スクリーンショットや具体例を多用すること", primary: AXES.CONCRETE, secondary: AXES.SUMMARY },
-            { text: "なぜその手順で行うのかという理由や背景の説明", primary: AXES.CONTEXT, secondary: AXES.CAUTION }
-        ]
-    },
-    {
-        text: "未経験のトラブルが発生した際、最初に頭に浮かぶ思考は？",
-        options: [
-            { text: "「落ち着いて状況を分析するまで、下手に動かず様子を見よう」", primary: AXES.CAUTION, secondary: AXES.VERIFY },
-            { text: "「類似のトラブルが過去になかったか？」", primary: AXES.CONCRETE, secondary: AXES.SUMMARY },
-            { text: "「原因と結果の因果関係はどうなっているか？」", primary: AXES.VERIFY, secondary: AXES.STRUCTURE },
-            { text: "「トラブルの裏で何が起きているか、関係者の文脈は？」", primary: AXES.CONTEXT, secondary: AXES.CAUTION }
-        ]
-    },
-    {
-        text: "自分の考えをメモに書き留めるとき、どのような形になりやすい？",
-        options: [
-            { text: "箇条書きやマインドマップなど、構造化された形", primary: AXES.STRUCTURE, secondary: AXES.SUMMARY },
-            { text: "一言で言えば何か、という単語やキャッチコピー", primary: AXES.SUMMARY, secondary: AXES.STRUCTURE },
-            { text: "「もし〜なら〜」といった仮説や条件のメモ", primary: AXES.VERIFY, secondary: AXES.CAUTION },
-            { text: "その時の感情や周囲の状況、会話のやり取りなどの生の記録", primary: AXES.CONTEXT, secondary: AXES.CONCRETE }
-        ]
-    },
-    {
-        text: "プレゼンテーションを聞いているとき、最も好感を持つスタイルは？",
-        options: [
-            { text: "要点が絞られており、短時間でズバッと理解できる発表", primary: AXES.SUMMARY, secondary: AXES.STRUCTURE },
-            { text: "論理の飛躍がなく、実験やデータで検証されている発表", primary: AXES.VERIFY, secondary: AXES.STRUCTURE },
-            { text: "ストーリー性があり、背景や想いが伝わってくる発表", primary: AXES.CONTEXT, secondary: AXES.CAUTION },
-            { text: "実際の事例（ケーススタディ）が豊富でリアルな発表", primary: AXES.CONCRETE, secondary: AXES.SUMMARY }
-        ]
-    },
-    {
-        text: "情報量が多すぎて混乱したとき、あなたがまずやることは？",
-        options: [
-            { text: "情報をカテゴリーごとに分けて整理する", primary: AXES.STRUCTURE, secondary: AXES.SUMMARY },
-            { text: "重要でない情報を削ぎ落とし、一番大事な1点に絞る", primary: AXES.SUMMARY, secondary: AXES.STRUCTURE },
-            { text: "信頼できる具体例や一次情報だけを手元に残す", primary: AXES.CONCRETE, secondary: AXES.VERIFY },
-            { text: "一旦思考を止めて時間を置き、情報が整理されるのを待つ", primary: AXES.CAUTION, secondary: AXES.CONTEXT }
-        ]
-    },
-    {
-        text: "誰かと意見が対立したとき、解決のために重視することは？",
-        options: [
-            { text: "お互いの認識の前提条件がズレていないかすり合わせる", primary: AXES.VERIFY, secondary: AXES.STRUCTURE },
-            { text: "相手がなぜその意見を持っているのか、背景や意図を聴く", primary: AXES.CONTEXT, secondary: AXES.CAUTION },
-            { text: "共通の目的や要点を確認し、小さな合意を作る", primary: AXES.SUMMARY, secondary: AXES.STRUCTURE },
-            { text: "論理的な整合性を保ちつつ、両者が納得できるフレームワークを作る", primary: AXES.STRUCTURE, secondary: AXES.VERIFY }
-        ]
-    },
-    {
-        text: "新しい知識を学ぶ際、最も理解が進むと感じるやり方は？",
-        options: [
-            { text: "全体像や概念モデルを理解してから細部に入る", primary: AXES.STRUCTURE, secondary: AXES.SUMMARY },
-            { text: "具体的なサンプルコードや実践例を動かしてみる", primary: AXES.CONCRETE, secondary: AXES.SUMMARY },
-            { text: "その知識が生まれた歴史的背景や文脈を知る", primary: AXES.CONTEXT, secondary: AXES.CAUTION },
-            { text: "仮説を立てて「本当にそうなるか」を試しながら学ぶ", primary: AXES.VERIFY, secondary: AXES.CAUTION }
-        ]
-    },
-    {
-        text: "他人の発言に対して「何か引っかかる」と感じる時はどんな時？",
-        options: [
-            { text: "言っていることに論理的な矛盾や検証不足がある時", primary: AXES.VERIFY, secondary: AXES.STRUCTURE },
-            { text: "表面的な言葉と、その裏にある感情や文脈が一致していない時", primary: AXES.CONTEXT, secondary: AXES.CAUTION },
-            { text: "話が抽象的すぎて具体的に何を指しているかわからない時", primary: AXES.CONCRETE, secondary: AXES.VERIFY },
-            { text: "話の要点が見えず、だらだらと長引いている時", primary: AXES.SUMMARY, secondary: AXES.STRUCTURE }
-        ]
-    },
-    {
-        text: "大きな意思決定をする際、自分のスタイルに最も近いものは？",
-        options: [
-            { text: "メリット・デメリットを構造化して分析してから決める", primary: AXES.STRUCTURE, secondary: AXES.VERIFY },
-            { text: "不確定要素が多いなら、結論を焦らず状況の変化を待つ", primary: AXES.CAUTION, secondary: AXES.VERIFY },
-            { text: "直感も含め、周囲の状況や全体の流れに合っているかで決める", primary: AXES.CONTEXT, secondary: AXES.CAUTION },
-            { text: "決定の影響を最小限にするための条件を洗い出してから決める", primary: AXES.VERIFY, secondary: AXES.STRUCTURE }
-        ]
-    },
-    {
-        text: "アンケートやフィードバックを集計するとき、真っ先に見る部分は？",
-        options: [
-            { text: "数値の平均値や、全体的なスコアの概要（サマリー）", primary: AXES.SUMMARY, secondary: AXES.STRUCTURE },
-            { text: "自由記述欄に書かれた、個別の具体的な意見やエピソード", primary: AXES.CONCRETE, secondary: AXES.CONTEXT },
-            { text: "回答者の属性や置かれている状況による回答の傾向差", primary: AXES.CONTEXT, secondary: AXES.VERIFY },
-            { text: "回答データのクロス集計や因果関係の有無", primary: AXES.VERIFY, secondary: AXES.STRUCTURE }
-        ]
-    },
-    {
-        text: "自分自身の強みを聞かれたとき、最もピンとくるものは？",
-        options: [
-            { text: "物事の全体像を捉え、わかりやすく整理すること", primary: AXES.STRUCTURE, secondary: AXES.SUMMARY },
-            { text: "本質や要点を一言でシンプルに言い表すこと", primary: AXES.SUMMARY, secondary: AXES.STRUCTURE },
-            { text: "場の空気や人の感情、言葉の裏にある意味を察すること", primary: AXES.CONTEXT, secondary: AXES.CAUTION },
-            { text: "事実や前提を冷静に見極め、ミスやリスクを防ぐこと", primary: AXES.VERIFY, secondary: AXES.CAUTION }
-        ]
-    },
-    {
-        text: "映画や小説を楽しんだ後、印象に残りやすいのは？",
-        options: [
-            { text: "伏線回収や緻密に組み上げられたプロット構造", primary: AXES.STRUCTURE, secondary: AXES.VERIFY },
-            { text: "登場人物の心理描写や行動の背景にある人間ドラマ", primary: AXES.CONTEXT, secondary: AXES.CAUTION },
-            { text: "「要するにどんな話だったか」という一言のテーマ", primary: AXES.SUMMARY, secondary: AXES.STRUCTURE },
-            { text: "特定の名シーンや、頭に残るリアルなセリフ", primary: AXES.CONCRETE, secondary: AXES.CONTEXT }
-        ]
-    },
-    {
-        text: "チームで議論が平行線になったとき、あなたが提示したい対処法は？",
-        options: [
-            { text: "「一旦判断を保留にして、各自データを持ち寄って再検討しよう」", primary: AXES.CAUTION, secondary: AXES.VERIFY },
-            { text: "「そもそも我々が合意すべき条件（ゴール）は何だっけ？」", primary: AXES.VERIFY, secondary: AXES.STRUCTURE },
-            { text: "「一旦共通部分だけをまとめて、残りは切り離そう」", primary: AXES.SUMMARY, secondary: AXES.STRUCTURE },
-            { text: "「お互いが主張する前提背景にある懸念を吐き出そう」", primary: AXES.CONTEXT, secondary: AXES.CAUTION }
-        ]
-    },
-    {
-        text: "日常のタスク管理で、最も重視するスタイルは？",
-        options: [
-            { text: "カテゴリ別や優先度順に綺麗にリスト化・体系化する", primary: AXES.STRUCTURE, secondary: AXES.SUMMARY },
-            { text: "今日やるべき「最重要の1件」に集中する", primary: AXES.SUMMARY, secondary: AXES.STRUCTURE },
-            { text: "手順や必要な道具など、実行手順を具体的に記載しておく", primary: AXES.CONCRETE, secondary: AXES.SUMMARY },
-            { text: "期限や依存関係（これが終わったら次）などの条件を明確にする", primary: AXES.VERIFY, secondary: AXES.CAUTION }
-        ]
-    },
-    {
-        text: "文章を書いた後、推敲（見直し）するときに一番チェックする点は？",
-        options: [
-            { text: "冗長な表現がないか、もっと短く削れないか", primary: AXES.SUMMARY, secondary: AXES.STRUCTURE },
-            { text: "論理のつながりや、見出しの構成が適切か", primary: AXES.STRUCTURE, secondary: AXES.SUMMARY },
-            { text: "読み手の立場や文脈から見て、誤解を生む表現がないか", primary: AXES.CONTEXT, secondary: AXES.CAUTION },
-            { text: "主張の根拠や事実関係に間違い（誤情報）がないか", primary: AXES.VERIFY, secondary: AXES.CAUTION }
-        ]
-    },
-    {
-        text: "新しいツールやソフトを導入するとき、どう接する？",
-        options: [
-            { text: "まずマニュアルの全体目次や構成を確認する", primary: AXES.STRUCTURE, secondary: AXES.SUMMARY },
-            { text: "よくある使い方（ユースケース）の例を見て試す", primary: AXES.CONCRETE, secondary: AXES.SUMMARY },
-            { text: "実際に動かしながら、意図通り動くか機能を検証する", primary: AXES.VERIFY, secondary: AXES.CAUTION },
-            { text: "導入に至った背景や自社の課題にフィットするか検討する", primary: AXES.CONTEXT, secondary: AXES.CAUTION }
-        ]
-    },
-    {
-        text: "他人の相談に乗るとき、あなたが無意識にやっていることは？",
-        options: [
-            { text: "話の要点を整理し、「つまり〜ということ？」と確認する", primary: AXES.SUMMARY, secondary: AXES.STRUCTURE },
-            { text: "相談者がそう感じるに至った状況や背景感情をしっかり聴く", primary: AXES.CONTEXT, secondary: AXES.CAUTION },
-            { text: "問題の要因を整理し、解決策をフレームワーク化して提案する", primary: AXES.STRUCTURE, secondary: AXES.VERIFY },
-            { text: "「以前自分も同じことがあってね」と具体的経験を共有する", primary: AXES.CONCRETE, secondary: AXES.CONTEXT }
-        ]
-    },
-    {
-        text: "不確実で先の見えない状況に直面したとき、どう対応する？",
-        options: [
-            { text: "安易に決めつけず、状況がクリアになるまで静観・保留する", primary: AXES.CAUTION, secondary: AXES.VERIFY },
-            { text: "分かっている事実と分かっていない不確定要素を整理（構造化）する", primary: AXES.STRUCTURE, secondary: AXES.VERIFY },
-            { text: "最悪のシナリオや分岐条件を洗い出す", primary: AXES.VERIFY, secondary: AXES.CAUTION },
-            { text: "今すぐできる小さく具体的なアクションだけを実行する", primary: AXES.CONCRETE, secondary: AXES.SUMMARY }
-        ]
-    },
-    {
-        text: "プレゼン資料の作成で、一番時間をかける作業は？",
-        options: [
-            { text: "スライド全体の構成案（目次・ロジック）を練ること", primary: AXES.STRUCTURE, secondary: AXES.SUMMARY },
-            { text: "1スライド1メッセージにするための文言の削ぎ落とし", primary: AXES.SUMMARY, secondary: AXES.STRUCTURE },
-            { text: "説得力を高めるための具体データや数値事例の収集", primary: AXES.CONCRETE, secondary: AXES.VERIFY },
-            { text: "聞き手の関心や業界の文脈に合わせたストーリー構成", primary: AXES.CONTEXT, secondary: AXES.CAUTION }
-        ]
-    },
-    {
-        text: "他人の意見を聞いて「信用できる」と感じる決め手は？",
-        options: [
-            { text: "根拠となる条件やデータが明確に示されているとき", primary: AXES.VERIFY, secondary: AXES.STRUCTURE },
-            { text: "主張の軸がブレず、ポイントが簡潔に伝わってくるとき", primary: AXES.SUMMARY, secondary: AXES.STRUCTURE },
-            { text: "その人の立場や苦労してきた背景に嘘がないと感じるとき", primary: AXES.CONTEXT, secondary: AXES.CAUTION },
-            { text: "具体的でリアルな実体験に基づいているとき", primary: AXES.CONCRETE, secondary: AXES.CONTEXT }
-        ]
-    },
-    {
-        text: "会議で意見を求められたが、まだ考えがまとまっていない時の対応は？",
-        options: [
-            { text: "「現時点では情報不足のため、判断を保留させてください」と言う", primary: AXES.CAUTION, secondary: AXES.VERIFY },
-            { text: "「要点だけ手短に言うと〜」と現時点の結論だけ述べる", primary: AXES.SUMMARY, secondary: AXES.STRUCTURE },
-            { text: "「〜という条件が満たされるなら賛成です」と条件付きで答える", primary: AXES.VERIFY, secondary: AXES.CAUTION },
-            { text: "「これまでの議論の文脈を整理すると〜」と全体をおさらいする", primary: AXES.STRUCTURE, secondary: AXES.CONTEXT }
-        ]
-    },
-    {
-        text: "ブレインストーミング（アイデア出し）であなたが果たす役割は？",
-        options: [
-            { text: "出たアイデアを分類し、マップ状に構造化する", primary: AXES.STRUCTURE, secondary: AXES.SUMMARY },
-            { text: "アイデアを実行するための具体的な実現例を出す", primary: AXES.CONCRETE, secondary: AXES.SUMMARY },
-            { text: "アイデアの実現可能性や前提条件の課題を指摘する", primary: AXES.VERIFY, secondary: AXES.CAUTION },
-            { text: "アイデアが出た背景やユーザーの潜在ニーズ（文脈）を深掘りする", primary: AXES.CONTEXT, secondary: AXES.CAUTION }
-        ]
-    },
-    {
-        text: "説明を受けた後、「理解できた」と感じる基準は？",
-        options: [
-            { text: "全体の論理的構造やフレームワークが頭に描けたとき", primary: AXES.STRUCTURE, secondary: AXES.SUMMARY },
-            { text: "自分の言葉で一言で要約・説明できるようになったとき", primary: AXES.SUMMARY, secondary: AXES.STRUCTURE },
-            { text: "「もし〜の場合どうなるか」という疑問がすべて解消したとき", primary: AXES.VERIFY, secondary: AXES.CAUTION },
-            { text: "具体的な使用場面やイメージがくっきりと浮かんだとき", primary: AXES.CONCRETE, secondary: AXES.CONTEXT }
-        ]
-    },
-    {
-        text: "あなたの普段の思考スタイルに一番近い例えは？",
-        options: [
-            { text: "建物を建てるように、枠組みからきっちり組み立てる（建築型）", primary: AXES.STRUCTURE, secondary: AXES.SUMMARY },
-            { text: "実験をするように、条件を確認しながら検証する（実験型）", primary: AXES.VERIFY, secondary: AXES.CAUTION },
-            { text: "空気を読むように、周囲の文脈や背景を感じ取る（察知型）", primary: AXES.CONTEXT, secondary: AXES.CAUTION },
-            { text: "写真を撮るように、具体的な事例や事実を切り取る（記録型）", primary: AXES.CONCRETE, secondary: AXES.SUMMARY }
-        ]
-    }
+// 全30問（配点データ）
+const QUESTIONS = [
+    { text: "新しいプロジェクトを任された時、最初にすることは？", options: [
+        { text: "全体の枠組みや構成要素を整理する", scores: { [AXES.STRUCTURE]: 2 } },
+        { text: "前提条件や成功基準を確認する", scores: { [AXES.CONDITION]: 2 } },
+        { text: "なぜこの企画が必要なのか背景を把握する", scores: { [AXES.CONTEXT]: 2 } },
+        { text: "まずは明確な例や具体例を集める", scores: { [AXES.CONCRETE]: 2 } }
+    ]},
+    { text: "説明を受ける時、一番気になるのは？", options: [
+        { text: "全体の中でその話がどこに位置するか", scores: { [AXES.STRUCTURE]: 2 } },
+        { text: "その主張の根拠や前提が正しいか", scores: { [AXES.CONDITION]: 2 } },
+        { text: "話し手がどういう経緯でそう考えているか", scores: { [AXES.CONTEXT]: 2 } },
+        { text: "一言で言うと何がポイントなのか", scores: { [AXES.COMPRESS]: 2 } }
+    ]},
+    { text: "情報が不足していて判断できない時、どうする？", options: [
+        { text: "判断を一度保留し、保留の理由を整理する", scores: { [AXES.HOLD]: 2 } },
+        { text: "足りない前提条件やデータを特定して要求する", scores: { [AXES.CONDITION]: 2 } },
+        { text: "手元にある具体例から推測を進める", scores: { [AXES.CONCRETE]: 2 } },
+        { text: "全体の流れを見て大枠の方針だけ決める", scores: { [AXES.STRUCTURE]: 1, [AXES.COMPRESS]: 1 } }
+    ]},
+    { text: "複雑な課題に直面した時、まず行うアプローチは？", options: [
+        { text: "要素を分解してロジックツリーのように整理する", scores: { [AXES.STRUCTURE]: 2 } },
+        { text: "どのような条件が揃えば解決できるか整理する", scores: { [AXES.CONDITION]: 2 } },
+        { text: "これまでの経緯や関係者の意図を確認する", scores: { [AXES.CONTEXT]: 2 } },
+        { text: "状況がクリアになるまで拙速な結論を避ける", scores: { [AXES.HOLD]: 2 } }
+    ]},
+    { text: "文章を書くときに意識することは？", options: [
+        { text: "見出しや箇条書きで構造を明確にする", scores: { [AXES.STRUCTURE]: 2 } },
+        { text: "論理の飛躍や矛盾がないかチェックする", scores: { [AXES.CONDITION]: 2 } },
+        { text: "要約して短い言葉で伝える", scores: { [AXES.COMPRESS]: 2 } },
+        { text: "具体的なエピソードや実例を入れる", scores: { [AXES.CONCRETE]: 2 } }
+    ]},
+    { text: "会議で意見が割れた時、どう行動する？", options: [
+        { text: "議論の争点を構造化して可視化する", scores: { [AXES.STRUCTURE]: 2 } },
+        { text: "それぞれの意見の前提条件を洗い出す", scores: { [AXES.CONDITION]: 2 } },
+        { text: "各立場に至った経緯や背景を深掘りする", scores: { [AXES.CONTEXT]: 2 } },
+        { text: "すぐに決定せず、一度持ち帰って検討する", scores: { [AXES.HOLD]: 2 } }
+    ]},
+    { text: "理解しやすいと感じる資料は？", options: [
+        { text: "図解やフレームワークで整理されている", scores: { [AXES.STRUCTURE]: 2 } },
+        { text: "前提、根拠、結論が明確に示されている", scores: { [AXES.CONDITION]: 2 } },
+        { text: "具体例やサンプルのデータが豊富なもの", scores: { [AXES.CONCRETE]: 2 } },
+        { text: "1ページで結論が端的にまとまっているもの", scores: { [AXES.COMPRESS]: 2 } }
+    ]},
+    { text: "意見を求められた時、困るのは？", options: [
+        { text: "全体像や目的が見えないまま聞かれること", scores: { [AXES.STRUCTURE]: 2 } },
+        { text: "前提条件や判断基準が曖昧なこと", scores: { [AXES.CONDITION]: 2 } },
+        { text: "背景や経緯を知らされていないこと", scores: { [AXES.CONTEXT]: 2 } },
+        { text: "情報が揃っていないのに即答を求められること", scores: { [AXES.HOLD]: 2 } }
+    ]},
+    { text: "長文のニュースを読むとき、どう読む？", options: [
+        { text: "全体の大枠や構成を把握しながら読む", scores: { [AXES.STRUCTURE]: 2 } },
+        { text: "事実と解釈、根拠が正しいかを確かめながら読む", scores: { [AXES.CONDITION]: 2 } },
+        { text: "その話題に至った歴史や背景を考えながら読む", scores: { [AXES.CONTEXT]: 2 } },
+        { text: "要約部分だけを拾い読みする", scores: { [AXES.COMPRESS]: 2 } }
+    ]},
+    { text: "アイデアを考える時、重視することは？", options: [
+        { text: "既存の枠組みを整理し直すこと", scores: { [AXES.STRUCTURE]: 2 } },
+        { text: "実現可能性や条件を満たしているか確認すること", scores: { [AXES.CONDITION]: 2 } },
+        { text: "現実的な具体的なプロトタイプを作ってみること", scores: { [AXES.CONCRETE]: 2 } },
+        { text: "シンプルで本質的なフレーズに落とし込むこと", scores: { [AXES.COMPRESS]: 2 } }
+    ]},
+    { text: "他人の説明を聞いて「わかりにくい」と感じる理由は？", options: [
+        { text: "話の構成や順序がバラバラ", scores: { [AXES.STRUCTURE]: 2 } },
+        { text: "主張の根拠や前提が曖昧", scores: { [AXES.CONDITION]: 2 } },
+        { text: "抽象的すぎて具体的なイメージが湧かない", scores: { [AXES.CONCRETE]: 2 } },
+        { text: "ダラダラと長くてポイントが見えない", scores: { [AXES.COMPRESS]: 2 } }
+    ]},
+    { text: "不確定要素が多い状況での対応は？", options: [
+        { text: "仮説に基づいて全体シナリオを複数作る", scores: { [AXES.STRUCTURE]: 2 } },
+        { text: "確定している条件と未確定の条件を分ける", scores: { [AXES.CONDITION]: 2 } },
+        { text: "判断を急がず、情報が集まるまで状況を見極める", scores: { [AXES.HOLD]: 2 } },
+        { text: "目の前にある具体的な小タスクから手を付ける", scores: { [AXES.CONCRETE]: 2 } }
+    ]},
+    { text: "問題解決の場で得意な役割は？", options: [
+        { text: "複雑な状況を整理して可視化する役割", scores: { [AXES.STRUCTURE]: 2 } },
+        { text: "論理的な穴やリスクを指摘する役割", scores: { [AXES.CONDITION]: 2 } },
+        { text: "経緯を踏まえて関係者の意図を繋ぐ役割", scores: { [AXES.CONTEXT]: 2 } },
+        { text: "複雑な議論を最後の一言にまとめる役割", scores: { [AXES.COMPRESS]: 2 } }
+    ]},
+    { text: "新しい概念を学ぶ時の得意なスタイルは？", options: [
+        { text: "全体像や分類表から理解する", scores: { [AXES.STRUCTURE]: 2 } },
+        { text: "どのような定義や条件で成り立つか理解する", scores: { [AXES.CONDITION]: 2 } },
+        { text: "具体的な事例や実際のコード・サンプルを見る", scores: { [AXES.CONCRETE]: 2 } },
+        { text: "その歴史的背景や開発された経緯を知る", scores: { [AXES.CONTEXT]: 2 } }
+    ]},
+    { text: "議論が迷走した時、どう立て直す？", options: [
+        { text: "これまでの議論をカテゴリーごとに整理し直す", scores: { [AXES.STRUCTURE]: 2 } },
+        { text: "そもそも何を目指しているのか目的・前提に戻る", scores: { [AXES.CONDITION]: 2 } },
+        { text: "一言で言うと何が問題なのかを再定義する", scores: { [AXES.COMPRESS]: 2 } },
+        { text: "一度思考を停止し、冷静に論点を整理する時間を置く", scores: { [AXES.HOLD]: 2 } }
+    ]},
+    { text: "情報を整理する時に一番やりたいことは？", options: [
+        { text: "マインドマップや体系図を作りたい", scores: { [AXES.STRUCTURE]: 2 } },
+        { text: "チェックリストや条件分岐を作りたい", scores: { [AXES.CONDITION]: 2 } },
+        { text: "要約文やキャッチコピーを作りたい", scores: { [AXES.COMPRESS]: 2 } },
+        { text: "具体的な体験談やケーススタディをまとめたい", scores: { [AXES.CONCRETE]: 2 } }
+    ]},
+    { text: "自分の仕事の振り返りをする時、考えることは？", options: [
+        { text: "プロセスの全体構造に問題がなかったか", scores: { [AXES.STRUCTURE]: 2 } },
+        { text: "事前の想定や条件設定が合っていたか", scores: { [AXES.CONDITION]: 2 } },
+        { text: "今回の経験から得られた本質的な教訓（一行）", scores: { [AXES.COMPRESS]: 2 } },
+        { text: "発生した具体的なトラブルとその対応データ", scores: { [AXES.CONCRETE]: 2 } }
+    ]},
+    { text: "判断を保留することに対する感覚は？", options: [
+        { text: "無理に決めず、保留にして観察するのも重要な判断", scores: { [AXES.HOLD]: 2 } },
+        { text: "条件が不十分なら保留にするのが論理的", scores: { [AXES.CONDITION]: 2 } },
+        { text: "背景情報がわかるまでは保留にしておきたい", scores: { [AXES.CONTEXT]: 2 } },
+        { text: "できればすぐに仮説でも結論を出したい", scores: { [AXES.COMPRESS]: 1, [AXES.CONCRETE]: 1 } }
+    ]},
+    { text: "人にアドバイスをする時に心がけるのは？", options: [
+        { text: "相手の状況を整理してマップ化してあげる", scores: { [AXES.STRUCTURE]: 2 } },
+        { text: "判断の基準や考えるべき条件を伝える", scores: { [AXES.CONDITION]: 2 } },
+        { text: "自分の具体的な体験談や事例を伝える", scores: { [AXES.CONCRETE]: 2 } },
+        { text: "相手がどういう経緯で悩んでいるのかを聴く", scores: { [AXES.CONTEXT]: 2 } }
+    ]},
+    { text: "仕事でストレスを感じやすい瞬間は？", options: [
+        { text: "整理されていないカオスな状態が続くこと", scores: { [AXES.STRUCTURE]: 2 } },
+        { text: "筋の通らない理由で決定が覆ること", scores: { [AXES.CONDITION]: 2 } },
+        { text: "結論だけ求められ、背景やプロセスを無視されること", scores: { [AXES.CONTEXT]: 2 } },
+        { text: "十分な検討時間を与えられず即答を迫られること", scores: { [AXES.HOLD]: 2 } }
+    ]},
+    { text: "プレゼンを準備する時、最初に作るものは？", options: [
+        { text: "アジェンダや全体のアウトライン", scores: { [AXES.STRUCTURE]: 2 } },
+        { text: "主張の根拠となるデータやロジック", scores: { [AXES.CONDITION]: 2 } },
+        { text: "聞き手の状況や背景ストーリー", scores: { [AXES.CONTEXT]: 2 } },
+        { text: "メインのキーフレーズやスライドの要約", scores: { [AXES.COMPRESS]: 2 } }
+    ]},
+    { text: "抽象的な議論が続いている時の気分は？", options: [
+        { text: "「具体的な例を1つ出してみよう」と言いたくなる", scores: { [AXES.CONCRETE]: 2 } },
+        { text: "「要するに何が言いたいの？」とまとめたくなる", scores: { [AXES.COMPRESS]: 2 } },
+        { text: "「どのような条件でそれが成立するの？」と確認したくなる", scores: { [AXES.CONDITION]: 2 } },
+        { text: "「全体の中でどの話をしているの？」と整理したくなる", scores: { [AXES.STRUCTURE]: 2 } }
+    ]},
+    { text: "過去の出来事を思い出す時に浮かぶのは？", options: [
+        { text: "その時の状況や関係性のニュアンス", scores: { [AXES.CONTEXT]: 2 } },
+        { text: "印象的だった場面や具体的な出来事", scores: { [AXES.CONCRETE]: 2 } },
+        { text: "その出来事が起きた原因や論理的結果", scores: { [AXES.CONDITION]: 2 } },
+        { text: "その出来事の全体的な流れや位置づけ", scores: { [AXES.STRUCTURE]: 2 } }
+    ]},
+    { text: "自分が納得しやすい説明の型は？", options: [
+        { text: "全体像 → 各論 という順番", scores: { [AXES.STRUCTURE]: 2 } },
+        { text: "前提 → 理由 → 結論 という順序", scores: { [AXES.CONDITION]: 2 } },
+        { text: "背景・ストーリー → 結論 という順序", scores: { [AXES.CONTEXT]: 2 } },
+        { text: "結論 → 具体的な事例 という順序", scores: { [AXES.CONCRETE]: 2 } }
+    ]},
+    { text: "新しいツールやシステムを導入する時、知りたいのは？", options: [
+        { text: "全体の中でどう機能するかというシステム構成", scores: { [AXES.STRUCTURE]: 2 } },
+        { text: "導入するための動作条件や要件", scores: { [AXES.CONDITION]: 2 } },
+        { text: "実際の画面イメージや具体的な操作方法", scores: { [AXES.CONCRETE]: 2 } },
+        { text: "なぜそのツールが必要になったのかの経緯", scores: { [AXES.CONTEXT]: 2 } }
+    ]},
+    { text: "意思決定をする時に最後に確認することは？", options: [
+        { text: "決定のロジックや論理に破綻がないか", scores: { [AXES.CONDITION]: 2 } },
+        { text: "決めきれない要素を未決事項として認識したか", scores: { [AXES.HOLD]: 2 } },
+        { text: "言葉としてシンプルに整理されているか", scores: { [AXES.COMPRESS]: 2 } },
+        { text: "現場の具体的な運用イメージが湧いているか", scores: { [AXES.CONCRETE]: 2 } }
+    ]},
+    { text: "他人の話で「なるほど」と感心するのはどんな時？", options: [
+        { text: "見事に整理された分類や図解を見た時", scores: { [AXES.STRUCTURE]: 2 } },
+        { text: "盲点だった前提条件を指摘された時", scores: { [AXES.CONDITION]: 2 } },
+        { text: "複雑な話を一言で言い表した例えを見た時", scores: { [AXES.COMPRESS]: 2 } },
+        { text: "手触り感のあるリアルな具体例を聞いた時", scores: { [AXES.CONCRETE]: 2 } }
+    ]},
+    { text: "ブレインストーミングをする時の自分の姿勢は？", options: [
+        { text: "出たアイデアをカテゴリーに分類したくなる", scores: { [AXES.STRUCTURE]: 2 } },
+        { text: "実現のための課題や評価条件を考えたくなる", scores: { [AXES.CONDITION]: 2 } },
+        { text: "安易に絞り込まず、色々な可能性を保留にしておきたい", scores: { [AXES.HOLD]: 2 } },
+        { text: "とにかく具体的な事例や実例をどんどん出したい", scores: { [AXES.CONCRETE]: 2 } }
+    ]},
+    { text: "自分の強みとして近いと感じるものは？", options: [
+        { text: "物事の構造や関係性を整理すること", scores: { [AXES.STRUCTURE]: 2 } },
+        { text: "前提や根拠を見極めてリスクを防ぐこと", scores: { [AXES.CONDITION]: 2 } },
+        { text: "複雑な事象の本質を短い言葉に凝縮すること", scores: { [AXES.COMPRESS]: 2 } },
+        { text: "状況を冷静に見極め、拙速な判断を避けること", scores: { [AXES.HOLD]: 2 } }
+    ]},
+    { text: "情報をインプットする時に重視するのは？", options: [
+        { text: "全体構造や体系の中で理解すること", scores: { [AXES.STRUCTURE]: 2 } },
+        { text: "情報源の信頼性や前提の妥当性を確かめること", scores: { [AXES.CONDITION]: 2 } },
+        { text: "文脈や背景にあるストーリーを把握すること", scores: { [AXES.CONTEXT]: 2 } },
+        { text: "要点や要約を効率的に把握すること", scores: { [AXES.COMPRESS]: 2 } }
+    ]}
 ];
 
-// --- 3. マトリクスデータ（プロファイル生成用） ---
-// 各組み合わせにおける「傾向（出やすさ）」「具体的行動」「認知コストの発生ポイント」
-const profileMatrix = {
-    [AXES.STRUCTURE]: {
-        [AXES.VERIFY]: {
-            title: "論理検証・体系化重視傾向",
-            desc: "全体の枠組みを整えつつ、それぞれの前提条件や因果関係を厳密に照らし合わせる処理を選びやすいプロファイルです。",
-            strongBehaviors: [
-                "全体像をフレームワーク化して整理する",
-                "主張や施策の前提条件・根拠を精査する",
-                "論理の飛躍や矛盾に気づきやすい"
-            ],
-            costScenarios: [
-                "前提条件が不明確なまま勢いだけで進行する場面",
-                "論理的な筋道がなく、感覚的な意見が飛び交う議論",
-                "構造化の時間が全く与えられないまま回答を求められる状況"
-            ]
-        },
-        [AXES.CONTEXT]: {
-            title: "文脈構造化重視傾向",
-            desc: "複雑な人間関係や背景の文脈を汲み取りながら、それを整理・体系化して捉える処理を選びやすいプロファイルです。",
-            strongBehaviors: [
-                "複雑な背景事情を整理してマップ化する",
-                "関係者の意図や感情をロジカルに読み解く",
-                "全体的なストーリーの整合性を保つ"
-            ],
-            costScenarios: [
-                "文脈や背景を完全に無視した機械的な割り切りを求められる場面",
-                "発言者の真意が見えず、表面的な事実だけを追わされる状況",
-                "全体関係が見えない細部だけの作業"
-            ]
-        },
-        [AXES.CAUTION]: {
-            title: "慎重構造化重視傾向",
-            desc: "安易に結論を出さず、全体像を整理しながら慎重に状況を見極める処理を選びやすいプロファイルです。",
-            strongBehaviors: [
-                "情報をカテゴリ分類して冷静に静観する",
-                "不確実な要素を整理し、リスクを可視化する",
-                "全体像がクリアになるまで拙速な判断を避ける"
-            ],
-            costScenarios: [
-                "情報が揃っていない中で即断即決を強く迫られる場面",
-                "構造化や整理を「遅い」と切り捨てられる状況",
-                "根拠なく場当たり的な対応を繰り返す環境"
-            ]
-        },
-        [AXES.CONCRETE]: {
-            title: "具体体系化重視傾向",
-            desc: "実際の事例や具体例を集め、それらを体系的なパターンとして整理・理解する処理を選びやすいプロファイルです。",
-            strongBehaviors: [
-                "具体事例を集めて共通のパターンを見出す",
-                "概念的な話を具体的な運用フローに落とし込む",
-                "実例に基づいたマニュアルやフォーマットを作る"
-            ],
-            costScenarios: [
-                "具体例が一切なく、抽象論や理念だけで進む議論",
-                "現場の実例を無視した頭でっかちな計画の提示",
-                "体系化されておらず散らかった手探りの作業"
-            ]
-        },
-        [AXES.SUMMARY]: {
-            title: "全体要約重視傾向",
-            desc: "複雑な大量の情報を効率的に整理し、一目でわかる要約や結論へと落とし込む処理を選びやすいプロファイルです。",
-            strongBehaviors: [
-                "散らかった議論の要点を手早くまとめる",
-                "複雑な事象をシンプルに要約して提示する",
-                "全体像を素早く掴み、核心を射抜く"
-            ],
-            costScenarios: [
-                "結論が見えず、だらだらと続く長時間の議論",
-                "要点がまとまっていない冗長な資料の読み込み",
-                "要約や結論の提示を制止され、細部の説明を永遠に求められる場面"
-            ]
-        }
+// ==========================================
+// 1. SCORE_BOUNDS の自動算出ロジック
+// ==========================================
+
+function calculateScoreBounds(questions) {
+    const bounds = {};
+    
+    // 各軸を0で初期化
+    Object.values(AXES).forEach(axis => {
+        bounds[axis] = { min: 0, max: 0 };
+    });
+
+    // 設問ごとに各軸が取り得る最小・最大配点を加算
+    questions.forEach(q => {
+        const qBounds = {};
+        
+        q.options.forEach(opt => {
+            Object.entries(opt.scores).forEach(([axis, score]) => {
+                if (!qBounds[axis]) {
+                    qBounds[axis] = { min: score, max: score };
+                } else {
+                    qBounds[axis].min = Math.min(qBounds[axis].min, score);
+                    qBounds[axis].max = Math.max(qBounds[axis].max, score);
+                }
+            });
+        });
+
+        // 全体バウンズに加算
+        Object.entries(qBounds).forEach(([axis, b]) => {
+            if (bounds[axis]) {
+                bounds[axis].min += b.min;
+                bounds[axis].max += b.max;
+            }
+        });
+    });
+
+    return bounds;
+}
+
+// 質問データから理論上の最小・最大値を自動取得
+const SCORE_BOUNDS = calculateScoreBounds(QUESTIONS);
+
+
+// プロファイル組み合わせテキスト定義（能力ではなく処理傾向を記述）
+const PROFILE_COMBINATIONS = {
+    [`${AXES.STRUCTURE}_${AXES.CONDITION}`]: {
+        overview: "情報をそのまま受け取るより、全体の構造を組み立て、成立条件や前提を確認してから理解しようとする処理が出やすい傾向があります。",
+        frequentBehaviors: [
+            "全体像を整理してから細部を見る",
+            "前提条件や根拠を確認する",
+            "論理の飛躍や条件の抜けを確認する"
+        ],
+        cognitiveCosts: [
+            "前提が共有されないまま結論を求められる場面",
+            "話が整理されていない状態で即答を求められる場面",
+            "「細かいことはいいから進めよう」と検証を飛ばされる場面"
+        ]
     },
-    [AXES.VERIFY]: {
-        [AXES.CONTEXT]: {
-            title: "文脈検証重視傾向",
-            desc: "言葉の表面だけでなく、その背景にある意図や前提条件が正しく成立しているかを吟味する処理を選びやすいプロファイルです。",
-            strongBehaviors: [
-                "発言の裏にある前提や文脈の妥当性を確認する",
-                "表面上の意見に惑わされず、根本の動機や背景を確かめる",
-                "条件の変化によって文脈がどう変わるかを洞察する"
-            ],
-            costScenarios: [
-                "前提説明や文脈の共有なしに「とにかく結論だけ」を求められる場面",
-                "「細かいことは気にしないで」と背景の確認をスキップされる状況",
-                "人物や出来事を一方的に単純化して決めつける議論"
-            ]
-        },
-        [AXES.CAUTION]: {
-            title: "慎重検証重視傾向",
-            desc: "前提条件や根拠の確実性を厳しく確認し、確信が得られるまで慎重に判断を留める処理を選びやすいプロファイルです。",
-            strongBehaviors: [
-                "疑問点や不確実な前提を徹底的に洗い出す",
-                "リスクや想定外のシナリオを未然にチェックする",
-                "根拠が不十分な場合は拙速に結論を出さず静観する"
-            ],
-            costScenarios: [
-                "検証不十分なまま前進することを強要される環境",
-                "「とりあえずやってみよう」でリスク管理が放置される場面",
-                "根拠のない楽観論が支配する状況"
-            ]
-        },
-        [AXES.CONCRETE]: {
-            title: "具体検証重視傾向",
-            desc: "実際のデータや事実、具体的な過去のケースと照らし合わせながら確実性を確かめる処理を選びやすいプロファイルです。",
-            strongBehaviors: [
-                "具体的な事実や一次情報に当たって真偽を確認する",
-                "過去の類似事例を参照して実現性をチェックする",
-                "抽象的な説に対して「具体的な根拠は？」と確認する"
-            ],
-            costScenarios: [
-                "データや具体例に基づかない感覚的な主張",
-                "絵に描いた餅のような実効性の薄いプランの押し付け",
-                "現場の事実と乖離した方針決定"
-            ]
-        },
-        [AXES.SUMMARY]: {
-            title: "要点検証重視傾向",
-            desc: "論点や結論の要約を素早く見抜きつつ、その重要なポイントに矛盾やリスクがないかをチェックする処理を選びやすいプロファイルです。",
-            strongBehaviors: [
-                "核心となるポイントを捉え、その妥当性をスピーディに確認する",
-                "結論に至る最大のボトルネックや前提条件を特定する",
-                "無駄を削ぎ落とした上で根拠の正しさを見る"
-            ],
-            costScenarios: [
-                "検証に必要な核心部分のデータが伏せられている場面",
-                "要点がぼやけたまま細かい手続きの検証だけをさせられる状況",
-                "検証作業そのものが目的化してスピードが著しく落ちる環境"
-            ]
-        }
+    [`${AXES.STRUCTURE}_${AXES.CONTEXT}`]: {
+        overview: "全体像の構造化と、その背景や経緯といった文脈情報の両方を重視して捉えようとする処理が出やすい傾向があります。",
+        frequentBehaviors: [
+            "関係性や位置づけを体系的に整理する",
+            "なぜその状況に至ったかの経緯を確認する",
+            "全体における意味付けを行う"
+        ],
+        cognitiveCosts: [
+            "背景説明が一切なく単発の指示だけが出される場面",
+            "構造が見えないまま感覚的な判断を求められる場面"
+        ]
     },
-    [AXES.CONTEXT]: {
-        [AXES.CAUTION]: {
-            title: "文脈静観重視傾向",
-            desc: "場の雰囲気や相手の状況、背景にある文脈を深く汲み取りながら、焦らず慎重に全体の挙動を見守る処理を選びやすいプロファイルです。",
-            strongBehaviors: [
-                "周囲の感情や背景の文脈をじっくり観察する",
-                "不調和や齟齬が起きていないか場を静観する",
-                "相手の置かれた状況に配慮して判断のタイミングを待つ"
-            ],
-            costScenarios: [
-                "配慮や文脈を無視した強引な決定や指示",
-                "相手の感情や意図を無視して効率だけを求める場面",
-                "状況が二転三転し、観察の猶予が与えられない状況"
-            ]
-        },
-        [AXES.CONCRETE]: {
-            title: "具体文脈重視傾向",
-            desc: "個別の生々しい具体例や、その場にいる人の具体的な文脈・エピソードから物事を総合的に捉える処理を選びやすいプロファイルです。",
-            strongBehaviors: [
-                "現場のエピソードや具体的な背景事情を大切にする",
-                "抽象的なデータより「実際の現場で何が起きているか」を重視する",
-                "個別のケースに寄り添った文脈理解を行う"
-            ],
-            costScenarios: [
-                "現場の具体的事情を無視した一律のルール適用",
-                "データや数値だけで人や状況を評価される場面",
-                "生の文脈から切り離されたドライな意思決定"
-            ]
-        },
-        [AXES.SUMMARY]: {
-            title: "文脈要約重視傾向",
-            desc: "多様な人間の意図や複雑な背景関係（文脈）を素早く察知し、それを「要するにこういうこと」と集約する処理を選びやすいプロファイルです。",
-            strongBehaviors: [
-                "場の雰囲気や関係者の本音を素早く察知してまとめる",
-                "背景の複雑な経緯を一言でわかりやすく表現する",
-                "人間の感情に配慮しつつ着地点を提示する"
-            ],
-            costScenarios: [
-                "背景のニュアンスを理解しないまま形だけの要約を求められる場面",
-                "人の感情や文脈を一切考慮に入れない冷徹な処理",
-                "長々とまとまらない人の愚痴や言い訳を聞かされ続ける状況"
-            ]
-        }
+    [`${AXES.CONDITION}_${AXES.HOLD}`]: {
+        overview: "前提や成立条件を厳密に確認し、情報が不十分な場合は安易に結論を出さず判断を保留する処理が出やすい傾向があります。",
+        frequentBehaviors: [
+            "判断に必要な条件を洗い出す",
+            "不確定要素がある場合に判断を一度留める",
+            "リスクや穴を事前にチェックする"
+        ],
+        cognitiveCosts: [
+            "十分な情報がないまま即断即決を迫られる場面",
+            "根拠の薄い説をノリで採択させられそうな場面"
+        ]
     },
-    [AXES.CAUTION]: {
-        [AXES.CONCRETE]: {
-            title: "慎重参照重視傾向",
-            desc: "確実な具体例や前例をじっくりと確認しながら、安全な手順を踏んで慎重に進める処理を選びやすいプロファイルです。",
-            strongBehaviors: [
-                "過去の成功例・失敗例を念入りに参照してリスクを避ける",
-                "確実な具体情報が集まるまで行動を留める",
-                "前例を手がかりに一歩ずつ確かめながら進める"
-            ],
-            costScenarios: [
-                "前例も具体例もない状態で、リスクを取って飛び込むことを要求される場面",
-                "「まずはやってみろ」と根拠のない切り込みを強要される状況",
-                "具体的なガイドラインがない手探りの状態"
-            ]
-        },
-        [AXES.SUMMARY]: {
-            title: "慎重集約重視傾向",
-            desc: "情報は無駄なくコンパクトに保ちつつ、リスクのある決断に対しては焦らず適切な判断の機会を待つ処理を選びやすいプロファイルです。",
-            strongBehaviors: [
-                "要点だけを把握し、過剰な情報に振り回されないようにする",
-                "判断材料が揃うまで無駄な動きを抑える",
-                "状況が整理されるまで静かに観察を続ける"
-            ],
-            costScenarios: [
-                "大量の雑多な情報に追われ、整理するヒマなく決断を迫られる場面",
-                "軽率な発言や要点の定まらないやり取りが繰り返される環境",
-                "保留することが許されず、拙速な回答を義務付けられる状況"
-            ]
-        }
-    },
-    [AXES.CONCRETE]: {
-        [AXES.SUMMARY]: {
-            title: "具体要約重視傾向",
-            desc: "現実の具体的な事例や手触りのある事実を重視し、そこから得られた実用的な要点をサッとまとめて活用する処理を選びやすいプロファイルです。",
-            strongBehaviors: [
-                "具体的な事例から「要するに何が言えるか」をシンプルに抽出する",
-                "抽象論を即座にわかりやすい具体例に言い換えてポイントを指し示す",
-                "実用性の高い情報だけを絞り込んで保持する"
-            ],
-            costScenarios: [
-                "実態（具体）の伴わない、言葉遊びのような概念議論",
-                "「で、結局何をやればいいの？」が見えない長大な資料",
-                "現場の事例から遠く離れた机上の空論"
-            ]
-        }
+    [`${AXES.COMPRESS}_${AXES.CONCRETE}`]: {
+        overview: "実際の具体例を取り込みつつ、それを手短なポイントや本質へ素早く凝縮して捉えようとする処理が出やすい傾向があります。",
+        frequentBehaviors: [
+            "手触りのある具体的な事例から理解する",
+            "複雑な内容を短い言葉に要約する",
+            "実用的なポイントに絞って把握する"
+        ],
+        cognitiveCosts: [
+            "具体例のない抽象論が長時間続く場面",
+            "要点が何かわからない長文や長話を聞く場面"
+        ]
     }
 };
 
-// --- 4. アプリケーションの状態管理 ---
-let currentQuestionIndex = 0;
-let scores = {};
-let radarChartInstance = null;
-
-// スコアの初期化
-function initScores() {
-    Object.values(AXES).forEach(axis => {
-        scores[axis] = 0;
-    });
+// フォールバック用の汎用テキスト生成関数
+function getFallbackProfile(top1, top2) {
+    return {
+        overview: `${AXIS_NAMES[top1]}と${AXIS_NAMES[top2]}の視点を優先的に組み合わせ、情報を整理・解釈しようとする処理スタイルです。`,
+        frequentBehaviors: [
+            `${AXIS_NAMES[top1]}に関する要素を自発的に確認する`,
+            `${AXIS_NAMES[top2]}の観点から状況を補強・検証する`
+        ],
+        cognitiveCosts: [
+            `${AXIS_NAMES[top1]}や${AXIS_NAMES[top2]}の処理が行いにくい環境や急な状況変化`
+        ]
+    };
 }
 
-// DOM要素の取得
-const startScreen = document.getElementById('start-screen');
-const questionScreen = document.getElementById('question-screen');
-const resultScreen = document.getElementById('result-screen');
 
-const startBtn = document.getElementById('start-btn');
-const restartBtn = document.getElementById('restart-btn');
+// ==========================================
+// 診断処理ロジック
+// ==========================================
 
-const progressBar = document.getElementById('progress-bar');
-const questionNumber = document.getElementById('question-number');
-const questionText = document.getElementById('question-text');
-const optionsContainer = document.getElementById('options-container');
+let currentQuestionIndex = 0;
+let rawScores = {};
 
-// イベントリスナー設定
-startBtn.addEventListener('click', startQuiz);
-restartBtn.addEventListener('click', startQuiz);
+function initScores() {
+    rawScores = {};
+    Object.values(AXES).forEach(axis => {
+        rawScores[axis] = 0;
+    });
+}
 
 function startQuiz() {
     initScores();
     currentQuestionIndex = 0;
-    startScreen.classList.remove('active');
-    resultScreen.classList.remove('active');
-    questionScreen.classList.add('active');
+    document.getElementById('screen-start').classList.add('hidden');
+    document.getElementById('screen-result').classList.add('hidden');
+    document.getElementById('screen-quiz').classList.remove('hidden');
     showQuestion();
 }
 
 function showQuestion() {
-    const q = questions[currentQuestionIndex];
-    questionNumber.textContent = `Q.${currentQuestionIndex + 1} / ${questions.length}`;
-    questionText.textContent = q.text;
+    const q = QUESTIONS[currentQuestionIndex];
+    document.getElementById('question-number').textContent = `質問 ${currentQuestionIndex + 1} / ${QUESTIONS.length}`;
+    document.getElementById('question-text').textContent = q.text;
     
-    // 進捗バー更新
-    const progressPercent = ((currentQuestionIndex) / questions.length) * 100;
-    progressBar.style.width = `${progressPercent}%`;
+    const progressPercent = ((currentQuestionIndex) / QUESTIONS.length) * 100;
+    document.getElementById('progress-bar').style.width = `${progressPercent}%`;
 
-    optionsContainer.innerHTML = '';
-    
-    // 選択肢の表示（シャッフルせずそのまま表示）
-    q.options.forEach((opt) => {
+    const container = document.getElementById('options-container');
+    container.innerHTML = '';
+
+    q.options.forEach(opt => {
         const btn = document.createElement('button');
         btn.className = 'option-btn';
         btn.textContent = opt.text;
-        btn.addEventListener('click', () => selectOption(opt));
-        optionsContainer.appendChild(btn);
+        btn.onclick = () => selectOption(opt.scores);
+        container.appendChild(btn);
     });
 }
 
-function selectOption(option) {
-    // スコア加算（主軸: +2, 副軸: +1）
-    if (option.primary) scores[option.primary] += 2;
-    if (option.secondary) scores[option.secondary] += 1;
+function selectOption(scores) {
+    Object.entries(scores).forEach(([axis, val]) => {
+        if (rawScores[axis] !== undefined) {
+            rawScores[axis] += val;
+        }
+    });
 
     currentQuestionIndex++;
-    if (currentQuestionIndex < questions.length) {
+    if (currentQuestionIndex < QUESTIONS.length) {
         showQuestion();
     } else {
-        showResults();
+        showResult();
     }
 }
 
-// --- 5. 集計・結果描画ロジック ---
-function showResults() {
-    questionScreen.classList.remove('active');
-    resultScreen.classList.add('active');
+// 2. 正規化と分布パターンの判定ロジック
 
-    // 1. スコアの 0〜100 正規化計算
-    const normalizedScores = {};
-    Object.keys(scores).forEach(axis => {
-        const raw = scores[axis];
-        const min = SCORE_BOUNDS[axis].min;
-        const max = SCORE_BOUNDS[axis].max;
-        // 最小〜最大で 0〜100 に正規化
-        const norm = Math.round(((raw - min) / (max - min)) * 100);
-        normalizedScores[axis] = Math.max(0, Math.min(100, norm)); // 0~100ガード
+function normalizeScores(raw) {
+    const normalized = {};
+    Object.keys(raw).forEach(axis => {
+        const { min, max } = SCORE_BOUNDS[axis];
+        if (max === min) {
+            normalized[axis] = 0;
+        } else {
+            const score = Math.max(min, Math.min(max, raw[axis]));
+            normalized[axis] = Math.round(((score - min) / (max - min)) * 100);
+        }
     });
+    return normalized;
+}
 
-    // 2. 軸のソート（正規化スコアで降順）
-    const sortedAxes = Object.keys(normalizedScores).sort((a, b) => normalizedScores[b] - normalizedScores[a]);
+function analyzeDistribution(normalizedScores) {
+    const values = Object.values(normalizedScores);
+    const sorted = [...values].sort((a, b) => b - a);
+    
+    const mean = values.reduce((sum, val) => sum + val, 0) / values.length;
+    const variance = values.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / values.length;
+    const stdDev = Math.sqrt(variance);
+    
+    const diffTop1Top2 = sorted[0] - sorted[1];
+
+    if (stdDev > 16 || diffTop1Top2 >= 18) {
+        return {
+            type: 'PROMINENT',
+            label: '特定処理が前に出るプロファイル',
+            description: '特定の情報処理スタイルが強く選択されやすく、状況によって処理の好みがはっきり分かれやすい傾向があります。'
+        };
+    } else if (stdDev < 8 && diffTop1Top2 < 10) {
+        return {
+            type: 'BALANCED',
+            label: '複数の処理が近いプロファイル',
+            description: '特定の処理だけに偏らず、複数の情報処理スタイルを近い頻度で選択しやすい傾向があります。'
+        };
+    } else {
+        return {
+            type: 'MODERATE',
+            label: 'バランス型のプロファイル',
+            description: '主軸となる処理を持ちつつも、状況に応じて他の処理スタイルも並行して使い分けやすい傾向があります。'
+        };
+    }
+}
+
+function generateDiagnosticResult(raw) {
+    const normalized = normalizeScores(raw);
+    
+    const sortedAxes = Object.entries(normalized)
+        .sort(([, a], [, b]) => b - a)
+        .map(([axis]) => axis);
+
     const top1 = sortedAxes[0];
     const top2 = sortedAxes[1];
 
-    const top1Score = normalizedScores[top1];
-    const top2Score = normalizedScores[top2];
-    const diffTop1Top2 = top1Score - top2Score; // 上位2軸の差
+    const distribution = analyzeDistribution(normalized);
 
-    // 3. 正規化後の分散・標準偏差の計算（分布パターンの判定）
-    const normValues = Object.values(normalizedScores);
-    const mean = normValues.reduce((a, b) => a + b, 0) / normValues.length;
-    const variance = normValues.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / normValues.length;
-    const stdDev = Math.sqrt(variance);
+    const combinationKey = `${top1}_${top2}`;
+    const baseProfile = PROFILE_COMBINATIONS[combinationKey] || getFallbackProfile(top1, top2);
 
-    // 4. 分布パターンの分類（正規化後の標準偏差・差分に基づく判定）
-    let distributionType = "";
-    let distributionTag = "";
-    let usageAdviceText = "";
+    return {
+        scores: normalized,
+        primaryAxes: [top1, top2],
+        distribution: distribution,
+        display: {
+            title: `${AXIS_NAMES[top1]} × ${AXIS_NAMES[top2]}`,
+            distributionLabel: distribution.label,
+            overview: baseProfile.overview + ' ' + distribution.description,
+            frequentBehaviors: baseProfile.frequentBehaviors,
+            cognitiveCosts: baseProfile.cognitiveCosts
+        }
+    };
+}
 
-    if (stdDev > 16 || diffTop1Top2 >= 20) {
-        distributionType = "突出型（特定処理集中）";
-        distributionTag = "特定処理の優先度が高いプロファイル";
-        usageAdviceText = `特定の認知処理（特に「${top1}」など）に対する選択傾向が非常に強く現れています。得意な文脈では抜群の思考の速さや着眼点の鋭さを発揮しやすい一方、その処理が使えない環境（例：${top1}が活きない曖昧な現場など）では想定以上の認知コストが発生することがあります。意識的に他のアプローチを補うか、自分の傾向が活きる環境を選ぶことがポイントです。`;
-    } else if (stdDev < 9) {
-        distributionType = "フラット型（バランス順応）";
-        distributionTag = "状況に応じた複合処理プロファイル";
-        usageAdviceText = `6つの軸のスコアが比較的均等であり、特定の処理パターンだけに固執せず、状況や課題に応じて柔軟に情報処理を切り替える傾向があります。どのような場面にも適応しやすい反面、「自分の決定的な持ち味が見えにくい」「全方位に気を配るため疲労が分散して蓄積しやすい」と感じることもあります。意識的に優先する軸を1つ決めて処理すると負荷が下がります。`;
-    } else {
-        distributionType = "複合型（状況選択）";
-        distributionTag = "上位軸を中心とした複合プロファイル";
-        usageAdviceText = `「${top1}」と「${top2}」を中心軸としつつも、周囲の状況に合わせて他の処理も並行して活用する適応力の高いプロファイルです。上位2つの組み合わせを基本の「持ち味」として使いつつ、必要に応じてサブの処理に切り替えるというハイブリッドな情報処理を行うことができます。`;
-    }
+// 描画機能
+let chartInstance = null;
 
-    // 5. UIへの結果適用
-    document.getElementById('distribution-tag').textContent = distributionTag;
+function showResult() {
+    document.getElementById('screen-quiz').classList.add('hidden');
+    document.getElementById('screen-result').classList.remove('hidden');
 
-    // profileMatrixからのデータ取得（順不同検索）
-    let profileData = null;
-    if (profileMatrix[top1] && profileMatrix[top1][top2]) {
-        profileData = profileMatrix[top1][top2];
-    } else if (profileMatrix[top2] && profileMatrix[top2][top1]) {
-        profileData = profileMatrix[top2][top1];
-    } else {
-        // フォールバック（定義がない組み合わせの場合）
-        profileData = {
-            title: `${top1} × ${top2} 複合傾向`,
-            desc: `「${top1}」と「${top2}」の2つの処理を優先的に組み合わせ、情報を評価・解釈しやすい傾向があります。`,
-            strongBehaviors: [
-                `「${top1}」の観点から情報を整理・解釈する`,
-                `「${top2}」の要素を意識して判断を補強する`,
-                "状況に応じて必要な情報に着目する"
-            ],
-            costScenarios: [
-                `「${top1}」や「${top2}」の処理が一切行えない雑多で無秩序な状況`,
-                "処理の方向性と真逆の対応を急速に迫られる場面"
-            ]
-        };
-    }
+    const result = generateDiagnosticResult(rawScores);
 
-    document.getElementById('profile-title').textContent = `${top1} × ${top2}`;
-    document.getElementById('trait-desc').textContent = profileData.desc;
+    document.getElementById('result-title').textContent = result.display.title;
+    document.getElementById('result-distribution-tag').textContent = result.display.distributionLabel;
+    document.getElementById('result-overview').textContent = result.display.overview;
 
-    // 行動リスト描画
-    const strongList = document.getElementById('strong-behaviors');
-    strongList.innerHTML = '';
-    profileData.strongBehaviors.forEach(item => {
+    const frequentList = document.getElementById('list-frequent');
+    frequentList.innerHTML = '';
+    result.display.frequentBehaviors.forEach(item => {
         const li = document.createElement('li');
         li.textContent = item;
-        strongList.appendChild(li);
+        frequentList.appendChild(li);
     });
 
-    // 認知コストリスト描画
-    const costList = document.getElementById('cost-scenarios');
-    costList.innerHTML = '';
-    profileData.costScenarios.forEach(item => {
+    const costsList = document.getElementById('list-costs');
+    costsList.innerHTML = '';
+    result.display.cognitiveCosts.forEach(item => {
         const li = document.createElement('li');
         li.textContent = item;
-        costList.appendChild(li);
+        costsList.appendChild(li);
     });
 
-    // 全体バリエーションに応じたアドバイス
-    document.getElementById('usage-advice').textContent = usageAdviceText;
-
-    // 6. チャート描画（Chart.js）- 0〜100の正規化値を表示
-    renderChart(normalizedScores);
+    renderChart(result.scores);
 }
 
 function renderChart(normalizedScores) {
     const ctx = document.getElementById('radarChart').getContext('2d');
     
-    const labels = Object.keys(normalizedScores);
-    const dataValues = Object.values(normalizedScores);
+    const labels = [
+        AXIS_NAMES[AXES.STRUCTURE],
+        AXIS_NAMES[AXES.CONDITION],
+        AXIS_NAMES[AXES.CONTEXT],
+        AXIS_NAMES[AXES.HOLD],
+        AXIS_NAMES[AXES.CONCRETE],
+        AXIS_NAMES[AXES.COMPRESS]
+    ];
 
-    if (radarChartInstance) {
-        radarChartInstance.destroy();
+    const dataValues = [
+        normalizedScores[AXES.STRUCTURE],
+        normalizedScores[AXES.CONDITION],
+        normalizedScores[AXES.CONTEXT],
+        normalizedScores[AXES.HOLD],
+        normalizedScores[AXES.CONCRETE],
+        normalizedScores[AXES.COMPRESS]
+    ];
+
+    if (chartInstance) {
+        chartInstance.destroy();
     }
 
-    radarChartInstance = new Chart(ctx, {
+    chartInstance = new Chart(ctx, {
         type: 'radar',
         data: {
             labels: labels,
             datasets: [{
-                label: '認知処理の選択傾向（0-100）',
+                label: '認知処理の選択傾向 (0-100)',
                 data: dataValues,
                 backgroundColor: 'rgba(37, 99, 235, 0.2)',
                 borderColor: 'rgba(37, 99, 235, 1)',
                 borderWidth: 2,
-                pointBackgroundColor: 'rgba(37, 99, 235, 1)',
-                pointRadius: 4
+                pointBackgroundColor: 'rgba(37, 99, 235, 1)'
             }]
         },
         options: {
-            responsive: true,
-            maintainAspectRatio: true,
             scales: {
                 r: {
-                    angleLines: {
-                        color: '#e2e8f0'
-                    },
-                    grid: {
-                        color: '#e2e8f0'
-                    },
-                    suggestedMin: 0,
-                    suggestedMax: 100,
+                    min: 0,
+                    max: 100,
                     ticks: {
                         stepSize: 20,
-                        backdropColor: 'transparent',
-                        font: {
-                            size: 10
-                        }
+                        display: false
                     },
                     pointLabels: {
                         font: {
-                            size: 12,
-                            weight: 'bold'
-                        },
-                        color: '#0f172a'
+                            size: 12
+                        }
                     }
                 }
             },
@@ -1047,6 +805,12 @@ function renderChart(normalizedScores) {
         }
     });
 }
+
+function resetQuiz() {
+    document.getElementById('screen-result').classList.add('hidden');
+    document.getElementById('screen-start').classList.remove('hidden');
+}
 </script>
+
 </body>
 </html>
