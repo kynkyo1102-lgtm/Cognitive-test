@@ -12,8 +12,9 @@
             --card-bg: #ffffff;
             --text-main: #0f172a;
             --text-sub: #475569;
-            --accent-color: #3b82f6;
-            --accent-hover: #2563eb;
+            --accent-color: #2563eb;
+            --accent-light: #eff6ff;
+            --accent-hover: #1d4ed8;
             --border-color: #e2e8f0;
         }
 
@@ -77,7 +78,7 @@
             font-size: 0.75rem;
             font-weight: 700;
             color: var(--accent-color);
-            background-color: #eff6ff;
+            background-color: var(--accent-light);
             padding: 4px 8px;
             border-radius: 4px;
             margin-bottom: 8px;
@@ -120,24 +121,24 @@
             font-size: 1.5rem;
             font-weight: 800;
             text-align: center;
-            margin-bottom: 8px;
+            margin-bottom: 4px;
         }
 
         .result-subtitle {
             text-align: center;
             color: var(--text-sub);
             margin-bottom: 24px;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
         }
 
         .chart-container {
             position: relative;
             width: 100%;
-            max-width: 450px;
-            margin: 0 auto 32px auto;
+            max-width: 440px;
+            margin: 0 auto 28px auto;
         }
 
-        /* 取扱説明書カード */
+        /* プロファイルカード */
         .instruction-card {
             background-color: #f8fafc;
             border: 1px solid var(--border-color);
@@ -146,17 +147,31 @@
             margin-bottom: 24px;
         }
 
-        .instruction-header {
-            font-size: 1.2rem;
-            font-weight: 800;
+        .main-style-tag {
+            font-size: 0.85rem;
+            font-weight: 700;
             color: var(--accent-color);
-            margin-bottom: 16px;
-            padding-bottom: 8px;
-            border-bottom: 2px solid #e2e8f0;
+            margin-bottom: 4px;
+        }
+
+        .instruction-header {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: var(--text-main);
+            margin-bottom: 12px;
+        }
+
+        .style-summary {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: var(--text-sub);
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
         }
 
         .section-box {
-            margin-bottom: 16px;
+            margin-bottom: 18px;
         }
 
         .section-box:last-child {
@@ -170,6 +185,7 @@
             display: flex;
             align-items: center;
             gap: 6px;
+            color: var(--text-main);
         }
 
         .section-content {
@@ -193,7 +209,6 @@
             cursor: pointer;
             text-align: center;
             transition: background-color 0.2s;
-            margin-top: 16px;
         }
 
         .restart-btn:hover {
@@ -212,33 +227,28 @@
                 <div class="progress-bar-fill" id="progress-bar"></div>
             </div>
         </div>
-        <div class="category-badge" id="category-badge">Ⅰ. 情報の受け取り方</div>
-        <div class="question-title" id="question-text">質問文がここに表示されます</div>
-        <div class="options-container" id="options-container">
-            <!-- 4つの選択肢ボタン -->
-        </div>
+        <div class="category-badge" id="category-badge">テーマ：情報の受け取り方</div>
+        <div class="question-title" id="question-text"></div>
+        <div class="options-container" id="options-container"></div>
     </div>
 
     <!-- 結果画面 -->
     <div id="result-screen" class="hidden">
-        <div class="result-title">あなたの認知プロファイル</div>
-        <div class="result-subtitle">30問の回答から分析された「情報処理の癖」</div>
+        <div class="result-title">認知プロファイル</div>
+        <div class="result-subtitle">回答から抽出された情報処理の傾向と取扱説明書</div>
         
         <div class="chart-container">
             <canvas id="radarChart"></canvas>
         </div>
 
         <div class="instruction-card">
-            <div class="instruction-header" id="type-title">メインスタイル</div>
+            <div class="main-style-tag">主な傾向</div>
+            <div class="instruction-header" id="type-title"></div>
+            <p class="style-summary" id="type-summary"></p>
             
             <div class="section-box">
-                <div class="section-title">🧠 情報処理の特徴</div>
-                <p class="section-content" id="type-feature"></p>
-            </div>
-
-            <div class="section-box">
-                <div class="section-title">⚡ 得意になりやすい処理</div>
-                <p class="section-content" id="type-strength"></p>
+                <div class="section-title">📌 出やすい処理</div>
+                <p class="section-content" id="type-tendency"></p>
             </div>
 
             <div class="section-box">
@@ -247,8 +257,8 @@
             </div>
 
             <div class="section-box">
-                <div class="section-title">💡 認知の取扱説明書（アドバイス）</div>
-                <p class="section-content" id="type-advice"></p>
+                <div class="section-title">💡 このプロファイルの取扱説明書</div>
+                <p class="section-content" id="type-guide"></p>
             </div>
         </div>
 
@@ -257,64 +267,75 @@
 </div>
 
 <script>
-    // 6つの認知スタイル軸
-    // 1. 構造化型 (Structure): 全体像・論理・整理を重視
-    // 2. 条件分析型 (Analysis): 前提・因果・境界・検証を重視
-    // 3. 文脈読解型 (Context): 背景・心理・他者・関係性を重視
-    // 4. 保留・慎重型 (Hold): 拙速な判断の回避・不確実さへの耐性
-    // 5. 探索・試行型 (Explore): とりあえず行動・具体例・体験重視
-    // 6. 圧縮・要約型 (Compress): 結論・要約・効率重視
+    // 6軸の定義（回答から抽出する認知の傾向）
+    // Structure: 構造化（全体像・分類・フレームワーク）
+    // Analysis : 条件・検証（前提確認・因果・境界・検証）
+    // Context  : 文脈読解（背景・意図・人間関係・ニュアンス）
+    // Hold     : 保留・慎重（判断保留・観察・不確実性の容認）
+    // Explore  : 試行・具体（まず動く・事例・直感からの検証）
+    // Compress : 圧縮・要約（結論優先・核心化・優先順位）
 
+    const styleNames = {
+        Structure: "構造化",
+        Analysis: "条件・検証",
+        Context: "文脈読解",
+        Hold: "保留・慎重",
+        Explore: "試行・具体",
+        Compress: "要約・圧縮"
+    };
+
+    // 質問データ (30問)
+    // weightsで1つの選択肢が複数の軸へ影響を与えるように加重配分
     const questions = [
         // Ⅰ. 情報の受け取り方
         {
             category: "Ⅰ. 情報の受け取り方",
             text: "ある出来事について、AさんとBさんの説明が食い違っています。あなたなら？",
             options: [
-                { text: "A. どちらか一方の説明をひとまず採用する", style: "Compress" },
-                { text: "B. 両方の話を聞いて共通点を探す", style: "Structure" },
-                { text: "C. 情報が足りないので判断を保留する", style: "Hold" },
-                { text: "D. なぜ説明が食い違ったのかを考える", style: "Context" }
+                { text: "A. どちらか一方の説明をひとまず採用する", weights: { Compress: 2, Explore: 1 } },
+                { text: "B. 両方の話を聞いて共通点を探す", weights: { Structure: 2, Analysis: 1 } },
+                { text: "C. 情報が足りないので判断を保留する", weights: { Hold: 2, Analysis: 1 } },
+                { text: "D. なぜ説明が食い違ったのかを考える", weights: { Context: 2, Analysis: 1 } }
             ]
         },
         {
             category: "Ⅰ. 情報の受け取り方",
             text: "長い文章を読むとき、あなたは？",
             options: [
-                { text: "A. 最初から最後まで順番に読む", style: "Explore" },
-                { text: "B. まず結論を探す", style: "Compress" },
-                { text: "C. 必要そうなところだけ拾い読む", style: "Analysis" },
-                { text: "D. 全体の構造を把握してから読む", style: "Structure" }
+                { text: "A. 最初から最後まで順番に読む", weights: { Explore: 2, Context: 1 } },
+                { text: "B. まず結論を探す", weights: { Compress: 2, Analysis: 1 } },
+                { text: "C. 必要そうなところだけ拾い読む", weights: { Analysis: 1, Compress: 1 } },
+                { text: "D. 全体の構造を把握してから読む", weights: { Structure: 2, Analysis: 1 } }
             ]
         },
         {
             category: "Ⅰ. 情報の受け取り方",
             text: "初めて聞く話に知らない言葉がたくさん出てきた。",
             options: [
-                { text: "A. とりあえず読み進める", style: "Explore" },
-                { text: "B. その言葉の意味を調べる", style: "Analysis" },
-                { text: "C. 前後の文脈から推測する", style: "Context" },
-                { text: "D. 全体が分かれば細部は気にしない", style: "Structure" }
+                { text: "A. とりあえず読み進める", weights: { Explore: 2, Hold: 1 } },
+                { text: "B. その言葉の意味を調べる", weights: { Analysis: 2, Structure: 1 } },
+                { text: "C. 前後の文脈から推測する", weights: { Context: 2, Analysis: 1 } },
+                { text: "D. 全体が分かれば細部は気にしない", weights: { Structure: 1, Compress: 2 } }
             ]
         },
         {
             category: "Ⅰ. 情報の受け取り方",
             text: "「最近こういう人が増えた」と言われた。",
             options: [
-                { text: "A. そういうこともあると思う", style: "Explore" },
-                { text: "B. 何を根拠に「増えた」と言っているのか気になる", style: "Analysis" },
-                { text: "C. 自分の周囲でもそうか確認する", style: "Context" },
-                { text: "D. そういう一般論はあまり信用しない", style: "Hold" }
+                { text: "A. そういうこともあると思う", weights: { Context: 1, Explore: 1 } },
+                { text: "B. 何を根拠に「増えた」と言っているのか気になる", weights: { Analysis: 2, Structure: 1 } },
+                { text: "C. 自分の周囲でもそうか確認する", weights: { Context: 1, Explore: 2 } },
+                { text: "D. そういう一般論はあまり信用しない", weights: { Hold: 2, Analysis: 1 } }
             ]
         },
         {
             category: "Ⅰ. 情報の受け取り方",
             text: "説明を聞いていて「なんとなく違う気がする」と感じた。",
             options: [
-                { text: "A. その感覚を一旦置いておく", style: "Hold" },
-                { text: "B. どこが違うのか言葉にしてみる", style: "Compress" },
-                { text: "C. 自分の理解が間違っていないか確認する", style: "Structure" },
-                { text: "D. 説明の前提から見直す", style: "Analysis" }
+                { text: "A. その感覚を一旦置いておく", weights: { Hold: 2, Explore: 1 } },
+                { text: "B. どこが違うのか言葉にしてみる", weights: { Compress: 1, Structure: 2 } },
+                { text: "C. 自分の理解が間違っていないか確認する", weights: { Structure: 1, Analysis: 2 } },
+                { text: "D. 説明の前提から見直す", weights: { Analysis: 2, Structure: 1 } }
             ]
         },
 
@@ -323,50 +344,50 @@
             category: "Ⅱ. 推論・問題の組み立て方",
             text: "ある方法を試したら、予想と違う結果になった。",
             options: [
-                { text: "A. 結果をそのまま受け入れる", style: "Explore" },
-                { text: "B. 自分の予想のどこが間違っていたか考える", style: "Structure" },
-                { text: "C. 条件によって結果が変わった可能性を考える", style: "Analysis" },
-                { text: "D. そもそもの前提が間違っていなかったか考える", style: "Hold" }
+                { text: "A. 結果をそのまま受け入れる", weights: { Explore: 2, Hold: 1 } },
+                { text: "B. 自分の予想のどこが間違っていたか考える", weights: { Structure: 1, Analysis: 2 } },
+                { text: "C. 条件によって結果が変わった可能性を考える", weights: { Analysis: 2, Structure: 1 } },
+                { text: "D. そもそもの前提が間違っていなかったか考える", weights: { Analysis: 2, Hold: 1 } }
             ]
         },
         {
             category: "Ⅱ. 推論・問題の組み立て方",
             text: "複雑な問題を解くことになった。",
             options: [
-                { text: "A. とりあえず手を動かしてみる", style: "Explore" },
-                { text: "B. 問題を細かく分解する", style: "Analysis" },
-                { text: "C. まず全体像を把握する", style: "Structure" },
-                { text: "D. 似た問題の解決方法を探す", style: "Compress" }
+                { text: "A. とりあえず手を動かしてみる", weights: { Explore: 2, Compress: 1 } },
+                { text: "B. 問題を細かく分解する", weights: { Analysis: 2, Structure: 1 } },
+                { text: "C. まず全体像を把握する", weights: { Structure: 2, Compress: 1 } },
+                { text: "D. 似た問題の解決方法を探す", weights: { Compress: 1, Context: 1 } }
             ]
         },
         {
             category: "Ⅱ. 推論・問題の組み立て方",
             text: "「この方法なら絶対うまくいく」と説明された。",
             options: [
-                { text: "A. 成功例があるなら試してみる", style: "Explore" },
-                { text: "B. どういう条件ならうまくいくのか聞く", style: "Analysis" },
-                { text: "C. 「絶対」という言葉が気になる", style: "Hold" },
-                { text: "D. 自分の場合にも当てはまるか考える", style: "Context" }
+                { text: "A. 成功例があるなら試してみる", weights: { Explore: 2, Compress: 1 } },
+                { text: "B. どういう条件ならうまくいくのか聞く", weights: { Analysis: 2, Structure: 1 } },
+                { text: "C. 「絶対」という言葉が気になる", weights: { Hold: 2, Analysis: 1 } },
+                { text: "D. 自分の場合にも当てはまるか考える", weights: { Context: 2, Analysis: 1 } }
             ]
         },
         {
             category: "Ⅱ. 推論・問題の組み立て方",
             text: "二つの出来事が続けて起きた。「Aの後にBが起きた」という事実がある。",
             options: [
-                { text: "A. AがBに影響した可能性を考える", style: "Structure" },
-                { text: "B. 他にも原因がないか考える", style: "Analysis" },
-                { text: "C. 関係があるかどうかはまだ分からないと思う", style: "Hold" },
-                { text: "D. まずAとBそれぞれの事情を見る", style: "Context" }
+                { text: "A. AがBに影響した可能性を考える", weights: { Structure: 1, Compress: 1 } },
+                { text: "B. 他にも原因がないか考える", weights: { Analysis: 2, Hold: 1 } },
+                { text: "C. 関係があるかどうかはまだ分からないと思う", weights: { Hold: 2, Analysis: 1 } },
+                { text: "D. まずAとBそれぞれの事情を見る", weights: { Context: 2, Structure: 1 } }
             ]
         },
         {
             category: "Ⅱ. 推論・問題の組み立て方",
             text: "問題の解決策を考えるとき、一番気になるのは？",
             options: [
-                { text: "A. すぐ実行できるか", style: "Explore" },
-                { text: "B. なぜその問題が起きているのか", style: "Analysis" },
-                { text: "C. 他にどんな方法があるか", style: "Structure" },
-                { text: "D. その方法が別の問題を生まないか", style: "Hold" }
+                { text: "A. すぐ実行できるか", weights: { Explore: 2, Compress: 1 } },
+                { text: "B. なぜその問題が起きているのか", weights: { Analysis: 2, Structure: 1 } },
+                { text: "C. 他にどんな方法があるか", weights: { Structure: 2, Analysis: 1 } },
+                { text: "D. その方法が別の問題を生まないか", weights: { Hold: 2, Analysis: 1 } }
             ]
         },
 
@@ -375,50 +396,50 @@
             category: "Ⅲ. 不確実さとの付き合い方",
             text: "情報が十分ではないけれど、今日中に判断しなければならない。",
             options: [
-                { text: "A. 今ある情報で決める", style: "Compress" },
-                { text: "B. 重要な情報だけ追加で集める", style: "Analysis" },
-                { text: "C. 不確実な部分を残したまま決める", style: "Explore" },
-                { text: "D. 判断そのものを延期できないか考える", style: "Hold" }
+                { text: "A. 今ある情報で決める", weights: { Compress: 2, Explore: 1 } },
+                { text: "B. 重要な情報だけ追加で集める", weights: { Analysis: 2, Structure: 1 } },
+                { text: "C. 不確実な部分を残したまま決める", weights: { Explore: 1, Hold: 1 } },
+                { text: "D. 判断そのものを延期できないか考える", weights: { Hold: 2, Analysis: 1 } }
             ]
         },
         {
             category: "Ⅲ. 不確実さとの付き合い方",
             text: "「この話、本当かどうか分からない」と言われた。",
             options: [
-                { text: "A. 分からないなら保留する", style: "Hold" },
-                { text: "B. 本当だとしたら何が起きるか考える", style: "Structure" },
-                { text: "C. 嘘だとしたら何が起きるか考える", style: "Analysis" },
-                { text: "D. 確認できる情報を探す", style: "Explore" }
+                { text: "A. 分からないなら保留する", weights: { Hold: 2, Compress: 1 } },
+                { text: "B. 本当だとしたら何が起きるか考える", weights: { Structure: 2, Analysis: 1 } },
+                { text: "C. 嘘だとしたら何が起きるか考える", weights: { Analysis: 2, Hold: 1 } },
+                { text: "D. 確認できる情報を探す", weights: { Explore: 2, Analysis: 1 } }
             ]
         },
         {
             category: "Ⅲ. 不確実さとの付き合い方",
             text: "自分の予想と現実が食い違った。",
             options: [
-                { text: "A. 現実を優先する", style: "Explore" },
-                { text: "B. 予想が外れた理由を探す", style: "Analysis" },
-                { text: "C. どちらにも成立する条件があると考える", style: "Structure" },
-                { text: "D. しばらく様子を見る", style: "Hold" }
+                { text: "A. 現実を優先する", weights: { Explore: 2, Compress: 1 } },
+                { text: "B. 予想が外れた理由を探す", weights: { Analysis: 2, Structure: 1 } },
+                { text: "C. どちらにも成立する条件があると考える", weights: { Structure: 2, Context: 1 } },
+                { text: "D. しばらく様子を見る", weights: { Hold: 2, Context: 1 } }
             ]
         },
         {
             category: "Ⅲ. 不確実さとの付き合い方",
             text: "ある問題について専門家の意見が二つに分かれている。",
             options: [
-                { text: "A. より信頼できそうな方を選ぶ", style: "Compress" },
-                { text: "B. それぞれの前提を比較する", style: "Analysis" },
-                { text: "C. まだ結論が出ていないと考える", style: "Hold" },
-                { text: "D. 自分に関係する部分だけ考える", style: "Context" }
+                { text: "A. より信頼できそうな方を選ぶ", weights: { Compress: 2, Context: 1 } },
+                { text: "B. それぞれの前提を比較する", weights: { Analysis: 2, Structure: 1 } },
+                { text: "C. まだ結論が出ていないと考える", weights: { Hold: 2, Analysis: 1 } },
+                { text: "D. 自分に関係する部分だけ考える", weights: { Context: 2, Compress: 1 } }
             ]
         },
         {
             category: "Ⅲ. 不確実さとの付き合い方",
             text: "「分からない」と答えることについて、一番近いのは？",
             options: [
-                { text: "A. できれば避けたい", style: "Compress" },
-                { text: "B. 情報がなければ普通にそう答える", style: "Analysis" },
-                { text: "C. 分からない状態のほうが気になる", style: "Structure" },
-                { text: "D. 分からないまま考え続けることも多い", style: "Hold" }
+                { text: "A. できれば避けたい", weights: { Compress: 2, Structure: 1 } },
+                { text: "B. 情報がなければ普通にそう答える", weights: { Analysis: 1, Hold: 1 } },
+                { text: "C. 分からない状態のほうが気になる", weights: { Structure: 2, Analysis: 1 } },
+                { text: "D. 分からないまま考え続けることも多い", weights: { Hold: 2, Context: 1 } }
             ]
         },
 
@@ -427,50 +448,50 @@
             category: "Ⅳ. 自分の認知を見る",
             text: "自分の考えと反対の意見を見つけた。",
             options: [
-                { text: "A. まず反論を考える", style: "Compress" },
-                { text: "B. なぜその人がそう考えるのか考える", style: "Context" },
-                { text: "C. 自分の考えに修正できるところがないか考える", style: "Analysis" },
-                { text: "D. 自分とは関係ない意見として流す", style: "Hold" }
+                { text: "A. まず反論を考える", weights: { Compress: 1, Analysis: 1 } },
+                { text: "B. なぜその人がそう考えるのか考える", weights: { Context: 2, Analysis: 1 } },
+                { text: "C. 自分の考えに修正できるところがないか考える", weights: { Analysis: 2, Structure: 1 } },
+                { text: "D. 自分とは関係ない意見として流す", weights: { Hold: 1, Compress: 1 } }
             ]
         },
         {
             category: "Ⅳ. 自分の認知を見る",
             text: "誰かから「考え方が偏っている」と言われた。",
             options: [
-                { text: "A. 具体的にどこが偏っているのか聞く", style: "Analysis" },
-                { text: "B. その人自身の偏りも考える", style: "Context" },
-                { text: "C. 自分では判断できないので保留する", style: "Hold" },
-                { text: "D. 自分の考えには自分なりの理由があると思う", style: "Structure" }
+                { text: "A. 具体的にどこが偏っているのか聞く", weights: { Analysis: 2, Structure: 1 } },
+                { text: "B. その人自身の偏りも考える", weights: { Context: 2, Analysis: 1 } },
+                { text: "C. 自分では判断できないので保留する", weights: { Hold: 2, Analysis: 1 } },
+                { text: "D. 自分の考えには自分なりの理由があると思う", weights: { Structure: 2, Compress: 1 } }
             ]
         },
         {
             category: "Ⅳ. 自分の認知を見る",
             text: "あとから考えると、自分の判断が間違っていた。",
             options: [
-                { text: "A. 間違っていたと認める", style: "Explore" },
-                { text: "B. 何が判断を誤らせたのか分析する", style: "Analysis" },
-                { text: "C. 当時の状況なら仕方なかったと思う", style: "Context" },
-                { text: "D. 次に同じことが起きたときの対策を考える", style: "Structure" }
+                { text: "A. 間違っていたと認める", weights: { Explore: 2, Compress: 1 } },
+                { text: "B. 何が判断を誤らせたのか分析する", weights: { Analysis: 2, Structure: 1 } },
+                { text: "C. 当時の状況なら仕方なかったと思う", weights: { Context: 2, Hold: 1 } },
+                { text: "D. 次に同じことが起きたときの対策を考える", weights: { Structure: 2, Analysis: 1 } }
             ]
         },
         {
             category: "Ⅳ. 自分の認知を見る",
             text: "自分が何かを嫌いだと気づいた。",
             options: [
-                { text: "A. 嫌いなのだからそれでいい", style: "Explore" },
-                { text: "B. なぜ嫌いなのか考える", style: "Analysis" },
-                { text: "C. 自分の経験が影響しているか考える", style: "Context" },
-                { text: "D. 嫌いでも必要なら受け入れる", style: "Compress" }
+                { text: "A. 嫌いなのだからそれでいい", weights: { Explore: 1, Compress: 1 } },
+                { text: "B. なぜ嫌いなのか考える", weights: { Analysis: 2, Structure: 1 } },
+                { text: "C. 自分の経験が影響しているか考える", weights: { Context: 2, Analysis: 1 } },
+                { text: "D. 嫌いでも必要なら受け入れる", weights: { Compress: 2, Structure: 1 } }
             ]
         },
         {
             category: "Ⅳ. 自分の認知を見る",
             text: "自分について考えていて、「自分はこういう人間だ」と思った。",
             options: [
-                { text: "A. それまでの経験を振り返って確かめる", style: "Structure" },
-                { text: "B. 反例がないか探す", style: "Analysis" },
-                { text: "C. 今の自分についてはそうだと思う", style: "Explore" },
-                { text: "D. 状況によって変わるものだと思う", style: "Context" }
+                { text: "A. それまでの経験を振り返って確かめる", weights: { Structure: 2, Context: 1 } },
+                { text: "B. 反例がないか探す", weights: { Analysis: 2, Hold: 1 } },
+                { text: "C. 今の自分についてはそうだと思う", weights: { Explore: 2, Compress: 1 } },
+                { text: "D. 状況によって変わるものだと思う", weights: { Context: 2, Hold: 1 } }
             ]
         },
 
@@ -479,50 +500,50 @@
             category: "Ⅴ. 他者・文脈の読み取り",
             text: "友人が「別にいいよ」と言った。でも、少し不機嫌そうに見える。",
             options: [
-                { text: "A. 言葉どおり受け取る", style: "Compress" },
-                { text: "B. 表情や状況も含めて考える", style: "Context" },
-                { text: "C. 本人に確認する", style: "Explore" },
-                { text: "D. 自分の思い込みかもしれないので判断しない", style: "Hold" }
+                { text: "A. 言葉どおり受け取る", weights: { Compress: 2, Explore: 1 } },
+                { text: "B. 表情や状況も含めて考える", weights: { Context: 2, Structure: 1 } },
+                { text: "C. 本人に確認する", weights: { Explore: 2, Analysis: 1 } },
+                { text: "D. 自分の思い込みかもしれないので判断しない", weights: { Hold: 2, Context: 1 } }
             ]
         },
         {
             category: "Ⅴ. 他者・文脈の読み取り",
             text: "誰かが突然、普段と違う行動をした。",
             options: [
-                { text: "A. その行動だけを見る", style: "Compress" },
-                { text: "B. 直前に何があったか考える", style: "Context" },
-                { text: "C. その人の普段の傾向と比較する", style: "Structure" },
-                { text: "D. 本人に聞かないと分からないと思う", style: "Hold" }
+                { text: "A. その行動だけを見る", weights: { Compress: 2, Explore: 1 } },
+                { text: "B. 直前に何があったか考える", weights: { Context: 2, Analysis: 1 } },
+                { text: "C. その人の普段の傾向と比較する", weights: { Structure: 2, Analysis: 1 } },
+                { text: "D. 本人に聞かないと分からないと思う", weights: { Hold: 2, Analysis: 1 } }
             ]
         },
         {
             category: "Ⅴ. 他者・文脈の読み取り",
             text: "ある発言が失礼に聞こえた。",
             options: [
-                { text: "A. 発言内容そのものを問題にする", style: "Compress" },
-                { text: "B. 言った人の意図を考える", style: "Context" },
-                { text: "C. その場の状況を考える", style: "Structure" },
-                { text: "D. 自分がどう受け取ったかをまず考える", style: "Analysis" }
+                { text: "A. 発言内容そのものを問題にする", weights: { Compress: 2, Analysis: 1 } },
+                { text: "B. 言った人の意図を考える", weights: { Context: 2, Structure: 1 } },
+                { text: "C. その場の状況を考える", weights: { Context: 2, Structure: 1 } },
+                { text: "D. 自分がどう受け取ったかをまず考える", weights: { Analysis: 2, Context: 1 } }
             ]
         },
         {
             category: "Ⅴ. 他者・文脈の読み取り",
             text: "同じ言葉なのに、人によって印象が違う。",
             options: [
-                { text: "A. 言葉そのものより言い方の問題だと思う", style: "Context" },
-                { text: "B. 受け取る側の経験も関係すると思う", style: "Analysis" },
-                { text: "C. 関係性や状況が大きいと思う", style: "Structure" },
-                { text: "D. 人によって違うので一概には言えない", style: "Hold" }
+                { text: "A. 言葉そのものより言い方の問題だと思う", weights: { Context: 2, Analysis: 1 } },
+                { text: "B. 受け取る側の経験も関係すると思う", weights: { Context: 2, Structure: 1 } },
+                { text: "C. 関係性や状況が大きいと思う", weights: { Structure: 2, Context: 1 } },
+                { text: "D. 人によって違うので一概には言えない", weights: { Hold: 2, Context: 1 } }
             ]
         },
         {
             category: "Ⅴ. 他者・文脈の読み取り",
             text: "誰かの行動に「なんでそんなことするんだろう」と思った。",
             options: [
-                { text: "A. 自分ならしないと思う", style: "Compress" },
-                { text: "B. その人にとっての合理性を考える", style: "Analysis" },
-                { text: "C. その人が置かれている状況を見る", style: "Context" },
-                { text: "D. 本人にしか分からないと思う", style: "Hold" }
+                { text: "A. 自分ならしないと思う", weights: { Compress: 1, Explore: 1 } },
+                { text: "B. その人にとっての合理性を考える", weights: { Analysis: 2, Structure: 1 } },
+                { text: "C. その人が置かれている状況を見る", weights: { Context: 2, Structure: 1 } },
+                { text: "D. 本人にしか分からないと思う", weights: { Hold: 2, Context: 1 } }
             ]
         },
 
@@ -531,109 +552,96 @@
             category: "Ⅵ. 情報の整理・圧縮",
             text: "人から長い相談をされた。話があちこちに飛んでいる。",
             options: [
-                { text: "A. とりあえず最後まで聞く", style: "Context" },
-                { text: "B. 要点を整理して確認する", style: "Structure" },
-                { text: "C. 一番困っていることを聞く", style: "Compress" },
-                { text: "D. 話の流れから全体像を組み立てる", style: "Analysis" }
+                { text: "A. とりあえず最後まで聞く", weights: { Context: 2, Hold: 1 } },
+                { text: "B. 要点を整理して確認する", weights: { Structure: 2, Compress: 1 } },
+                { text: "C. 一番困っていることを聞く", weights: { Compress: 2, Structure: 1 } },
+                { text: "D. 話の流れから全体像を組み立てる", weights: { Structure: 2, Analysis: 1 } }
             ]
         },
         {
             category: "Ⅵ. 情報の整理・圧縮",
             text: "複数の情報を人に説明することになった。",
             options: [
-                { text: "A. 時系列順に説明する", style: "Explore" },
-                { text: "B. 結論から説明する", style: "Compress" },
-                { text: "C. 重要度の高い順に説明する", style: "Structure" },
-                { text: "D. 相手が知っていることに合わせて変える", style: "Context" }
+                { text: "A. 時系列順に説明する", weights: { Explore: 1, Context: 1 } },
+                { text: "B. 結論から説明する", weights: { Compress: 2, Structure: 1 } },
+                { text: "C. 重要度の高い順に説明する", weights: { Structure: 2, Compress: 1 } },
+                { text: "D. 相手が知っていることに合わせて変える", weights: { Context: 2, Structure: 1 } }
             ]
         },
         {
             category: "Ⅵ. 情報の整理・圧縮",
             text: "情報が多すぎて整理できない。",
             options: [
-                { text: "A. まず全部書き出す", style: "Explore" },
-                { text: "B. 不要な情報を捨てる", style: "Compress" },
-                { text: "C. 分類してグループ化する", style: "Structure" },
-                { text: "D. そもそも何を決めるための情報なのか考える", style: "Analysis" }
+                { text: "A. まず全部書き出す", weights: { Explore: 2, Structure: 1 } },
+                { text: "B. 不要な情報を捨てる", weights: { Compress: 2, Analysis: 1 } },
+                { text: "C. 分類してグループ化する", weights: { Structure: 2, Analysis: 1 } },
+                { text: "D. そもそも何を決めるための情報なのか考える", weights: { Analysis: 2, Structure: 1 } }
             ]
         },
         {
             category: "Ⅵ. 情報の整理・圧縮",
             text: "誰かに説明するとき、「分かりやすくして」と言われた。",
             options: [
-                { text: "A. 難しい言葉を簡単な言葉に変える", style: "Compress" },
-                { text: "B. 情報量を減らす", style: "Structure" },
-                { text: "C. 具体例を出す", style: "Explore" },
-                { text: "D. 相手がどこでつまずいているのか確認する", style: "Context" }
+                { text: "A. 難しい言葉を簡単な言葉に変える", weights: { Compress: 2, Context: 1 } },
+                { text: "B. 情報量を減らす", weights: { Compress: 2, Structure: 1 } },
+                { text: "C. 具体例を出す", weights: { Explore: 2, Context: 1 } },
+                { text: "D. 相手がどこでつまずいているのか確認する", weights: { Context: 2, Analysis: 1 } }
             ]
         },
         {
             category: "Ⅵ. 情報の整理・圧縮",
             text: "複雑なことを一言で表す必要がある。",
             options: [
-                { text: "A. 一番重要な部分だけ残す", style: "Compress" },
-                { text: "B. 誤解されない表現を優先する", style: "Analysis" },
-                { text: "C. あえて一言にしない", style: "Hold" },
-                { text: "D. 前提を含めて短くまとめる", style: "Structure" }
+                { text: "A. 一番重要な部分だけ残す", weights: { Compress: 2, Structure: 1 } },
+                { text: "B. 誤解されない表現を優先する", weights: { Analysis: 2, Hold: 1 } },
+                { text: "C. あえて一言にしない", weights: { Hold: 2, Structure: 1 } },
+                { text: "D. 前提を含めて短くまとめる", weights: { Structure: 2, Compress: 1 } }
             ]
         }
     ];
 
-    // プロファイル定義
-    const profiles = {
+    // 各軸ごとの傾向データ記述
+    const axisDetails = {
         Structure: {
-            title: "【構造化思考型】全体像と枠組みの建築家",
-            feature: "散らかった情報を分類し、全体像やシステムとして捉えることを重視します。関係性や構造が明確になると頭がスッキリするタイプです。",
-            strength: "・情報の分類や整理整頓\n・ロードマップや全体像の可視化\n・複雑な問題のロードマップ化",
-            cost: "・構造化できない混沌とした状態の放置\n・目的や枠組みが定まらないフワッとした会話",
-            advice: "完璧な分類にこだわりすぎず、時には「未分類のまま進める柔軟さ」を持つことで意思決定が加速します。"
+            summary: "情報をそのまま受け取るより、要素間の関係性や全体像、枠組みを整理して捉える傾向があります。",
+            tendency: "・情報同士の関係や優先順位を整理する\n・全体像やカテゴリ分けの枠組みを作る\n・論理的な流れや一貫性を確認する",
+            cost: "・構造や枠組みが一切見えない混沌とした情報の聞き取り\n・目的や分類が曖昧なまま進む議論",
+            guide: "「綺麗に分類すること」にこだわりすぎず、時には未整理のまま進める柔軟さを持つと意思決定スピードが上がります。"
         },
         Analysis: {
-            title: "【条件・検証分析型】前提と境界線の解剖医",
-            feature: "「なぜ？」「どういう条件で成立する？」と前提や因果関係を深掘りします。見逃されがちな矛盾や適用条件に敏感です。",
-            strength: "・前提条件や例外パターンの洗い出し\n・論理的な矛盾やリスクの早期発見\n・客観的なファクトベースの議論",
-            cost: "・根拠の薄い状態での即断即決\n・「とりあえずやってみよう」というノリ重視の進行",
-            advice: "分析そのものが目的にならないよう、「今の目的を達成するには何割の検証で十分か」の線引きをあらかじめ決めましょう。"
+            summary: "情報を額面通りに受け取らず、「どういう条件で成り立つか」「前提は何か」を確認しながら検証する傾向があります。",
+            tendency: "・前提条件や例外パターンを確認する\n・言葉の定義や根拠の曖昧さに目が向きやすい\n・条件によって判断を細かく分ける",
+            cost: "・根拠や条件が不明確なままでの即断・実行\n・「勢い」や「ノリ」だけで押し切る場面",
+            guide: "「考えすぎないようにする」より、「どこまでの条件が確認できたら十分とするか」の終了基準をあらかじめ決めるのが効果的です。"
         },
         Context: {
-            title: "【文脈・関係読解型】背景と場の空気の解読者",
-            feature: "言葉そのものだけでなく、相手の立場、背景、場の空気、これまでの経緯など「行間（文脈）」を読み取って処理します。",
-            strength: "・他者の意図や感情の汲み取り\n・状況に応じた柔軟なコミュニケーション\n・背景やストーリーを考慮した調整",
-            cost: "・文脈が断絶された箇条書きのみの機械的な指示\n・感情や意図を完全に無視した合理的すぎる決定",
-            advice: "深読みしすぎて判断が複雑化することがあります。「文字通りの意味」でシンプルに受け取る練習も効果的です。"
+            summary: "言葉そのものの内容だけでなく、相手の立場、背景、その場の文脈やニュアンスを含めて解釈する傾向があります。",
+            tendency: "・発言の背景にある意図や感情を捉える\n・状況や関係性に応じた柔軟な受け止め方をする\n・言葉の行間や場の空気感を読み取る",
+            cost: "・背景や経緯がすべて削ぎ落とされた機械的なテキスト指示\n・文脈を無視した合理的・ドライすぎる割り切り",
+            guide: "深読みしすぎて複雑化した時は、「相手が言葉にしたそのままの意味」に一瞬だけ立ち返るとシンプルに捉え直せます。"
         },
         Hold: {
-            title: "【保留・慎重探索型】不確実さへの耐性と観察者",
-            feature: "情報が揃っていない時に無理に結論を出さず、「分からないものは分からない」として保留・観察を維持できます。",
-            strength: "・拙速な誤断を防ぐストッパー機能\n・思い込みを排除した冷静な観察\n・複雑で不確実な状況下での耐久性",
-            cost: "・その場での素早い決断やコミットメント\n・白黒をハッキリつけることを求められるプレッシャー",
-            advice: "保留は強みですが、時には「暫定の仮説」を1つ置いて動いてみることで、新しい情報が得られやすくなります。"
+            summary: "情報が不足している時に拙速な結論を出さず、「分からないものは一旦保留にする」状態で思考を維持できる傾向があります。",
+            tendency: "・不確実な部分を残したまま観察を続ける\n・白黒つけずに判断を一時保留する\n・決めつけを避け、追加情報を待つ",
+            cost: "・十分な情報がない状態での緊急の意思決定\n・今すぐ白黒はっきりつけることを迫られる状況",
+            guide: "保留は優れたリスク回避傾向です。「暫定の仮説」を1つだけ置いて行動してみると、保留を解くための新しい情報が得られやすくなります。"
         },
         Explore: {
-            title: "【試行・具体体験型】実践とフィードバックの探求者",
-            feature: "頭の中でこねくり回すよりも、「まずやってみる」「具体例を見る」ことでリアルタイムに情報を処理・学習します。",
-            strength: "・圧倒的な行動力とプロトタイピング\n・現実のフィードバックからの高速学習\n・現場感のある具体的なアイデア出し",
-            cost: "・事前のアブストラクト（抽象論）や長時間の議論\n・マニュアルや規律をきっちり読み込む作業",
-            advice: "動きながら考えるのが得意ですが、大きな決定の前には「一度立ち止まって全体を見渡す」時間を作ると安全です。"
+            summary: "頭の中だけで熟考を続けるより、具体的な事例を見たり実際に試したりしながらリアルタイムに解釈を深める傾向があります。",
+            tendency: "・具体例や実践を通して理解を深める\n・試行錯誤のフィードバックから判断を調整する\n・行動しながら思考を整理する",
+            cost: "・抽象的で長大な概念論を聞き続けること\n・マニュアルや規律を細部まで読み込んでからでないと動けない状況",
+            guide: "動きながら考える強みを活かしつつ、リスクが大きい判断の前には「一旦立ち止まって前提を確かめる」クッションを挟むと安全です。"
         },
         Compress: {
-            title: "【要約・核心圧縮型】結論ファーストの優先順位決定者",
-            feature: "「結局何が重要か？」に素早く焦点を合わせ、余分な情報を削ぎ落として結論や核心を短くまとめます。",
-            strength: "・迅速な意思決定と実行\n・簡潔で分かりやすい要点伝達\n・重要度の低い情報のカット",
-            cost: "・長々とまとまりなく続く話の傾聴\n・細部やニュアンスをじっくり吟味する作業",
-            advice: "効率を重視するあまり、重要だが目立たない前提条件や他者の感情を削ぎ落としすぎないよう一呼吸おきましょう。"
+            summary: "情報量が多い場面でも、核心や要点を見極めて素早く不要な要素を削ぎ落とし、結論へとまとめる傾向があります。",
+            tendency: "・一番重要なポイントに焦点を絞る\n・複雑な内容をシンプルな言葉や結論に変換する\n・優先順位をつけて不要な情報を削る",
+            cost: "・結論の見えない冗長で脱線しやすい会話の傾聴\n・細部のニュアンスや前提条件を延々と検証する作業",
+            guide: "速やかな要約が得意な反面、削ぎ落とした「前提条件」や「他者の感情的ニュアンス」の中に重要なヒントが隠れていないか時折振り返りましょう。"
         }
     };
 
     let currentQuestionIndex = 0;
-    let scores = {
-        Structure: 0,
-        Analysis: 0,
-        Context: 0,
-        Hold: 0,
-        Explore: 0,
-        Compress: 0
-    };
+    let scores = { Structure: 0, Analysis: 0, Context: 0, Hold: 0, Explore: 0, Compress: 0 };
 
     const quizScreen = document.getElementById("quiz-screen");
     const resultScreen = document.getElementById("result-screen");
@@ -655,7 +663,7 @@
 
     function showQuestion() {
         const q = questions[currentQuestionIndex];
-        categoryBadge.textContent = q.category;
+        categoryBadge.textContent = `テーマ：${q.category.replace(/^[ⅠⅡⅢⅣⅤⅥ]\.\s*/, '')}`;
         questionText.textContent = `Q${currentQuestionIndex + 1}. ${q.text}`;
         
         progressText.textContent = `Q${currentQuestionIndex + 1} / ${questions.length}`;
@@ -667,14 +675,16 @@
             const btn = document.createElement("button");
             btn.className = "option-btn";
             btn.textContent = opt.text;
-            btn.onclick = () => selectOption(opt.style);
+            btn.onclick = () => selectOption(opt.weights);
             optionsContainer.appendChild(btn);
         });
     }
 
-    function selectOption(style) {
-        if (style && scores.hasOwnProperty(style)) {
-            scores[style]++;
+    function selectOption(weights) {
+        for (const style in weights) {
+            if (scores.hasOwnProperty(style)) {
+                scores[style] += weights[style];
+            }
         }
         currentQuestionIndex++;
 
@@ -689,23 +699,26 @@
         quizScreen.classList.add("hidden");
         resultScreen.classList.remove("hidden");
 
-        // 最高スコアの軸を判定
-        let maxStyle = "Structure";
-        let maxScore = -1;
-        for (const style in scores) {
-            if (scores[style] > maxScore) {
-                maxScore = scores[style];
-                maxStyle = style;
-            }
-        }
+        // スコア順にソート
+        const sortedStyles = Object.keys(scores).sort((a, b) => scores[b] - scores[a]);
+        const top1 = sortedStyles[0];
+        const top2 = sortedStyles[1];
 
-        // 取扱説明書の描画
-        const profile = profiles[maxStyle];
-        document.getElementById("type-title").textContent = profile.title;
-        document.getElementById("type-feature").textContent = profile.feature;
-        document.getElementById("type-strength").textContent = profile.strength;
-        document.getElementById("type-cost").textContent = profile.cost;
-        document.getElementById("type-advice").textContent = profile.advice;
+        const top1Name = styleNames[top1];
+        const top2Name = styleNames[top2];
+
+        // メイン・サブタイトルの設定
+        document.getElementById("type-title").textContent = `${top1Name} × ${top2Name}`;
+        
+        // 1位の解説を軸にしつつ、プロファイルを作成
+        const mainDetail = axisDetails[top1];
+        const subDetail = axisDetails[top2];
+
+        document.getElementById("type-summary").textContent = `${mainDetail.summary}\nまた、副次的に【${top2Name}】の傾向（${subDetail.summary.replace('傾向があります。', '')}）も併せ持っています。`;
+        
+        document.getElementById("type-tendency").textContent = mainDetail.tendency;
+        document.getElementById("type-cost").textContent = mainDetail.cost;
+        document.getElementById("type-guide").textContent = mainDetail.guide;
 
         // チャートの描画
         renderChart();
@@ -721,9 +734,16 @@
         radarChartInstance = new Chart(ctx, {
             type: 'radar',
             data: {
-                labels: ['構造化', '条件・検証', '文脈読解', '保留・慎重', '試行・具体', '要約・圧縮'],
+                labels: [
+                    styleNames.Structure,
+                    styleNames.Analysis,
+                    styleNames.Context,
+                    styleNames.Hold,
+                    styleNames.Explore,
+                    styleNames.Compress
+                ],
                 datasets: [{
-                    label: '処理の出現回数',
+                    label: '選びやすかった処理パターン（傾向値）',
                     data: [
                         scores.Structure,
                         scores.Analysis,
@@ -732,10 +752,10 @@
                         scores.Explore,
                         scores.Compress
                     ],
-                    backgroundColor: 'rgba(59, 130, 246, 0.2)',
-                    borderColor: 'rgba(59, 130, 246, 1)',
+                    backgroundColor: 'rgba(37, 99, 235, 0.15)',
+                    borderColor: 'rgba(37, 99, 235, 1)',
                     borderWidth: 2,
-                    pointBackgroundColor: 'rgba(59, 130, 246, 1)'
+                    pointBackgroundColor: 'rgba(37, 99, 235, 1)'
                 }]
             },
             options: {
@@ -744,12 +764,11 @@
                         angleLines: { color: '#e2e8f0' },
                         grid: { color: '#e2e8f0' },
                         pointLabels: {
-                            font: { size: 11, weight: 'bold' },
+                            font: { size: 12, weight: 'bold' },
                             color: '#0f172a'
                         },
                         suggestedMin: 0,
-                        suggestedMax: 10,
-                        ticks: { stepSize: 2 }
+                        ticks: { display: false } // スコアは絶対的な能力値ではないため目盛り数字は非表示
                     }
                 },
                 plugins: {
