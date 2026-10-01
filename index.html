@@ -281,187 +281,307 @@ const AXIS_NAMES = {
 };
 
 // 全30問（配点データ）
-const QUESTIONS = [
-    { text: "新しいプロジェクトを任された時、最初にすることは？", options: [
-        { text: "全体の枠組みや構成要素を整理する", scores: { [AXES.STRUCTURE]: 2 } },
-        { text: "前提条件や成功基準を確認する", scores: { [AXES.CONDITION]: 2 } },
-        { text: "なぜこの企画が必要なのか背景を把握する", scores: { [AXES.CONTEXT]: 2 } },
-        { text: "まずは明確な例や具体例を集める", scores: { [AXES.CONCRETE]: 2 } }
-    ]},
-    { text: "説明を受ける時、一番気になるのは？", options: [
-        { text: "全体の中でその話がどこに位置するか", scores: { [AXES.STRUCTURE]: 2 } },
-        { text: "その主張の根拠や前提が正しいか", scores: { [AXES.CONDITION]: 2 } },
-        { text: "話し手がどういう経緯でそう考えているか", scores: { [AXES.CONTEXT]: 2 } },
-        { text: "一言で言うと何がポイントなのか", scores: { [AXES.COMPRESS]: 2 } }
-    ]},
-    { text: "情報が不足していて判断できない時、どうする？", options: [
-        { text: "判断を一度保留し、保留の理由を整理する", scores: { [AXES.HOLD]: 2 } },
-        { text: "足りない前提条件やデータを特定して要求する", scores: { [AXES.CONDITION]: 2 } },
-        { text: "手元にある具体例から推測を進める", scores: { [AXES.CONCRETE]: 2 } },
-        { text: "全体の流れを見て大枠の方針だけ決める", scores: { [AXES.STRUCTURE]: 1, [AXES.COMPRESS]: 1 } }
-    ]},
-    { text: "複雑な課題に直面した時、まず行うアプローチは？", options: [
-        { text: "要素を分解してロジックツリーのように整理する", scores: { [AXES.STRUCTURE]: 2 } },
-        { text: "どのような条件が揃えば解決できるか整理する", scores: { [AXES.CONDITION]: 2 } },
-        { text: "これまでの経緯や関係者の意図を確認する", scores: { [AXES.CONTEXT]: 2 } },
-        { text: "状況がクリアになるまで拙速な結論を避ける", scores: { [AXES.HOLD]: 2 } }
-    ]},
-    { text: "文章を書くときに意識することは？", options: [
-        { text: "見出しや箇条書きで構造を明確にする", scores: { [AXES.STRUCTURE]: 2 } },
-        { text: "論理の飛躍や矛盾がないかチェックする", scores: { [AXES.CONDITION]: 2 } },
-        { text: "要約して短い言葉で伝える", scores: { [AXES.COMPRESS]: 2 } },
-        { text: "具体的なエピソードや実例を入れる", scores: { [AXES.CONCRETE]: 2 } }
-    ]},
-    { text: "会議で意見が割れた時、どう行動する？", options: [
-        { text: "議論の争点を構造化して可視化する", scores: { [AXES.STRUCTURE]: 2 } },
-        { text: "それぞれの意見の前提条件を洗い出す", scores: { [AXES.CONDITION]: 2 } },
-        { text: "各立場に至った経緯や背景を深掘りする", scores: { [AXES.CONTEXT]: 2 } },
-        { text: "すぐに決定せず、一度持ち帰って検討する", scores: { [AXES.HOLD]: 2 } }
-    ]},
-    { text: "理解しやすいと感じる資料は？", options: [
-        { text: "図解やフレームワークで整理されている", scores: { [AXES.STRUCTURE]: 2 } },
-        { text: "前提、根拠、結論が明確に示されている", scores: { [AXES.CONDITION]: 2 } },
-        { text: "具体例やサンプルのデータが豊富なもの", scores: { [AXES.CONCRETE]: 2 } },
-        { text: "1ページで結論が端的にまとまっているもの", scores: { [AXES.COMPRESS]: 2 } }
-    ]},
-    { text: "意見を求められた時、困るのは？", options: [
-        { text: "全体像や目的が見えないまま聞かれること", scores: { [AXES.STRUCTURE]: 2 } },
-        { text: "前提条件や判断基準が曖昧なこと", scores: { [AXES.CONDITION]: 2 } },
-        { text: "背景や経緯を知らされていないこと", scores: { [AXES.CONTEXT]: 2 } },
-        { text: "情報が揃っていないのに即答を求められること", scores: { [AXES.HOLD]: 2 } }
-    ]},
-    { text: "長文のニュースを読むとき、どう読む？", options: [
-        { text: "全体の大枠や構成を把握しながら読む", scores: { [AXES.STRUCTURE]: 2 } },
-        { text: "事実と解釈、根拠が正しいかを確かめながら読む", scores: { [AXES.CONDITION]: 2 } },
-        { text: "その話題に至った歴史や背景を考えながら読む", scores: { [AXES.CONTEXT]: 2 } },
-        { text: "要約部分だけを拾い読みする", scores: { [AXES.COMPRESS]: 2 } }
-    ]},
-    { text: "アイデアを考える時、重視することは？", options: [
-        { text: "既存の枠組みを整理し直すこと", scores: { [AXES.STRUCTURE]: 2 } },
-        { text: "実現可能性や条件を満たしているか確認すること", scores: { [AXES.CONDITION]: 2 } },
-        { text: "現実的な具体的なプロトタイプを作ってみること", scores: { [AXES.CONCRETE]: 2 } },
-        { text: "シンプルで本質的なフレーズに落とし込むこと", scores: { [AXES.COMPRESS]: 2 } }
-    ]},
-    { text: "他人の説明を聞いて「わかりにくい」と感じる理由は？", options: [
-        { text: "話の構成や順序がバラバラ", scores: { [AXES.STRUCTURE]: 2 } },
-        { text: "主張の根拠や前提が曖昧", scores: { [AXES.CONDITION]: 2 } },
-        { text: "抽象的すぎて具体的なイメージが湧かない", scores: { [AXES.CONCRETE]: 2 } },
-        { text: "ダラダラと長くてポイントが見えない", scores: { [AXES.COMPRESS]: 2 } }
-    ]},
-    { text: "不確定要素が多い状況での対応は？", options: [
-        { text: "仮説に基づいて全体シナリオを複数作る", scores: { [AXES.STRUCTURE]: 2 } },
-        { text: "確定している条件と未確定の条件を分ける", scores: { [AXES.CONDITION]: 2 } },
-        { text: "判断を急がず、情報が集まるまで状況を見極める", scores: { [AXES.HOLD]: 2 } },
-        { text: "目の前にある具体的な小タスクから手を付ける", scores: { [AXES.CONCRETE]: 2 } }
-    ]},
-    { text: "問題解決の場で得意な役割は？", options: [
-        { text: "複雑な状況を整理して可視化する役割", scores: { [AXES.STRUCTURE]: 2 } },
-        { text: "論理的な穴やリスクを指摘する役割", scores: { [AXES.CONDITION]: 2 } },
-        { text: "経緯を踏まえて関係者の意図を繋ぐ役割", scores: { [AXES.CONTEXT]: 2 } },
-        { text: "複雑な議論を最後の一言にまとめる役割", scores: { [AXES.COMPRESS]: 2 } }
-    ]},
-    { text: "新しい概念を学ぶ時の得意なスタイルは？", options: [
-        { text: "全体像や分類表から理解する", scores: { [AXES.STRUCTURE]: 2 } },
-        { text: "どのような定義や条件で成り立つか理解する", scores: { [AXES.CONDITION]: 2 } },
-        { text: "具体的な事例や実際のコード・サンプルを見る", scores: { [AXES.CONCRETE]: 2 } },
-        { text: "その歴史的背景や開発された経緯を知る", scores: { [AXES.CONTEXT]: 2 } }
-    ]},
-    { text: "議論が迷走した時、どう立て直す？", options: [
-        { text: "これまでの議論をカテゴリーごとに整理し直す", scores: { [AXES.STRUCTURE]: 2 } },
-        { text: "そもそも何を目指しているのか目的・前提に戻る", scores: { [AXES.CONDITION]: 2 } },
-        { text: "一言で言うと何が問題なのかを再定義する", scores: { [AXES.COMPRESS]: 2 } },
-        { text: "一度思考を停止し、冷静に論点を整理する時間を置く", scores: { [AXES.HOLD]: 2 } }
-    ]},
-    { text: "情報を整理する時に一番やりたいことは？", options: [
-        { text: "マインドマップや体系図を作りたい", scores: { [AXES.STRUCTURE]: 2 } },
-        { text: "チェックリストや条件分岐を作りたい", scores: { [AXES.CONDITION]: 2 } },
-        { text: "要約文やキャッチコピーを作りたい", scores: { [AXES.COMPRESS]: 2 } },
-        { text: "具体的な体験談やケーススタディをまとめたい", scores: { [AXES.CONCRETE]: 2 } }
-    ]},
-    { text: "自分の仕事の振り返りをする時、考えることは？", options: [
-        { text: "プロセスの全体構造に問題がなかったか", scores: { [AXES.STRUCTURE]: 2 } },
-        { text: "事前の想定や条件設定が合っていたか", scores: { [AXES.CONDITION]: 2 } },
-        { text: "今回の経験から得られた本質的な教訓（一行）", scores: { [AXES.COMPRESS]: 2 } },
-        { text: "発生した具体的なトラブルとその対応データ", scores: { [AXES.CONCRETE]: 2 } }
-    ]},
-    { text: "判断を保留することに対する感覚は？", options: [
-        { text: "無理に決めず、保留にして観察するのも重要な判断", scores: { [AXES.HOLD]: 2 } },
-        { text: "条件が不十分なら保留にするのが論理的", scores: { [AXES.CONDITION]: 2 } },
-        { text: "背景情報がわかるまでは保留にしておきたい", scores: { [AXES.CONTEXT]: 2 } },
-        { text: "できればすぐに仮説でも結論を出したい", scores: { [AXES.COMPRESS]: 1, [AXES.CONCRETE]: 1 } }
-    ]},
-    { text: "人にアドバイスをする時に心がけるのは？", options: [
-        { text: "相手の状況を整理してマップ化してあげる", scores: { [AXES.STRUCTURE]: 2 } },
-        { text: "判断の基準や考えるべき条件を伝える", scores: { [AXES.CONDITION]: 2 } },
-        { text: "自分の具体的な体験談や事例を伝える", scores: { [AXES.CONCRETE]: 2 } },
-        { text: "相手がどういう経緯で悩んでいるのかを聴く", scores: { [AXES.CONTEXT]: 2 } }
-    ]},
-    { text: "仕事でストレスを感じやすい瞬間は？", options: [
-        { text: "整理されていないカオスな状態が続くこと", scores: { [AXES.STRUCTURE]: 2 } },
-        { text: "筋の通らない理由で決定が覆ること", scores: { [AXES.CONDITION]: 2 } },
-        { text: "結論だけ求められ、背景やプロセスを無視されること", scores: { [AXES.CONTEXT]: 2 } },
-        { text: "十分な検討時間を与えられず即答を迫られること", scores: { [AXES.HOLD]: 2 } }
-    ]},
-    { text: "プレゼンを準備する時、最初に作るものは？", options: [
-        { text: "アジェンダや全体のアウトライン", scores: { [AXES.STRUCTURE]: 2 } },
-        { text: "主張の根拠となるデータやロジック", scores: { [AXES.CONDITION]: 2 } },
-        { text: "聞き手の状況や背景ストーリー", scores: { [AXES.CONTEXT]: 2 } },
-        { text: "メインのキーフレーズやスライドの要約", scores: { [AXES.COMPRESS]: 2 } }
-    ]},
-    { text: "抽象的な議論が続いている時の気分は？", options: [
-        { text: "「具体的な例を1つ出してみよう」と言いたくなる", scores: { [AXES.CONCRETE]: 2 } },
-        { text: "「要するに何が言いたいの？」とまとめたくなる", scores: { [AXES.COMPRESS]: 2 } },
-        { text: "「どのような条件でそれが成立するの？」と確認したくなる", scores: { [AXES.CONDITION]: 2 } },
-        { text: "「全体の中でどの話をしているの？」と整理したくなる", scores: { [AXES.STRUCTURE]: 2 } }
-    ]},
-    { text: "過去の出来事を思い出す時に浮かぶのは？", options: [
-        { text: "その時の状況や関係性のニュアンス", scores: { [AXES.CONTEXT]: 2 } },
-        { text: "印象的だった場面や具体的な出来事", scores: { [AXES.CONCRETE]: 2 } },
-        { text: "その出来事が起きた原因や論理的結果", scores: { [AXES.CONDITION]: 2 } },
-        { text: "その出来事の全体的な流れや位置づけ", scores: { [AXES.STRUCTURE]: 2 } }
-    ]},
-    { text: "自分が納得しやすい説明の型は？", options: [
-        { text: "全体像 → 各論 という順番", scores: { [AXES.STRUCTURE]: 2 } },
-        { text: "前提 → 理由 → 結論 という順序", scores: { [AXES.CONDITION]: 2 } },
-        { text: "背景・ストーリー → 結論 という順序", scores: { [AXES.CONTEXT]: 2 } },
-        { text: "結論 → 具体的な事例 という順序", scores: { [AXES.CONCRETE]: 2 } }
-    ]},
-    { text: "新しいツールやシステムを導入する時、知りたいのは？", options: [
-        { text: "全体の中でどう機能するかというシステム構成", scores: { [AXES.STRUCTURE]: 2 } },
-        { text: "導入するための動作条件や要件", scores: { [AXES.CONDITION]: 2 } },
-        { text: "実際の画面イメージや具体的な操作方法", scores: { [AXES.CONCRETE]: 2 } },
-        { text: "なぜそのツールが必要になったのかの経緯", scores: { [AXES.CONTEXT]: 2 } }
-    ]},
-    { text: "意思決定をする時に最後に確認することは？", options: [
-        { text: "決定のロジックや論理に破綻がないか", scores: { [AXES.CONDITION]: 2 } },
-        { text: "決めきれない要素を未決事項として認識したか", scores: { [AXES.HOLD]: 2 } },
-        { text: "言葉としてシンプルに整理されているか", scores: { [AXES.COMPRESS]: 2 } },
-        { text: "現場の具体的な運用イメージが湧いているか", scores: { [AXES.CONCRETE]: 2 } }
-    ]},
-    { text: "他人の話で「なるほど」と感心するのはどんな時？", options: [
-        { text: "見事に整理された分類や図解を見た時", scores: { [AXES.STRUCTURE]: 2 } },
-        { text: "盲点だった前提条件を指摘された時", scores: { [AXES.CONDITION]: 2 } },
-        { text: "複雑な話を一言で言い表した例えを見た時", scores: { [AXES.COMPRESS]: 2 } },
-        { text: "手触り感のあるリアルな具体例を聞いた時", scores: { [AXES.CONCRETE]: 2 } }
-    ]},
-    { text: "ブレインストーミングをする時の自分の姿勢は？", options: [
-        { text: "出たアイデアをカテゴリーに分類したくなる", scores: { [AXES.STRUCTURE]: 2 } },
-        { text: "実現のための課題や評価条件を考えたくなる", scores: { [AXES.CONDITION]: 2 } },
-        { text: "安易に絞り込まず、色々な可能性を保留にしておきたい", scores: { [AXES.HOLD]: 2 } },
-        { text: "とにかく具体的な事例や実例をどんどん出したい", scores: { [AXES.CONCRETE]: 2 } }
-    ]},
-    { text: "自分の強みとして近いと感じるものは？", options: [
-        { text: "物事の構造や関係性を整理すること", scores: { [AXES.STRUCTURE]: 2 } },
-        { text: "前提や根拠を見極めてリスクを防ぐこと", scores: { [AXES.CONDITION]: 2 } },
-        { text: "複雑な事象の本質を短い言葉に凝縮すること", scores: { [AXES.COMPRESS]: 2 } },
-        { text: "状況を冷静に見極め、拙速な判断を避けること", scores: { [AXES.HOLD]: 2 } }
-    ]},
-    { text: "情報をインプットする時に重視するのは？", options: [
-        { text: "全体構造や体系の中で理解すること", scores: { [AXES.STRUCTURE]: 2 } },
-        { text: "情報源の信頼性や前提の妥当性を確かめること", scores: { [AXES.CONDITION]: 2 } },
-        { text: "文脈や背景にあるストーリーを把握すること", scores: { [AXES.CONTEXT]: 2 } },
-        { text: "要点や要約を効率的に把握すること", scores: { [AXES.COMPRESS]: 2 } }
-    ]}
+const questions = [
+  {
+    id: 1,
+    text: "新しい課題やプロジェクトが始まったとき、最初に確認したいことは？",
+    options: [
+      { text: "全体のロードマップや工程の組まれ方", scores: { STRUCTURE: 2 } },
+      { text: "どのような背景や狙いで立ち上がったのか", scores: { CONTEXT: 2 } },
+      { text: "具体的に何を成果物として出すべきか", scores: { CONCRETE: 2 } },
+      { text: "達成すべき条件や制約（予算・納期・ルール）", scores: { CONDITION: 2 } }
+    ]
+  },
+  {
+    id: 2,
+    text: "説明を受けていて「なんとなく腑に落ちない」と感じたとき、どうする？",
+    options: [
+      { text: "全体の論理構成や抜け漏れを整理してみる", scores: { STRUCTURE: 2 } },
+      { text: "「なぜその説明になったのか」相手の立場や文脈を探る", scores: { CONTEXT: 2 } },
+      { text: "「具体的にどういうことか」例を出してもらう", scores: { CONCRETE: 2 } },
+      { text: "すぐには判断せず、追加の情報が出るまで様子を見る", scores: { HOLD: 2 } }
+    ]
+  },
+  {
+    id: 3,
+    text: "複雑な事象を人に伝えるとき、意識することは？",
+    options: [
+      { text: "要点や結論を1つの言葉・一文に短くまとめる", scores: { COMPRESS: 2 } },
+      { text: "図解や箇条書きで構造的に見せる", scores: { STRUCTURE: 2 } },
+      { text: "実際の具体例やエピソードを交えて話す", scores: { CONCRETE: 2 } },
+      { text: "どのような条件・前提での話なのかを明記する", scores: { CONDITION: 2 } }
+    ]
+  },
+  {
+    id: 4,
+    text: "他人の意見が自分の認識と食い違っているとき、最初に考えることは？",
+    options: [
+      { text: "どのような背景や経験からその意見が出たのか", scores: { CONTEXT: 2 } },
+      { text: "どちらの主張が全体のロジックとして通っているか", scores: { STRUCTURE: 2 } },
+      { text: "前提条件や定義の捉え方がズレていないか", scores: { CONDITION: 2 } },
+      { text: "結論を急がず、互いの主張の観察を続ける", scores: { HOLD: 2 } }
+    ]
+  },
+  {
+    id: 5,
+    text: "膨大な資料やデータを見せられたとき、最初にとる行動は？",
+    options: [
+      { text: "要約して「一言でいうと何か」を抽出する", scores: { COMPRESS: 2 } },
+      { text: "目次や見出しを見て、全体構造を把握する", scores: { STRUCTURE: 2 } },
+      { text: "手元の具体的な数字や実例に目を通す", scores: { CONCRETE: 2 } },
+      { text: "判断材料が揃うまで一旦ストックしておく", scores: { HOLD: 2 } }
+    ]
+  },
+  {
+    id: 6,
+    text: "仕事や議論で「あいまいな表現」に出くわしたとき、どう感じる？",
+    options: [
+      { text: "「具体的にどの数値を指すのか」を確定させたい", scores: { CONCRETE: 2 } },
+      { text: "「どういう条件なら適用できるか」をクリアにしたい", scores: { CONDITION: 2 } },
+      { text: "「どういう文脈でその言葉が使われたか」を確かめたい", scores: { CONTEXT: 2 } },
+      { text: "文脈によって意味が変わるので、一旦そのまま保持する", scores: { HOLD: 2 } }
+    ]
+  },
+  {
+    id: 7,
+    text: "文章やレポートを作成するとき、最も時間をかける部分は？",
+    options: [
+      { text: "見出しの順序や全体の骨組みの整理", scores: { STRUCTURE: 2 } },
+      { text: "読者の背景知識や立場に合わせた言葉選び", scores: { CONTEXT: 2 } },
+      { text: "核心をひと目で伝えるタイトルや箇条書きの凝縮", scores: { COMPRESS: 2 } },
+      { text: "読者がイメージしやすい具体的な事例やデータ", scores: { CONCRETE: 2 } }
+    ]
+  },
+  {
+    id: 8,
+    text: "予期せぬトラブルや仕様変更が発生したとき、どう反応する？",
+    options: [
+      { text: "影響範囲と適用される新条件を即座に再定義する", scores: { CONDITION: 2 } },
+      { text: "慌てて動かず、状況の推移や原因の特定を待つ", scores: { HOLD: 2 } },
+      { text: "全体プロセスのどこを修正すべきか再構造化する", scores: { STRUCTURE: 2 } },
+      { text: "「何が起きているか」を端的・要約して関係者に共有する", scores: { COMPRESS: 2 } }
+    ]
+  },
+  {
+    id: 9,
+    text: "アイデア出しや企画の初期段階で、好む進め方は？",
+    options: [
+      { text: "既存の事例やサンプル（具体物）を収集する", scores: { CONCRETE: 2 } },
+      { text: "どのような社会的背景やニーズがあるか考察する", scores: { CONTEXT: 2 } },
+      { text: "コンセプトを短いワンフレーズに削ぎ落とす", scores: { COMPRESS: 2 } },
+      { text: "最初から方向性を絞らず、選択肢を広げたまま保留する", scores: { HOLD: 2 } }
+    ]
+  },
+  {
+    id: 10,
+    text: "「優秀な説明」と聞いて真っ先に思い浮かぶ特徴は？",
+    options: [
+      { text: "無駄な言葉がなく、一言で本質が伝わる", scores: { COMPRESS: 2 } },
+      { text: "体系的で、話のつながりや論理構造が明確", scores: { STRUCTURE: 2 } },
+      { text: "聞き手の文脈や状況にぴったり寄り添っている", scores: { CONTEXT: 2 } },
+      { text: "例外条件や境界線がハッキリ整理されている", scores: { CONDITION: 2 } }
+    ]
+  },
+  {
+    id: 11,
+    text: "未経験の新しいツールやシステムを導入するとき、どう触り始める？",
+    options: [
+      { text: "まずは実際のサンプルデータを入れて動かしてみる", scores: { CONCRETE: 2 } },
+      { text: "マニュアルや設定条件、利用規約をじっくり読む", scores: { CONDITION: 2 } },
+      { text: "ツールが作られた思想や開発背景を理解しようとする", scores: { CONTEXT: 2 } },
+      { text: "すぐに使いこなそうとせず、操作感を観察しながら慣れる", scores: { HOLD: 2 } }
+    ]
+  },
+  {
+    id: 12,
+    text: "長時間の議論の末、収束しなくなったときにとりたい役割は？",
+    options: [
+      { text: "これまでの議論を1分程度で要約・整理する", scores: { COMPRESS: 2 } },
+      { text: "「ここまでは確定、ここからは未定」と境界線を整理する", scores: { CONDITION: 2 } },
+      { text: "議論のマップ（構造図）を描いて見せる", scores: { STRUCTURE: 2 } },
+      { text: "今すぐ決定を出さず、一度持ち帰って熟考することを提案する", scores: { HOLD: 2 } }
+    ]
+  },
+  {
+    id: 13,
+    text: "人の相談に乗っているとき、よく口にするアドバイスは？",
+    options: [
+      { text: "「で、結局何が一番言いたいの？」", scores: { COMPRESS: 2 } },
+      { text: "「具体的なエピソードを一つ教えて？」", scores: { CONCRETE: 2 } },
+      { text: "「どういう状況・相手との間で起きたこと？」", scores: { CONTEXT: 2 } },
+      { text: "「焦って決めず、もう少し様子を見てみたら？」", scores: { HOLD: 2 } }
+    ]
+  },
+  {
+    id: 14,
+    text: "指示やアドバイスを受けた際、物足りなさを感じるのはどんなとき？",
+    options: [
+      { text: "具体的で実用的なアクションが示されていないとき", scores: { CONCRETE: 2 } },
+      { text: "適用できる条件や範囲が限定・明確化されていないとき", scores: { CONDITION: 2 } },
+      { text: "背景や理由（なぜそれを行うか）が語られていないとき", scores: { CONTEXT: 2 } },
+      { text: "話が長すぎて要点がどこにあるか分からないとき", scores: { COMPRESS: 2 } }
+    ]
+  },
+  {
+    id: 15,
+    text: "プレゼン資料を読むとき、真っ先に視線が向かう部分は？",
+    options: [
+      { text: "各スライドの要約（サマリー）やメッセージライン", scores: { COMPRESS: 2 } },
+      { text: "全体の目次や構成図（アジェンダ）", scores: { STRUCTURE: 2 } },
+      { text: "グラフや数値、具体的な事例写真", scores: { CONCRETE: 2 } },
+      { text: "注記や前提条件、適用対象の範囲", scores: { CONDITION: 2 } }
+    ]
+  },
+  {
+    id: 16,
+    text: "新しい概念や理論を学習するとき、定着しやすい理解の仕方は？",
+    options: [
+      { text: "身近な例や実例に置き換えて考える", scores: { CONCRETE: 2 } },
+      { text: "その理論が生まれた歴史的背景や文脈を知る", scores: { CONTEXT: 2 } },
+      { text: "他の概念との位置関係や体系図（構造）の中で捉える", scores: { STRUCTURE: 2 } },
+      { text: "一言で表現できるキャッチフレーズとして覚える", scores: { COMPRESS: 2 } }
+    ]
+  },
+  {
+    id: 17,
+    text: "チーム内で意見の対立が起きたとき、重視するアプローチは？",
+    options: [
+      { text: "双方が同意できる前提条件（共通ルール）を作る", scores: { CONDITION: 2 } },
+      { text: "それぞれの意見が出た背景や文脈を解きほぐす", scores: { CONTEXT: 2 } },
+      { text: "それぞれの具体策を試してみて結果を比較する", scores: { CONCRETE: 2 } },
+      { text: "互いに結論を急がず、感情が落ち着くまで静観する", scores: { HOLD: 2 } }
+    ]
+  },
+  {
+    id: 18,
+    text: "日常のメモやメモ帳の使い方は？",
+    options: [
+      { text: "キーフレーズや単語だけを短く残す", scores: { COMPRESS: 2 } },
+      { text: "ツリー構造や箇条書きで分類して整理する", scores: { STRUCTURE: 2 } },
+      { text: "後から見返してもわかる具体例や事実を克明に残す", scores: { CONCRETE: 2 } },
+      { text: "断片的なメモを消さずに蓄積し、必要になるまで保留しておく", scores: { HOLD: 2 } }
+    ]
+  },
+  {
+    id: 19,
+    text: "仕事で「判断を下す」際に最も障害となるのは？",
+    options: [
+      { text: "判断するための前提条件や基準が曖昧なこと", scores: { CONDITION: 2 } },
+      { text: "全体像や長期的な構造が見えていないこと", scores: { STRUCTURE: 2 } },
+      { text: "判断に伴う現場の背景や文脈を理解できていないこと", scores: { CONTEXT: 2 } },
+      { text: "まだ情報が不十分なのに、拙速な決断を迫られること", scores: { HOLD: 2 } }
+    ]
+  },
+  {
+    id: 20,
+    text: "ビジネスや勉強で「フレームワーク（型）」を使うとき、どう感じる？",
+    options: [
+      { text: "思考を構造化して漏れをなくせるので非常に役に立つ", scores: { STRUCTURE: 2 } },
+      { text: "短時間で要点を凝縮整理できるツールとして使う", scores: { COMPRESS: 2 } },
+      { text: "文脈や状況を無視して型に当てはめすぎるリスクを感じる", scores: { CONTEXT: 2 } },
+      { text: "型に当てはめず、まずは観察事実をそのまま保持したい", scores: { HOLD: 2 } }
+    ]
+  },
+  {
+    id: 21,
+    text: "他人の説明を聞いていて「うまいな」と感心するのはどんなとき？",
+    options: [
+      { text: "一言のキャッチコピーで本質をズバと言い表したとき", scores: { COMPRESS: 2 } },
+      { text: "複雑な話をすっきりとした構造やマップで見せたとき", scores: { STRUCTURE: 2 } },
+      { text: "具体的でリアルな体験談や事例を出されたとき", scores: { CONCRETE: 2 } },
+      { text: "「この条件ならA、あの条件ならB」と分岐が明確なとき", scores: { CONDITION: 2 } }
+    ]
+  },
+  {
+    id: 22,
+    text: "予定通りに物事が進まなくなったとき、最初にとる行動は？",
+    options: [
+      { text: "変更後の条件やデッドラインを再確認・再定義する", scores: { CONDITION: 2 } },
+      { text: "今起きている現象の背景や周囲の状況を確認する", scores: { CONTEXT: 2 } },
+      { text: "スケジュール全体の構造を組み直す", scores: { STRUCTURE: 2 } },
+      { text: "一時的に判断を止め、次の変化が起きるまで見守る", scores: { HOLD: 2 } }
+    ]
+  },
+  {
+    id: 23,
+    text: "他人のレポートや企画書を添削・フィードバックするとき、最初にチェックするのは？",
+    options: [
+      { text: "「要約すると何か」が冒頭で明確になっているか", scores: { COMPRESS: 2 } },
+      { text: "全体の論理構成や段落のつながりが正しいか", scores: { STRUCTURE: 2 } },
+      { text: "抽象的な議論にならず、具体例やデータがあるか", scores: { CONCRETE: 2 } },
+      { text: "読み手の文脈や立場に合わせたトーンになっているか", scores: { CONTEXT: 2 } }
+    ]
+  },
+  {
+    id: 24,
+    text: "新しい知識を学んだとき、自分の中でどう処理する？",
+    options: [
+      { text: "「一言でいうとどういうことか」をノートに書く", scores: { COMPRESS: 2 } },
+      { text: "既存の知識体系（マップ）のどこに位置するか整理する", scores: { STRUCTURE: 2 } },
+      { text: "自分の実際の業務や日常でどう使えるか（具体化）試す", scores: { CONCRETE: 2 } },
+      { text: "すぐに解釈せず、他の知識が集まるまで保留にしておく", scores: { HOLD: 2 } }
+    ]
+  },
+  {
+    id: 25,
+    text: "会議やミーティングに参加している際、フラストレーションを感じやすい場面は？",
+    options: [
+      { text: "発言者の意図や背景文脈が見えず、本心が分からないとき", scores: { CONTEXT: 2 } },
+      { text: "議論の前提条件やゴールが定義されないまま進むとき", scores: { CONDITION: 2 } },
+      { text: "具体例がなく抽象的なきれいごとばかりが並ぶとき", scores: { CONCRETE: 2 } },
+      { text: "結論が出ないのに、無理にその場で決めようとするとき", scores: { HOLD: 2 } }
+    ]
+  },
+  {
+    id: 26,
+    text: "「情報を整理する」とは、あなたにとって具体的に何をする行為？",
+    options: [
+      { text: "不要な情報を削ぎ落とし、核心だけを凝縮すること", scores: { COMPRESS: 2 } },
+      { text: "要素を分類し、全体としての枠組み（構造）を作ること", scores: { STRUCTURE: 2 } },
+      { text: "情報の適用条件や分類ルールを明確にすること", scores: { CONDITION: 2 } },
+      { text: "背景や文脈ごとに情報をタグ付け・紐付けすること", scores: { CONTEXT: 2 } }
+    ]
+  },
+  {
+    id: 27,
+    text: "未知の分野や難解な本を読むとき、最後まで読み通すための工夫は？",
+    options: [
+      { text: "まずは図解や要約ページだけをさらっと追う", scores: { COMPRESS: 2 } },
+      { text: "身近な具体例や知っている実例に引き寄せて読む", scores: { CONCRETE: 2 } },
+      { text: "著者や時代背景など、書かれた文脈を先に調べる", scores: { CONTEXT: 2 } },
+      { text: "理解できない部分は無理に解釈せず、保留にして進む", scores: { HOLD: 2 } }
+    ]
+  },
+  {
+    id: 28,
+    text: "議論の中で「例外的な事例」が出てきたとき、どう扱う？",
+    options: [
+      { text: "「どのような条件のときに発生するか」条件分岐を作成する", scores: { CONDITION: 2 } },
+      { text: "例外が発生した特有の背景や文脈を深く探る", scores: { CONTEXT: 2 } },
+      { text: "全体のロジック構造を崩さないよう、一旦枠外に置く", scores: { STRUCTURE: 2 } },
+      { text: "一般化を急がず、パターンが見えるまでケースとして保持する", scores: { HOLD: 2 } }
+    ]
+  },
+  {
+    id: 29,
+    text: "他人に仕事を依頼（デリゲーション）するとき、最も注意を払うのは？",
+    options: [
+      { text: "どこまでが担当範囲か（境界条件）をハッキリ伝える", scores: { CONDITION: 2 } },
+      { text: "具体的に「何を・いつまでに」やるべきか示す", scores: { CONCRETE: 2 } },
+      { text: "なぜこの仕事が必要なのか背景やストーリーを語る", scores: { CONTEXT: 2 } },
+      { text: "依頼の全体プロセス（工程構造）を明確にする", scores: { STRUCTURE: 2 } }
+    ]
+  },
+  {
+    id: 30,
+    text: "自分自身の「思考の強み」を一つ挙げるとしたらどれ？",
+    options: [
+      { text: "複雑な情報から本質を一言で抜き出す「要約力」", scores: { COMPRESS: 2 } },
+      { text: "具体例や事例を用いてわかりやすく話す「具体化力」", scores: { CONCRETE: 2 } },
+      { text: "場の空気や相手の背景まで考慮して判断する「文脈力」", scores: { CONTEXT: 2 } },
+      { text: "不確実な状況でも焦らず冷静に観察を続ける「保留力」", scores: { HOLD: 2 } }
+    ]
+  }
 ];
 
 // SCORE_BOUNDS の自動算出
