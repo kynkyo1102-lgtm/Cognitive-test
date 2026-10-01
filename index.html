@@ -151,13 +151,6 @@
             margin-bottom: 6px;
         }
 
-        .result-subtitle {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: var(--text-main);
-            margin-bottom: 12px;
-        }
-
         .result-distribution-tag {
             display: inline-block;
             background-color: #eff6ff;
@@ -471,19 +464,14 @@ const QUESTIONS = [
     ]}
 ];
 
-// ==========================================
-// 1. SCORE_BOUNDS の自動算出ロジック（修正版）
-// ==========================================
-
+// SCORE_BOUNDS の自動算出
 function calculateScoreBounds(questions) {
     const bounds = {};
     
-    // 全軸のminを0, maxを0で初期化
     Object.values(AXES).forEach(axis => {
         bounds[axis] = { min: 0, max: 0 };
     });
 
-    // 設問ごとに各軸の最大配点（選んだ場合の最大値）を加算
     questions.forEach(q => {
         Object.values(AXES).forEach(axis => {
             const maxForQuestion = Math.max(
@@ -497,11 +485,9 @@ function calculateScoreBounds(questions) {
     return bounds;
 }
 
-// 質問データから理論上の最小・最大値を自動取得
 const SCORE_BOUNDS = calculateScoreBounds(QUESTIONS);
 
-
-// プロファイル組み合わせテキスト定義（能力ではなく処理傾向を記述）
+// プロファイル組み合わせテキスト定義
 const PROFILE_COMBINATIONS = {
     [`${AXES.STRUCTURE}_${AXES.CONDITION}`]: {
         overview: "情報をそのまま受け取るより、全体の構造を組み立て、成立条件や前提を確認してから理解しようとする処理が出やすい傾向があります。",
@@ -554,7 +540,6 @@ const PROFILE_COMBINATIONS = {
     }
 };
 
-// フォールバック用の汎用テキスト生成関数
 function getFallbackProfile(top1, top2) {
     return {
         overview: `${AXIS_NAMES[top1]}と${AXIS_NAMES[top2]}の視点を優先的に組み合わせ、情報を整理・解釈しようとする処理スタイルです。`,
@@ -567,7 +552,6 @@ function getFallbackProfile(top1, top2) {
         ]
     };
 }
-
 
 // ==========================================
 // 診断処理ロジック
@@ -626,8 +610,6 @@ function selectOption(scores) {
         showResult();
     }
 }
-
-// 2. 正規化と分布パターンの判定ロジック
 
 function normalizeScores(raw) {
     const normalized = {};
@@ -703,7 +685,6 @@ function generateDiagnosticResult(raw) {
     };
 }
 
-// 描画機能
 let chartInstance = null;
 
 function showResult() {
@@ -716,7 +697,7 @@ function showResult() {
     document.getElementById('result-distribution-tag').textContent = result.display.distributionLabel;
     document.getElementById('result-overview').textContent = result.display.overview;
 
-    // 上位3軸の表示処理
+    // 上位3軸の表示処理（数値のみ表示）
     const sortedAxes = Object.entries(result.scores)
         .sort(([, a], [, b]) => b - a);
 
@@ -724,7 +705,7 @@ function showResult() {
     top3List.innerHTML = '';
     sortedAxes.slice(0, 3).forEach(([axis, score]) => {
         const li = document.createElement('li');
-        li.textContent = `${AXIS_NAMES[axis]} (${score} pt)`;
+        li.textContent = `${AXIS_NAMES[axis]} ${score}`;
         top3List.appendChild(li);
     });
 
