@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>あなたの頭は、何に引っかかる？ | 認知癖診断 v0.3</title>
+    <title>あなたの頭は、何に引っかかる？ | 認知癖診断 v0.4</title>
     <!-- Chart.js (レーダーチャート描画用) -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -72,8 +72,19 @@
         }
 
         /* 質問エリア */
+        .question-category {
+            display: inline-block;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--accent-color);
+            background-color: #eef2ff;
+            padding: 4px 8px;
+            border-radius: 4px;
+            margin-bottom: 8px;
+        }
+
         .question-title {
-            font-size: 1.25rem;
+            font-size: 1.2rem;
             font-weight: 700;
             line-height: 1.5;
             margin-bottom: 24px;
@@ -82,26 +93,35 @@
         .options-container {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 10px;
         }
 
         .option-btn {
             background-color: #fff;
             border: 2px solid var(--border-color);
             border-radius: 8px;
-            padding: 16px 20px;
-            font-size: 1rem;
+            padding: 14px 18px;
+            font-size: 0.95rem;
             color: var(--text-main);
             text-align: left;
             cursor: pointer;
             transition: all 0.2s ease;
             line-height: 1.4;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
 
         .option-btn:hover {
             border-color: var(--accent-color);
             background-color: #f8fafc;
             transform: translateY(-1px);
+        }
+
+        .option-score-label {
+            font-size: 0.8rem;
+            color: var(--text-sub);
+            font-weight: 600;
         }
 
         /* 結果画面 */
@@ -195,21 +215,21 @@
     <!-- 診断画面 -->
     <div id="quiz-screen">
         <div class="progress-container">
-            <div class="progress-text" id="progress-text">Q1 / 40</div>
+            <div class="progress-text" id="progress-text">Q1 / 25</div>
             <div class="progress-bar-bg">
                 <div class="progress-bar-fill" id="progress-bar"></div>
             </div>
         </div>
         <div class="question-title" id="question-text">質問文がここに表示されます</div>
         <div class="options-container" id="options-container">
-            <!-- 選択肢ボタンが動的に挿入されます -->
+            <!-- 5つの選択肢ボタンが動的に挿入されます -->
         </div>
     </div>
 
     <!-- 結果画面 -->
     <div id="result-screen" class="hidden">
         <div class="result-title">あなたの認知癖・思考傾向</div>
-        <div class="result-subtitle">5つの思考軸スコア ＆ あなたの取扱説明書</div>
+        <div class="result-subtitle">5軸スコア（各5〜25点） ＆ あなたの取扱説明書</div>
         
         <div class="chart-container">
             <canvas id="radarChart"></canvas>
@@ -224,7 +244,7 @@
             </div>
 
             <div class="section-box">
-                <div class="section-title">⚠️ 陥りがちな罠・コミュニケーションの摩擦</div>
+                <div class="section-title">⚠️️ 陥りがちな罠・コミュニケーションの摩擦</div>
                 <p class="section-content" id="type-trap"></p>
             </div>
 
@@ -244,94 +264,88 @@
 </div>
 
 <script>
-    // 質問データ（40問）
-    const questions = [
-        // 1. 定義感度
-        { text: "「この企画、みんな賛成してるよ」と言われた時、最初に気になるのは？", options: [{ text: "『みんな』って具体的に何人中何人のこと？", axis: "definition" }, { text: "どんな意見が出ているかの中身", axis: "other" }, { text: "賛成していない人の理由", axis: "other" }] },
-        { text: "「もっと自由にやっていいよ」と言われた時、どう感じる？", options: [{ text: "『自由』の範囲やルールを先に明確にしてほしい", axis: "definition" }, { text: "伸び伸びできて嬉しい", axis: "other" }, { text: "どう進めるか自分で一から考える", axis: "other" }] },
-        { text: "「コスパが良い」という言葉を聞いて思うことは？", options: [{ text: "何に対してのコストとパフォーマンスなのか定義が曖昧だと感じる", axis: "definition" }, { text: "お得なら買ってみたい", axis: "other" }, { text: "安かろう悪かろうじゃないか疑う", axis: "other" }] },
-        { text: "「要領よくやって」と言われた時、引っかかるポイントは？", options: [{ text: "何をもって『要領が良い』とするかの基準", axis: "definition" }, { text: "手を抜けということかなと思う", axis: "other" }, { text: "具体的にどうやればいいか聞く", axis: "other" }] },
-        { text: "会議で「いい感じで進めておいて」と言われたら？", options: [{ text: "「いい感じ」の着地点を言葉で定義し直す", axis: "definition" }, { text: "とりあえず自分で進めてみる", axis: "other" }, { text: "過去の類似例を探す", axis: "other" }] },
-        { text: "「普通は〜するよね」という発言を聞いた時の反応は？", options: [{ text: "その「普通」が指す範囲ってどこ？と思う", axis: "definition" }, { text: "自分もそうだなと同意する", axis: "other" }, { text: "人それぞれじゃないかと思う", axis: "other" }] },
-        { text: "「自己責任」という言葉に対して感じる疑問は？", options: [{ text: "どこまでが自分の責任で、どこからが環境の責任か", axis: "definition" }, { text: "厳しい言葉だなと思う", axis: "other" }, { text: "言い訳を防ぐ良い言葉だと思う", axis: "other" }] },
-        { text: "「AI時代に必要な人材」という議論を聞いて気になるのは？", options: [{ text: "そもそも「AI時代」や「必要な人材」の定義は何か", axis: "definition" }, { text: "どんなスキルを身につけるべきか", axis: "other" }, { text: "自分の仕事がなくなるかどうか", axis: "other" }] },
-
-        // 2. 因果接続
-        { text: "「これを飲むと肌がきれいになる！」という口コミを見た時、考えることは？", options: [{ text: "成分が肌に作用する具体的な仕組み（理屈）を知りたい", axis: "causality" }, { text: "何人が効果を実感したかのデータを見たい", axis: "other" }, { text: "自分にも効くか試してみたい", axis: "other" }] },
-        { text: "「あの人が成功したのは運が良かったからだ」と言われたら？", options: [{ text: "運だけでなくどんな行動が成功に繋がったか論理を探す", axis: "causality" }, { text: "確かに運の要素は大きいと同調する", axis: "other" }, { text: "成功者の元のスペックが高かったからだと思う", axis: "other" }] },
-        { text: "後輩から「頑張ったのに成果が出ませんでした」と言われたら？", options: [{ text: "行動と結果の間にどんな問題やズレがあったか分析する", axis: "causality" }, { text: "まずは努力を労う", axis: "other" }, { text: "やり方が悪かったんじゃないかと一言言う", axis: "other" }] },
-        { text: "「風が吹けば桶屋が儲かる」のような話を聞くと？", options: [{ text: "途中の論理展開に飛躍がないか確認したくなる", axis: "causality" }, { text: "へー、面白い連鎖だなと思う", axis: "other" }, { text: "実際にはそんなに上手くいかないと思う", axis: "other" }] },
-        { text: "売上が急に伸びた理由を聞かれたらどう説明する？", options: [{ text: "施策Aが顧客の感情変化Bを引き起こした、という筋道で話す", axis: "causality" }, { text: "前月比や他社比較などのデータを出して説明する", axis: "other" }, { text: "「チーム全員の努力です」と答える", axis: "other" }] },
-        { text: "アドバイスを聞く時に一番重視するのは？", options: [{ text: "「なぜそうなるのか」という理由・メカニズムの納得感", axis: "causality" }, { text: "アドバイスをくれた人の実績や信頼性", axis: "other" }, { text: "すぐに実行できる具体的な手順かどうか", axis: "other" }] },
-        { text: "「占い」や「ジンクス」に対してどう思う？", options: [{ text: "科学的な根拠や因果関係がないので信用しない", axis: "causality" }, { text: "当たることもあるからエンタメとして楽しむ", axis: "other" }, { text: "良いことだけ信じる", axis: "other" }] },
-        { text: "トラブルの原因究明をするとき、最初にすることは？", options: [{ text: "どの事象がトリガーになって結果を引き起こしたか順を追う", axis: "causality" }, { text: "過去に似たトラブルが何件あったか調べる", axis: "other" }, { text: "とにかく影響範囲を確定させる", axis: "other" }] },
-
-        // 3. 母集団・サンプル意識
-        { text: "「私の友達がみんなあの商品を使ってる」と聞いた時の感想は？", options: [{ text: "「その友達は何人で、どんな属性の人たち？」と思う", axis: "population" }, { text: "そんなに流行ってるなら気になると思う", axis: "other" }, { text: "自分には関係ないなと思う", axis: "other" }] },
-        { text: "アンケート結果「満足度90%！」を見た時に確認したいのは？", options: [{ text: "何人を対象に、どういう聞き方をしたアンケートか", axis: "population" }, { text: "90%はすごいなと素直に受け止める", axis: "other" }, { text: "残りの10%が気にかかる", axis: "other" }] },
-        { text: "「成功者はみんな朝型人間だ」という意見に対して？", options: [{ text: "「夜型の成功者」や「朝型でも失敗した人」の割合は？と考える", axis: "population" }, { text: "自分も朝型に変えようかなと思う", axis: "other" }, { text: "体質によるから人それぞれだと思う", axis: "other" }] },
-        { text: "自分の体験談を人に話す時に意識することは？", options: [{ text: "「これはあくまで私個人の一例だけど」と前置きする", axis: "population" }, { text: "相手に伝わりやすいようにストーリー仕立てにする", axis: "other" }, { text: "感情を込めて熱量高く話す", axis: "other" }] },
-        { text: "SNSで特定の意見がバズっているのを見た時は？", options: [{ text: "「声が大きい一部の層だけじゃないか？」と全体像を疑う", axis: "population" }, { text: "世の中のトレンドはこれなんだなと思う", axis: "other" }, { text: "極端な意見が多いなと呆れる", axis: "other" }] },
-        { text: "「この商品はレビューで☆4.5だから安心」と言われたら？", options: [{ text: "レビュー件数が10件か1000件かで信頼度を変える", axis: "population" }, { text: "☆4.5なら買っても大丈夫そうと思う", axis: "other" }, { text: "☆1を付けている人の意見だけ読む", axis: "other" }] },
-        { text: "「若者の間で〜が流行中」というニュースを見たら？", options: [{ text: "どの地域・どの年代の「若者」をサンプリングしたのか調べる", axis: "population" }, { text: "今の流行りを学べて勉強になると思う", axis: "other" }, { text: "メディアのでっち上げじゃないか疑う", axis: "other" }] },
-        { text: "新サービスを開始する前のテストで重要なのは？", options: [{ text: "モニターの属性や人数が偏っていないか確認すること", axis: "population" }, { text: "熱狂的なファン（1人の熱量）が生まれるか見ること", axis: "other" }, { text: "不具合なく動くかシステムを確認すること", axis: "other" }] },
-
-        // 4. 適用可能性・再現性
-        { text: "有名経営者の自伝やノウハウ本を読む時に思うことは？", options: [{ text: "「この人の状況だからできたことで、他の人にも再現できる？」", axis: "applicability" }, { text: "モチベーションが上がって勉強になる", axis: "other" }, { text: "真似できそうなテクニックを探す", axis: "other" }] },
-        { text: "「他社でうまくいった成功事例」を提案されたら？", options: [{ text: "自社の環境や前提条件にそのまま当てはまるか検証する", axis: "applicability" }, { text: "実績があるなら早く自社でも導入したい", axis: "other" }, { text: "費用対効果が合うか計算する", axis: "other" }] },
-        { text: "新しいノウハウやツールを学ぶ時に一番気になるのは？", options: [{ text: "どんなシチュエーションなら使えて、どこからは使えないのか（境界線）", axis: "applicability" }, { text: "初心者でも簡単に使えるかどうか", axis: "other" }, { text: "これを学ぶとどれくらい効率化できるか", axis: "other" }] },
-        { text: "「この法則を使えば誰でも痩せられる！」と言われたら？", options: [{ text: "「誰でも」は言い過ぎで、人によって効果が変わるはずだと思う", axis: "applicability" }, { text: "自分にも効果があるか試してみたい", axis: "other" }, { text: "嘘くさいのでスルーする", axis: "other" }] },
-        { text: "過去の自分の成功体験を再現しようとする時どうする？", options: [{ text: "当時と「今の環境・条件」の違いを洗い出してから実行する", axis: "applicability" }, { text: "前回と同じ手順でそのままやってみる", axis: "other" }, { text: "直感で微調整しながら進める", axis: "other" }] },
-        { text: "マニュアルや手順書を作る時にこだわるポイントは？", options: [{ text: "「例外が発生した場合」にも対応できる汎用性を持たせる", axis: "applicability" }, { text: "文字数を少なくして読みやすくする", axis: "other" }, { text: "図やスクショを多く使って直感的にする", axis: "other" }] },
-        { text: "「海外で大流行のビジネス」を紹介されたら？", options: [{ text: "日本の文化や市場でも同じように通用するか疑問を持つ", axis: "applicability" }, { text: "先進的で面白そうだから参入したい", axis: "other" }, { text: "競合がすでに日本にいないか探す", axis: "other" }] },
-        { text: "抽象的なセミナーや研修を受けた後の感想は？", options: [{ text: "「で、自分の明日の業務のどこに適応できるの？」と考える", axis: "applicability" }, { text: "良い話を聞けて意識が高まった", axis: "other" }, { text: "内容が難しくて理解できなかった", axis: "other" }] },
-
-        // 5. 不確実性許容
-        { text: "「まだ計画は曖昧だけど、とりあえず走り出そう」と言われたら？", options: [{ text: "不確定要素が多すぎて不安・イライラする", axis: "uncertainty_low" }, { text: "走りながら考えればいいとワクワクする", axis: "other" }, { text: "最低限のリスクだけ確認して付き合う", axis: "other" }] },
-        { text: "レストランで見たことのない海外料理を見つけた時は？", options: [{ text: "味が想像できないので、知っている無難なメニューを選ぶ", axis: "uncertainty_low" }, { text: "面白そうだから挑戦して注文してみる", axis: "other" }, { text: "店員にどんな味か詳しく聞いてから決める", axis: "other" }] },
-        { text: "旅行の計画を立てる時のスタンスは？", options: [{ text: "分単位でスケジュールや移動手段をガチガチに決めたい", axis: "uncertainty_low" }, { text: "行き先だけ決めて現地で自由に行動したい", axis: "other" }, { text: "有名なスポットだけ押さえておく", axis: "other" }] },
-        { text: "「正解がわからない問い」について議論している時は？", options: [{ text: "早く結論や方針を1つに決めてすっきりさせたい", axis: "uncertainty_low" }, { text: "色んなアイデアが出る過程を楽しむ", axis: "other" }, { text: "誰か詳しい人の意見に従いたい", axis: "other" }] },
-        { text: "仕様がコロコロ変わるプロジェクトに参加したら？", options: [{ text: "「最初からちゃんと決めておいてほしい」とストレスを感じる", axis: "uncertainty_low" }, { text: "柔軟に変化に対応するのを楽しむ", axis: "other" }, { text: "変わるたびに仕様書を書き直す作業が面倒だと思う", axis: "other" }] },
-        { text: "株や投資で「元本割れの可能性ありだがハイリターン」な案件は？", options: [{ text: "リスクが読めないので絶対に手を出さない", axis: "uncertainty_low" }, { text: "余剰資金なら試してみたい", axis: "other" }, { text: "評判を調べてから考える", axis: "other" }] },
-        { text: "上司や顧客から「これどう思う？」と答えのない質問をされたら？", options: [{ text: "前提条件や目的をはっきりさせてから答えてほしいと思う", axis: "uncertainty_low" }, { text: "思いついたアイデアを直感で答える", axis: "other" }, { text: "一般的な回答を答えて様子を見る", axis: "other" }] },
-        { text: "白黒はっきりしないグレーな人間関係や状況に対して？", options: [{ text: "どっちなのかハッキリさせないと気が済まない", axis: "uncertainty_low" }, { text: "まあそんなこともあるかと放っておける", axis: "other" }, { text: "距離を置いて静観する", axis: "other" }] }
+    // 5段階評価の汎用選択肢
+    const standardScale = [
+        { text: "非常に当てはまる（強く引っかかる）", score: 5 },
+        { text: "やや当てはまる", score: 4 },
+        { text: "どちらともいえない", score: 3 },
+        { text: "あまり当てはまらない", score: 2 },
+        { text: "全く当てはまらない（気にならない）", score: 1 }
     ];
 
-    // 取扱説明書データ（思考軸ごとの詳細プロファイル）
+    // 各軸5問 × 5軸 ＝ 全25問（5択化により問題数を精鋭化してテンポも維持）
+    const questions = [
+        // --- 1. 定義感度 (definition) ---
+        { axis: "definition", text: "「みんな賛成している」「普通はこうする」と言われると、まず『みんな』や『普通』の定義・範囲が気になる。" },
+        { axis: "definition", text: "指示や会話の中に「いい感じに」「要領よく」「コスパよく」といった曖昧な言葉があると、具体化しないと気が済まない。" },
+        { axis: "definition", text: "仕事や議論を進める際、最初に「言葉の定義」や「ルールの境界線」を明確にすることを重視する。" },
+        { axis: "definition", text: "「自己責任」や「自由」など、人によって捉え方がズレそうな抽象的単語を聞くと違和感を覚える。" },
+        { axis: "definition", text: "会議で意見が食い違っている時、原因は「考えの違い」ではなく「言葉の定義のズレ」だと感じることが多い。" },
+
+        // --- 2. 因果接続 (causality) ---
+        { axis: "causality", text: "「これをすれば絶対に上手くいく」という主張に対して、なぜそうなるのか論理的な仕組み（メカニズム）を追求したくなる。" },
+        { axis: "causality", text: "トラブルが起きた時、精神論や状況説明よりも「どの事象が引き金（トリガー）になったか」の因果関係を真っ先に解明したい。" },
+        { axis: "causality", text: "占い、ジンクス、スピリチュアルなど、科学的・論理的な因果関係がないものを信用しにくい。" },
+        { axis: "causality", text: "他人の主張を聞く時、結論と理由の間に「論理の飛躍」がないかを無意識にチェックしてしまう。" },
+        { axis: "causality", text: "アドバイスをもらうなら、「具体的に何をすればいいか」よりも「なぜそうすべきなのか」の理屈に納得したい。" },
+
+        // --- 3. 母集団・サンプル意識 (population) ---
+        { axis: "population", text: "「満足度90%」「みんな使っている」などの謳い文句を見ると、「何人中何人のデータ？」とサンプル数を疑う。" },
+        { axis: "population", text: "SNSで極端な意見がバズっている時、「声が大きい一部の層だけではないか」と全体像を俯瞰しようとする。" },
+        { axis: "population", text: "自分の経験談を話す時、「これはあくまで私個人の1例だけど」と前置きを入れる癖がある。" },
+        { axis: "population", text: "1〜2件の極端な口コミや体験談（N=1）だけで、全体の良し悪しを判断されると強い違和感を覚える。" },
+        { axis: "population", text: "何かを評価・判断する時は、感覚や1人の意見よりも、統計データや全体の傾向（分布）を重視する。" },
+
+        // --- 4. 適用可能性・再現性 (applicability) ---
+        { axis: "applicability", text: "他社の成功事例や有名人のノウハウを聞いた時、「その前提条件は自分たちの環境にも当てはまるか？」と考える。" },
+        { axis: "applicability", text: "マニュアルやルールを作る時、例外や別のシチュエーションでも通用する汎用性を持たせようとする。" },
+        { axis: "applicability", text: "ノウハウを学ぶ時は、単にやり方を真似るのではなく「どんな条件なら使えて、どこからは使えないか（限界）」を把握したい。" },
+        { axis: "applicability", text: "「過去にこれで成功したから」という理由だけで、環境が異なる現在にも同じ手法を適用することに慎重である。" },
+        { axis: "applicability", text: "素晴らしいアイデアが出ても、「で、実際の現場の制約の中でどう実装・運用するの？」と実現可能性を気にする。" },
+
+        // --- 5. 不確実性回避 (uncertainty_low) ---
+        { axis: "uncertainty_low", text: "計画や仕様が曖昧なまま「とりあえず走り出しながら考えよう」と言われると、強い不安やストレスを感じる。" },
+        { axis: "uncertainty_low", text: "旅行やイベントの時、移動手段やスケジュールをあらかじめ細かく決めておきたいタイプだ。" },
+        { axis: "uncertainty_low", text: "正解や終わりの見えない抽象的な議論を延々と続けるより、早く着地点や1つの決定を出してすっきりさせたい。" },
+        { axis: "uncertainty_low", text: "予測不能なリスクやグレーゾーンを残すくらいなら、多少時間がかかってもルールや計画をガチガチに固めたい。" },
+        { axis: "uncertainty_low", text: "レストランや買い物では、味や品質が読めない新商品より、知っている無難・確実な選択肢を選びがちだ。" }
+    ];
+
+    // プロファイルデータ
     const profiles = {
         definition: {
             title: "【定義感度・厳密派】言語定義の魔術師",
             strength: "言葉のニュアンスや前提の曖昧さを絶対に見逃さない「要件定義の天才」です。契約書の確認、マニュアル作成、議論の整理で抜群の精度を発揮します。",
-            trap: "会議で「その言葉ってどういう意味？」と聞きすぎて、場のスピード感を止めてしまったり、相手に「詰められている」と感じさせることがあります。",
-            prescription: "相手が「雰囲気」で話している時はその場で即ツッコミを入れず、後から「箇条書きの確認テキスト」にして送ると摩擦を防げます。",
+            trap: "会議で「その言葉ってどういう意味？」と確認しすぎて、場のテンポを止めてしまったり、相手に「詰められている」と警戒させることがあります。",
+            prescription: "相手が口頭で感覚的に話している時はその場で即座に突っ込まず、後から「箇条書きのテキスト」にして確認を入れると無用な摩擦を防げます。",
             environment: "法務、システム要件定義、品質管理、契約交渉、学術・リサーチ分野"
         },
         causality: {
             title: "【因果接続・論理派】仕組みと筋道の探求者",
-            strength: "「なぜそうなるのか」という論理的な筋道（メカニズム）を見抜く力に長けています。トラブルの根本原因究明や構造改革で圧倒的な強みを発揮します。",
+            strength: "「なぜそうなるのか」という論理的メカニズムを見抜く力に長けています。トラブルの根本原因究明や構造改革で圧倒的な強みを発揮します。",
             trap: "直感や感情で動く相手に対して「理屈が通っていない」と切り捨ててしまい、感情的な対立を生んでしまうことがあります。",
-            prescription: "「正しい理屈」であっても、人間は感情で動く生き物だと割り切り、「ロジック7割：感情の配慮3割」を意識すると説得力が跳ね上がります。",
+            prescription: "正しい理屈であっても人間は感情で動く生き物だと割り切り、「ロジック7割：感情への配慮3割」を意識すると説得力が跳ね上がります。",
             environment: "業務改善コンサルタント、エンジニア、プロダクトマネージャー、戦略立案"
         },
         population: {
             title: "【母集団・客観派】データと全体像の鑑定士",
-            strength: "「それって何例中の話？」と常にサンプル数や全体像を疑うことができ、一部の偏った意見やデマに騙されない圧倒的な客観性を持っています。",
-            trap: "相手が熱量を持って話す「個人的な熱い体験談」に対して、「でもそれN=1（単なる一例）ですよね」と水を出して熱量を冷ましてしまうことがあります。",
-            prescription: "「客観的な事実」と「個人の感情・体験談」を切り分け、共感を示す場面ではあえてデータのツッコミを封印しましょう。",
+            strength: "「それって何例中の話？」と常にサンプル数や全体像を疑うことができ、偏った意見や噂話に騙されない圧倒的な客観性を持っています。",
+            trap: "相手が熱量を持って話す「個人的な熱い体験談」に対して、「でもそれって単なる一例ですよね」と冷静に水を差してしまうことがあります。",
+            prescription: "「客観的な事実」と「個人の熱量」を切り分け、共感を示す場面ではあえてデータの突っ込みを封印する使い分けが有効です。",
             environment: "データアナリスト、マーチャンダイザー、リスク管理、市場調査・マーケティング"
         },
         applicability: {
             title: "【適用可能性・境界派】再現性と検証のプロ",
-            strength: "「うちの環境でも再現できるか？」と境界条件を見抜く目を持っています。成功事例をそのまま鵜呑みにせず、自社に合わせて最適化するのが得意です。",
-            trap: "アイデアが出た時に「うちの環境だとここが無理」と条件の壁を提示しすぎて、周囲から「否定から入る人」と見られるリスクがあります。",
-            prescription: "「無理な理由（境界線）」を提示した後は、必ず「こう組み替えればうちでも通用する」という代替案をセットで提示しましょう。",
+            strength: "「うちの環境でも再現できるか？」と境界条件を見抜く目を持っています。成功事例をそのまま鵜呑みにせず、現場に合わせて最適化するのが得意です。",
+            trap: "アイデアが出た時に「うちの環境だとここが無理」と条件の壁を先に提示しすぎて、周囲から「否定から入る人」と思われるリスクがあります。",
+            prescription: "「無理な理由」を提示した後は、必ず「こう条件を組み替えればうちでも通用する」という代替案をセットで提示しましょう。",
             environment: "業務ローカライズ、新規事業の実現性検証（PoC）、運用構築、現場監督"
         },
         uncertainty_low: {
             title: "【不確実性回避・堅実派】リスクゼロの守護神",
-            strength: "曖昧さやリスクを排除し、計画の細部まで詰める「圧倒的な確実性」を作れます。漏れのない進行管理やリスクマネジメントで周囲に安心感を与えます。",
+            strength: "曖昧さや不確定要素を徹底的に排除し、計画の細部まで詰める「圧倒的な確実性」を作れます。漏れのない進行管理でチームに安心感を与えます。",
             trap: "予測不能な変化やアジャイルな進行に対してストレスを感じやすく、答えのない状態に直面すると足が止まってしまうことがあります。",
-            prescription: "「不確定なのも計画の一部」と捉え、あらかじめ「想定外が起きた時の遊び（バッファ）」を3割確保する癖をつけましょう。",
+            prescription: "「不確定な状態も計画の一部」と割り切り、あらかじめ「想定外が起きた時の遊び（バッファ）」を3割確保する癖をつけましょう。",
             environment: "プロジェクトマネジメント（PMO）、経理・財務、安全管理、イベント進行管理"
         }
     };
@@ -370,18 +384,22 @@
         progressBar.style.width = `${((currentQuestionIndex + 1) / questions.length) * 100}%`;
 
         optionsContainer.innerHTML = "";
-        q.options.forEach(opt => {
+        
+        // 5つの選択肢を生成
+        standardScale.forEach(scale => {
             const btn = document.createElement("button");
             btn.className = "option-btn";
-            btn.textContent = opt.text;
-            btn.onclick = () => selectOption(opt.axis);
+            btn.innerHTML = `
+                <span>${scale.text}</span>
+            `;
+            btn.onclick = () => selectOption(q.axis, scale.score);
             optionsContainer.appendChild(btn);
         });
     }
 
-    function selectOption(axis) {
+    function selectOption(axis, score) {
         if (axis && scores.hasOwnProperty(axis)) {
-            scores[axis]++;
+            scores[axis] += score;
         }
         currentQuestionIndex++;
 
@@ -396,7 +414,7 @@
         quizScreen.classList.add("hidden");
         resultScreen.classList.remove("hidden");
 
-        // 最も高いスコアの軸を判定
+        // 最高スコアの軸を判定
         let maxAxis = "definition";
         let maxScore = -1;
         for (const axis in scores) {
@@ -430,7 +448,7 @@
             data: {
                 labels: ['定義感度', '因果接続', '母集団意識', '適用可能性', '不確実性回避'],
                 datasets: [{
-                    label: 'あなたの思考感度スコア',
+                    label: '思考癖スコア',
                     data: [
                         scores.definition,
                         scores.causality,
@@ -453,9 +471,9 @@
                             font: { size: 12, weight: 'bold' },
                             color: '#1e293b'
                         },
-                        suggestedMin: 0,
-                        suggestedMax: 8,
-                        ticks: { stepSize: 2 }
+                        suggestedMin: 5,
+                        suggestedMax: 25,
+                        ticks: { stepSize: 5 }
                     }
                 },
                 plugins: {
