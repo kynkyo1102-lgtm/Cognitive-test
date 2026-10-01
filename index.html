@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>認知スタイル診断 | 30問でわかる情報処理プロファイル</title>
-    <!-- Chart.js (レーダーチャート描画用) -->
+    <!-- chart.js (レーダーチャート描画用) -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
@@ -15,130 +15,110 @@
             --accent-color: #2563eb;
             --accent-hover: #1d4ed8;
             --border-color: #e2e8f0;
-            --radius: 12px;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            --bar-bg: #e2e8f0;
         }
 
         body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-main);
-            line-height: 1.6;
+            margin: 0;
             padding: 20px;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
+            box-sizing: border-box;
         }
 
         .container {
-            width: 100%;
-            max-width: 680px;
             background-color: var(--card-bg);
-            border-radius: var(--radius);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            max-width: 680px;
+            width: 100%;
             padding: 32px;
-            border: 1px solid var(--border-color);
-        }
-
-        .hidden {
-            display: none !important;
+            box-sizing: border-box;
         }
 
         h1 {
             font-size: 1.5rem;
-            margin-bottom: 12px;
-            color: var(--text-main);
+            margin-top: 0;
+            margin-bottom: 8px;
             text-align: center;
         }
 
-        p.description {
+        .subtitle {
+            font-size: 0.9rem;
             color: var(--text-sub);
-            font-size: 0.95rem;
+            text-align: center;
             margin-bottom: 24px;
-            text-align: center;
         }
 
-        .btn {
-            display: block;
-            width: 100%;
-            padding: 14px 20px;
-            background-color: var(--accent-color);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.2s;
-            text-align: center;
-            margin-top: 20px;
+        /* プログレスバー */
+        .progress-container {
+            margin-bottom: 24px;
         }
 
-        .btn:hover {
-            background-color: var(--accent-hover);
-        }
-
-        /* 質問画面 */
-        .progress-bar-container {
-            width: 100%;
-            height: 6px;
-            background-color: var(--border-color);
-            border-radius: 3px;
-            margin-bottom: 20px;
-            overflow: hidden;
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: var(--text-sub);
+            margin-bottom: 6px;
         }
 
         .progress-bar {
+            height: 8px;
+            background-color: var(--bar-bg);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
             height: 100%;
             background-color: var(--accent-color);
             width: 0%;
             transition: width 0.3s ease;
         }
 
-        .question-number {
-            font-size: 0.85rem;
-            color: var(--text-sub);
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
-
-        .question-text {
+        /* 質問エリア */
+        .question-title {
             font-size: 1.1rem;
             font-weight: 600;
             margin-bottom: 20px;
+            line-height: 1.5;
         }
 
-        .options-container {
+        .options-list {
             display: flex;
             flex-direction: column;
             gap: 12px;
         }
 
         .option-btn {
-            width: 100%;
-            padding: 14px 16px;
             background-color: #fff;
-            border: 1px solid var(--border-color);
+            border: 2px solid var(--border-color);
             border-radius: 8px;
-            font-size: 0.95rem;
+            padding: 16px;
             text-align: left;
-            cursor: pointer;
-            transition: all 0.2s;
+            font-size: 0.95rem;
             color: var(--text-main);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            line-height: 1.4;
         }
 
         .option-btn:hover {
-            background-color: #f1f5f9;
-            border-color: #cbd5e1;
+            border-color: var(--accent-color);
+            background-color: #eff6ff;
         }
 
-        /* 結果画面 */
+        /* 結果エリア */
+        .hidden {
+            display: none;
+        }
+
         .result-header {
             text-align: center;
             margin-bottom: 24px;
@@ -146,28 +126,34 @@
 
         .result-title {
             font-size: 1.4rem;
-            font-weight: 700;
+            font-weight: bold;
             color: var(--accent-color);
-            margin-bottom: 6px;
+            margin-bottom: 8px;
         }
 
         .result-distribution-tag {
             display: inline-block;
-            background-color: #eff6ff;
-            color: var(--accent-color);
-            font-size: 0.85rem;
-            font-weight: 600;
+            background-color: #dbeafe;
+            color: #1e40af;
+            font-size: 0.8rem;
             padding: 4px 12px;
-            border-radius: 20px;
-            margin-bottom: 16px;
-            border: 1px solid #bfdbfe;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .description {
+            font-size: 0.95rem;
+            color: var(--text-sub);
+            line-height: 1.6;
+            margin-bottom: 24px;
         }
 
         .chart-container {
             position: relative;
             width: 100%;
-            max-width: 400px;
-            margin: 0 auto 24px auto;
+            max-width: 450px;
+            margin: 0 auto 32px auto;
         }
 
         .section-box {
@@ -179,15 +165,18 @@
         }
 
         .section-box h3 {
-            font-size: 1rem;
+            font-size: 0.95rem;
+            margin-top: 0;
             margin-bottom: 8px;
             color: var(--text-main);
         }
 
         .section-box ul, .section-box ol {
+            margin: 0;
             padding-left: 20px;
             font-size: 0.9rem;
             color: var(--text-sub);
+            line-height: 1.6;
         }
 
         .section-box li {
@@ -195,46 +184,65 @@
         }
 
         .note-text {
-            font-size: 0.8rem;
-            color: var(--text-sub);
+            font-size: 0.75rem;
+            color: #94a3b8;
             margin-top: 24px;
-            line-height: 1.5;
-            border-top: 1px solid var(--border-color);
-            padding-top: 12px;
+            line-height: 1.4;
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            background-color: var(--accent-color);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 24px;
+            text-align: center;
+        }
+
+        .btn:hover {
+            background-color: var(--accent-hover);
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <!-- スタート画面 -->
-    <div id="screen-start">
+    <!-- 診断画面 -->
+    <div id="screen-quiz">
         <h1>認知スタイル診断</h1>
-        <p class="description">普段自然に選択しやすい「情報処理のスタイル」を可視化する診断です。（全30問）</p>
-        <button class="btn" onclick="startQuiz()">診断を始める</button>
-    </div>
+        <div class="subtitle">日常生活や仕事での「情報の受け取り方・考え方」を可視化します（全30問）</div>
 
-    <!-- 質問画面 -->
-    <div id="screen-quiz" class="hidden">
-        <div class="progress-bar-container">
-            <div id="progress-bar" class="progress-bar"></div>
+        <div class="progress-container">
+            <div class="progress-label">
+                <span>進捗</span>
+                <span id="progress-text">1 / 30</span>
+            </div>
+            <div class="progress-bar">
+                <div id="progress-fill" class="progress-fill"></div>
+            </div>
         </div>
-        <div id="question-number" class="question-number">質問 1 / 30</div>
-        <div id="question-text" class="question-text"></div>
-        <div id="options-container" class="options-container"></div>
+
+        <div id="question-container">
+            <div id="question-text" class="question-title">質問文がここに入ります</div>
+            <div id="options-container" class="options-list">
+                <!-- 選択肢ボタンが動的に挿入されます -->
+            </div>
+        </div>
     </div>
 
     <!-- 結果画面 -->
-    <!-- 変更例 -->
-<div class="section-box">
-    <h3>あなたの思考の「あるある」特徴</h3>
-    <ul id="list-frequent"></ul>
-</div>
-
-<div class="section-box">
-    <h3>こんな場面、ちょっとモヤッとするかも？</h3>
-    <ul id="list-costs"></ul>
-</div>
+    <div id="screen-result" class="hidden">
+        <div class="result-header">
+            <h2 id="result-title" class="result-title"></h2>
+            <div id="result-distribution-tag" class="result-distribution-tag"></div>
+            <p id="result-overview" class="description"></p>
+        </div>
 
         <div class="chart-container">
             <canvas id="radarChart"></canvas>
@@ -246,12 +254,12 @@
         </div>
 
         <div class="section-box">
-            <h3>出やすい処理の特徴</h3>
+            <h3>あなたの思考の「あるある」特徴</h3>
             <ul id="list-frequent"></ul>
         </div>
 
         <div class="section-box">
-            <h3>認知コストが上がりやすそうな場面</h3>
+            <h3>こんな場面、ちょっとモヤッとするかも？</h3>
             <ul id="list-costs"></ul>
         </div>
 
@@ -264,571 +272,588 @@
 </div>
 
 <script>
-const AXES = {
-    STRUCTURE: 'STRUCTURE', // 構造化
-    CONDITION: 'CONDITION', // 条件・検証
-    CONTEXT: 'CONTEXT',     // 文脈
-    HOLD: 'HOLD',           // 保留
-    CONCRETE: 'CONCRETE',   // 具体
-    COMPRESS: 'COMPRESS'    // 圧縮
-};
-
-const AXIS_NAMES = {
-    [AXES.STRUCTURE]: '構造化',
-    [AXES.CONDITION]: '条件・検証',
-    [AXES.CONTEXT]: '文脈',
-    [AXES.HOLD]: '保留',
-    [AXES.CONCRETE]: '具体',
-    [AXES.COMPRESS]: '圧縮'
-};
-
-const questions = [
-  {
-    id: 1,
-    text: "新しい課題やプロジェクトが始まったとき、最初に確認したいことは？",
-    options: [
-      { text: "全体のロードマップや工程の組まれ方", scores: { STRUCTURE: 2 } },
-      { text: "どのような背景や狙いで立ち上がったのか", scores: { CONTEXT: 2 } },
-      { text: "具体的に何を成果物として出すべきか", scores: { CONCRETE: 2 } },
-      { text: "達成すべき条件や制約（予算・納期・ルール）", scores: { CONDITION: 2 } }
-    ]
-  },
-  {
-    id: 2,
-    text: "説明を受けていて「なんとなく腑に落ちない」と感じたとき、どうする？",
-    options: [
-      { text: "全体の論理構成や抜け漏れを整理してみる", scores: { STRUCTURE: 2 } },
-      { text: "「なぜその説明になったのか」相手の立場や文脈を探る", scores: { CONTEXT: 2 } },
-      { text: "「具体的にどういうことか」例を出してもらう", scores: { CONCRETE: 2 } },
-      { text: "すぐには判断せず、追加の情報が出るまで様子を見る", scores: { HOLD: 2 } }
-    ]
-  },
-  {
-    id: 3,
-    text: "複雑な事象を人に伝えるとき、意識することは？",
-    options: [
-      { text: "要点や結論を1つの言葉・一文に短くまとめる", scores: { COMPRESS: 2 } },
-      { text: "図解や箇条書きで構造的に見せる", scores: { STRUCTURE: 2 } },
-      { text: "実際の具体例やエピソードを交えて話す", scores: { CONCRETE: 2 } },
-      { text: "どのような条件・前提での話なのかを明記する", scores: { CONDITION: 2 } }
-    ]
-  },
-  {
-    id: 4,
-    text: "他人の意見が自分の認識と食い違っているとき、最初に考えることは？",
-    options: [
-      { text: "どのような背景や経験からその意見が出たのか", scores: { CONTEXT: 2 } },
-      { text: "どちらの主張が全体のロジックとして通っているか", scores: { STRUCTURE: 2 } },
-      { text: "前提条件や定義の捉え方がズレていないか", scores: { CONDITION: 2 } },
-      { text: "結論を急がず、互いの主張の観察を続ける", scores: { HOLD: 2 } }
-    ]
-  },
-  {
-    id: 5,
-    text: "膨大な資料やデータを見せられたとき、最初にとる行動は？",
-    options: [
-      { text: "要約して「一言でいうと何か」を抽出する", scores: { COMPRESS: 2 } },
-      { text: "目次や見出しを見て、全体構造を把握する", scores: { STRUCTURE: 2 } },
-      { text: "手元の具体的な数字や実例に目を通す", scores: { CONCRETE: 2 } },
-      { text: "判断材料が揃うまで一旦ストックしておく", scores: { HOLD: 2 } }
-    ]
-  },
-  {
-    id: 6,
-    text: "仕事や議論で「あいまいな表現」に出くわしたとき、どう感じる？",
-    options: [
-      { text: "「具体的にどの数値を指すのか」を確定させたい", scores: { CONCRETE: 2 } },
-      { text: "「どういう条件なら適用できるか」をクリアにしたい", scores: { CONDITION: 2 } },
-      { text: "「どういう文脈でその言葉が使われたか」を確かめたい", scores: { CONTEXT: 2 } },
-      { text: "文脈によって意味が変わるので、一旦そのまま保持する", scores: { HOLD: 2 } }
-    ]
-  },
-  {
-    id: 7,
-    text: "文章やレポートを作成するとき、最も時間をかける部分は？",
-    options: [
-      { text: "見出しの順序や全体の骨組みの整理", scores: { STRUCTURE: 2 } },
-      { text: "読者の背景知識や立場に合わせた言葉選び", scores: { CONTEXT: 2 } },
-      { text: "核心をひと目で伝えるタイトルや箇条書きの凝縮", scores: { COMPRESS: 2 } },
-      { text: "読者がイメージしやすい具体的な事例やデータ", scores: { CONCRETE: 2 } }
-    ]
-  },
-  {
-    id: 8,
-    text: "予期せぬトラブルや仕様変更が発生したとき、どう反応する？",
-    options: [
-      { text: "影響範囲と適用される新条件を即座に再定義する", scores: { CONDITION: 2 } },
-      { text: "慌てて動かず、状況の推移や原因の特定を待つ", scores: { HOLD: 2 } },
-      { text: "全体プロセスのどこを修正すべきか再構造化する", scores: { STRUCTURE: 2 } },
-      { text: "「何が起きているか」を端的・要約して関係者に共有する", scores: { COMPRESS: 2 } }
-    ]
-  },
-  {
-    id: 9,
-    text: "アイデア出しや企画の初期段階で、好む進め方は？",
-    options: [
-      { text: "既存の事例やサンプル（具体物）を収集する", scores: { CONCRETE: 2 } },
-      { text: "どのような社会的背景やニーズがあるか考察する", scores: { CONTEXT: 2 } },
-      { text: "コンセプトを短いワンフレーズに削ぎ落とす", scores: { COMPRESS: 2 } },
-      { text: "最初から方向性を絞らず、選択肢を広げたまま保留する", scores: { HOLD: 2 } }
-    ]
-  },
-  {
-    id: 10,
-    text: "「優秀な説明」と聞いて真っ先に思い浮かぶ特徴は？",
-    options: [
-      { text: "無駄な言葉がなく、一言で本質が伝わる", scores: { COMPRESS: 2 } },
-      { text: "体系的で、話のつながりや論理構造が明確", scores: { STRUCTURE: 2 } },
-      { text: "聞き手の文脈や状況にぴったり寄り添っている", scores: { CONTEXT: 2 } },
-      { text: "例外条件や境界線がハッキリ整理されている", scores: { CONDITION: 2 } }
-    ]
-  },
-  {
-    id: 11,
-    text: "未経験の新しいツールやシステムを導入するとき、どう触り始める？",
-    options: [
-      { text: "まずは実際のサンプルデータを入れて動かしてみる", scores: { CONCRETE: 2 } },
-      { text: "マニュアルや設定条件、利用規約をじっくり読む", scores: { CONDITION: 2 } },
-      { text: "ツールが作られた思想や開発背景を理解しようとする", scores: { CONTEXT: 2 } },
-      { text: "すぐに使いこなそうとせず、操作感を観察しながら慣れる", scores: { HOLD: 2 } }
-    ]
-  },
-  {
-    id: 12,
-    text: "長時間の議論の末、収束しなくなったときにとりたい役割は？",
-    options: [
-      { text: "これまでの議論を1分程度で要約・整理する", scores: { COMPRESS: 2 } },
-      { text: "「ここまでは確定、ここからは未定」と境界線を整理する", scores: { CONDITION: 2 } },
-      { text: "議論のマップ（構造図）を描いて見せる", scores: { STRUCTURE: 2 } },
-      { text: "今すぐ決定を出さず、一度持ち帰って熟考することを提案する", scores: { HOLD: 2 } }
-    ]
-  },
-  {
-    id: 13,
-    text: "人の相談に乗っているとき、よく口にするアドバイスは？",
-    options: [
-      { text: "「で、結局何が一番言いたいの？」", scores: { COMPRESS: 2 } },
-      { text: "「具体的なエピソードを一つ教えて？」", scores: { CONCRETE: 2 } },
-      { text: "「どういう状況・相手との間で起きたこと？」", scores: { CONTEXT: 2 } },
-      { text: "「焦って決めず、もう少し様子を見てみたら？」", scores: { HOLD: 2 } }
-    ]
-  },
-  {
-    id: 14,
-    text: "指示やアドバイスを受けた際、物足りなさを感じるのはどんなとき？",
-    options: [
-      { text: "具体的で実用的なアクションが示されていないとき", scores: { CONCRETE: 2 } },
-      { text: "適用できる条件や範囲が限定・明確化されていないとき", scores: { CONDITION: 2 } },
-      { text: "背景や理由（なぜそれを行うか）が語られていないとき", scores: { CONTEXT: 2 } },
-      { text: "話が長すぎて要点がどこにあるか分からないとき", scores: { COMPRESS: 2 } }
-    ]
-  },
-  {
-    id: 15,
-    text: "プレゼン資料を読むとき、真っ先に視線が向かう部分は？",
-    options: [
-      { text: "各スライドの要約（サマリー）やメッセージライン", scores: { COMPRESS: 2 } },
-      { text: "全体の目次や構成図（アジェンダ）", scores: { STRUCTURE: 2 } },
-      { text: "グラフや数値、具体的な事例写真", scores: { CONCRETE: 2 } },
-      { text: "注記や前提条件、適用対象の範囲", scores: { CONDITION: 2 } }
-    ]
-  },
-  {
-    id: 16,
-    text: "新しい概念や理論を学習するとき、定着しやすい理解の仕方は？",
-    options: [
-      { text: "身近な例や実例に置き換えて考える", scores: { CONCRETE: 2 } },
-      { text: "その理論が生まれた歴史的背景や文脈を知る", scores: { CONTEXT: 2 } },
-      { text: "他の概念との位置関係や体系図（構造）の中で捉える", scores: { STRUCTURE: 2 } },
-      { text: "一言で表現できるキャッチフレーズとして覚える", scores: { COMPRESS: 2 } }
-    ]
-  },
-  {
-    id: 17,
-    text: "チーム内で意見の対立が起きたとき、重視するアプローチは？",
-    options: [
-      { text: "双方が同意できる前提条件（共通ルール）を作る", scores: { CONDITION: 2 } },
-      { text: "それぞれの意見が出た背景や文脈を解きほぐす", scores: { CONTEXT: 2 } },
-      { text: "それぞれの具体策を試してみて結果を比較する", scores: { CONCRETE: 2 } },
-      { text: "互いに結論を急がず、感情が落ち着くまで静観する", scores: { HOLD: 2 } }
-    ]
-  },
-  {
-    id: 18,
-    text: "日常のメモやメモ帳の使い方は？",
-    options: [
-      { text: "キーフレーズや単語だけを短く残す", scores: { COMPRESS: 2 } },
-      { text: "ツリー構造や箇条書きで分類して整理する", scores: { STRUCTURE: 2 } },
-      { text: "後から見返してもわかる具体例や事実を克明に残す", scores: { CONCRETE: 2 } },
-      { text: "断片的なメモを消さずに蓄積し、必要になるまで保留しておく", scores: { HOLD: 2 } }
-    ]
-  },
-  {
-    id: 19,
-    text: "仕事で「判断を下す」際に最も障害となるのは？",
-    options: [
-      { text: "判断するための前提条件や基準が曖昧なこと", scores: { CONDITION: 2 } },
-      { text: "全体像や長期的な構造が見えていないこと", scores: { STRUCTURE: 2 } },
-      { text: "判断に伴う現場の背景や文脈を理解できていないこと", scores: { CONTEXT: 2 } },
-      { text: "まだ情報が不十分なのに、拙速な決断を迫られること", scores: { HOLD: 2 } }
-    ]
-  },
-  {
-    id: 20,
-    text: "ビジネスや勉強で「フレームワーク（型）」を使うとき、どう感じる？",
-    options: [
-      { text: "思考を構造化して漏れをなくせるので非常に役に立つ", scores: { STRUCTURE: 2 } },
-      { text: "短時間で要点を凝縮整理できるツールとして使う", scores: { COMPRESS: 2 } },
-      { text: "文脈や状況を無視して型に当てはめすぎるリスクを感じる", scores: { CONTEXT: 2 } },
-      { text: "型に当てはめず、まずは観察事実をそのまま保持したい", scores: { HOLD: 2 } }
-    ]
-  },
-  {
-    id: 21,
-    text: "他人の説明を聞いていて「うまいな」と感心するのはどんなとき？",
-    options: [
-      { text: "一言のキャッチコピーで本質をズバと言い表したとき", scores: { COMPRESS: 2 } },
-      { text: "複雑な話をすっきりとした構造やマップで見せたとき", scores: { STRUCTURE: 2 } },
-      { text: "具体的でリアルな体験談や事例を出されたとき", scores: { CONCRETE: 2 } },
-      { text: "「この条件ならA、あの条件ならB」と分岐が明確なとき", scores: { CONDITION: 2 } }
-    ]
-  },
-  {
-    id: 22,
-    text: "予定通りに物事が進まなくなったとき、最初にとる行動は？",
-    options: [
-      { text: "変更後の条件やデッドラインを再確認・再定義する", scores: { CONDITION: 2 } },
-      { text: "今起きている現象の背景や周囲の状況を確認する", scores: { CONTEXT: 2 } },
-      { text: "スケジュール全体の構造を組み直す", scores: { STRUCTURE: 2 } },
-      { text: "一時的に判断を止め、次の変化が起きるまで見守る", scores: { HOLD: 2 } }
-    ]
-  },
-  {
-    id: 23,
-    text: "他人のレポートや企画書を添削・フィードバックするとき、最初にチェックするのは？",
-    options: [
-      { text: "「要約すると何か」が冒頭で明確になっているか", scores: { COMPRESS: 2 } },
-      { text: "全体の論理構成や段落のつながりが正しいか", scores: { STRUCTURE: 2 } },
-      { text: "抽象的な議論にならず、具体例やデータがあるか", scores: { CONCRETE: 2 } },
-      { text: "読み手の文脈や立場に合わせたトーンになっているか", scores: { CONTEXT: 2 } }
-    ]
-  },
-  {
-    id: 24,
-    text: "新しい知識を学んだとき、自分の中でどう処理する？",
-    options: [
-      { text: "「一言でいうとどういうことか」をノートに書く", scores: { COMPRESS: 2 } },
-      { text: "既存の知識体系（マップ）のどこに位置するか整理する", scores: { STRUCTURE: 2 } },
-      { text: "自分の実際の業務や日常でどう使えるか（具体化）試す", scores: { CONCRETE: 2 } },
-      { text: "すぐに解釈せず、他の知識が集まるまで保留にしておく", scores: { HOLD: 2 } }
-    ]
-  },
-  {
-    id: 25,
-    text: "会議やミーティングに参加している際、フラストレーションを感じやすい場面は？",
-    options: [
-      { text: "発言者の意図や背景文脈が見えず、本心が分からないとき", scores: { CONTEXT: 2 } },
-      { text: "議論の前提条件やゴールが定義されないまま進むとき", scores: { CONDITION: 2 } },
-      { text: "具体例がなく抽象的なきれいごとばかりが並ぶとき", scores: { CONCRETE: 2 } },
-      { text: "結論が出ないのに、無理にその場で決めようとするとき", scores: { HOLD: 2 } }
-    ]
-  },
-  {
-    id: 26,
-    text: "「情報を整理する」とは、あなたにとって具体的に何をする行為？",
-    options: [
-      { text: "不要な情報を削ぎ落とし、核心だけを凝縮すること", scores: { COMPRESS: 2 } },
-      { text: "要素を分類し、全体としての枠組み（構造）を作ること", scores: { STRUCTURE: 2 } },
-      { text: "情報の適用条件や分類ルールを明確にすること", scores: { CONDITION: 2 } },
-      { text: "背景や文脈ごとに情報をタグ付け・紐付けすること", scores: { CONTEXT: 2 } }
-    ]
-  },
-  {
-    id: 27,
-    text: "未知の分野や難解な本を読むとき、最後まで読み通すための工夫は？",
-    options: [
-      { text: "まずは図解や要約ページだけをさらっと追う", scores: { COMPRESS: 2 } },
-      { text: "身近な具体例や知っている実例に引き寄せて読む", scores: { CONCRETE: 2 } },
-      { text: "著者や時代背景など、書かれた文脈を先に調べる", scores: { CONTEXT: 2 } },
-      { text: "理解できない部分は無理に解釈せず、保留にして進む", scores: { HOLD: 2 } }
-    ]
-  },
-  {
-    id: 28,
-    text: "議論の中で「例外的な事例」が出てきたとき、どう扱う？",
-    options: [
-      { text: "「どのような条件のときに発生するか」条件分岐を作成する", scores: { CONDITION: 2 } },
-      { text: "例外が発生した特有の背景や文脈を深く探る", scores: { CONTEXT: 2 } },
-      { text: "全体のロジック構造を崩さないよう、一旦枠外に置く", scores: { STRUCTURE: 2 } },
-      { text: "一般化を急がず、パターンが見えるまでケースとして保持する", scores: { HOLD: 2 } }
-    ]
-  },
-  {
-    id: 29,
-    text: "他人に仕事を依頼（デリゲーション）するとき、最も注意を払うのは？",
-    options: [
-      { text: "どこまでが担当範囲か（境界条件）をハッキリ伝える", scores: { CONDITION: 2 } },
-      { text: "具体的に「何を・いつまでに」やるべきか示す", scores: { CONCRETE: 2 } },
-      { text: "なぜこの仕事が必要なのか背景やストーリーを語る", scores: { CONTEXT: 2 } },
-      { text: "依頼の全体プロセス（工程構造）を明確にする", scores: { STRUCTURE: 2 } }
-    ]
-  },
-  {
-    id: 30,
-    text: "自分自身の「思考の強み」を一つ挙げるとしたらどれ？",
-    options: [
-      { text: "複雑な情報から本質を一言で抜き出す「要約力」", scores: { COMPRESS: 2 } },
-      { text: "具体例や事例を用いてわかりやすく話す「具体化力」", scores: { CONCRETE: 2 } },
-      { text: "場の空気や相手の背景まで考慮して判断する「文脈力」", scores: { CONTEXT: 2 } },
-      { text: "不確実な状況でも焦らず冷静に観察を続ける「保留力」", scores: { HOLD: 2 } }
-    ]
-  }
-];
-
-function calculateScoreBounds(questionList) {
-    const bounds = {};
-    Object.values(AXES).forEach(axis => {
-        bounds[axis] = { min: 0, max: 0 };
-    });
-
-    questionList.forEach(q => {
-        Object.values(AXES).forEach(axis => {
-            const maxForQuestion = Math.max(
-                0,
-                ...q.options.map(opt => (opt.scores && opt.scores[axis]) || 0)
-            );
-            bounds[axis].max += maxForQuestion;
-        });
-    });
-
-    return bounds;
-}
-
-const SCORE_BOUNDS = calculateScoreBounds(questions);
-
-const PROFILE_COMBINATIONS = {
-    [`${AXES.STRUCTURE}_${AXES.CONDITION}`]: {
-        title: "「整頓された設計図を求める」クラフトマンタイプ",
-        overview: "いきなり走るよりも『まず全体像とルールを完璧に把握したい』慎重派の職人さん。複雑な状況でも、頭の中でサクサク箱分けしてクリアにしていく整理の達人です。",
-        frequentBehaviors: [
-            "「で、結局全体で何をしようとしてるんだっけ？」と定期的に確認したくなる",
-            "話を聞きながら、頭の中で勝手に箇条書きやマインドマップを作っている",
-            "「それってどういう例外条件のときの話？」と抜け漏れをすぐ見つける"
-        ],
-        cognitiveCosts: [
-            "「理由はいいからノリでイイ感じにして！」と丸投げされたとき",
-            "前提やゴールがころころ変わって、軸がブレまくっている会議",
-            "仕組みやルールが整っていないカオスな状態でのぶっつけ本番"
-        ]
-    },
-    [`${AXES.STRUCTURE}_${AXES.CONTEXT}`]: {
-        title: "「ストーリーを描き切る」ナビゲータータイプ",
-        overview: "全体的な組み立てだけでなく、『なぜそれをするのか』という背景や感情のストーリーをとても大切にするタイプ。チームの方向性を優しく指し示す司令塔です。",
-        frequentBehaviors: [
-            "「どういう経緯でこの話になったの？」と歴史や背景をちゃんと聞きたがる",
-            "バラバラに見える出来事を「要するにこういう流れだよね」とつなぎ合わせる",
-            "相手の立場や心情を組み込んだ上で、納得感のある計画を立てる"
-        ],
-        cognitiveCosts: [
-            "背景やストーリーの説明がゼロで、単発の作業だけをポイ投げされたとき",
-            "人の気持ちやコンテキストを無視して、数字だけでバッサリ決められる瞬間",
-            "脈絡のない指示が次々と飛んでくるカオスな環境"
-        ]
-    },
-    [`${AXES.CONDITION}_${AXES.HOLD}`]: {
-        title: "「リスクを見逃さない」慎重派の鑑定士タイプ",
-        overview: "条件やルールをしっかり見極め、納得がいくまで焦って結論を出さない冷静な観察者。『一旦持ち帰って考えます』が最強の武器です。",
-        frequentBehaviors: [
-            "「まだ情報が足りないな」と感じたら、周りに流されず静観できる",
-            "うまい話を聞いたとき、真っ先に「裏の条件やデメリットは？」と探る",
-            "トラブルが起きたときほど、一歩引いて「で、何が起きてるの？」と冷静"
-        ],
-        cognitiveCosts: [
-            "根拠や情報がスカスカなのに「今すぐ決めて！」と詰められる場面",
-            "ノリと勢いだけで怪しい企画がどんどん進んでいく空間",
-            "結論を急かされて、じっくり検証する時間を奪われること"
-        ]
-    },
-    [`${AXES.COMPRESS}_${AXES.CONCRETE}`]: {
-        title: "「本質を即スナイプする」実践派リアリストタイプ",
-        overview: "『で、具体的に何をやればいいの？』を素早く見抜き、要点だけをズバッと掴む超実践派。無駄な長話は大嫌いで、スピーディーに成果を出したいタイプです。",
-        frequentBehaviors: [
-            "長すぎるメールやチャットを見ると、無意識に「結論はどこ？」と探す",
-            "抽象的な議論より「たとえばどんな例がある？」と具体例で理解する",
-            "学んだことや聞いた話を、一言のキャッチコピーに要約するのが得意"
-        ],
-        cognitiveCosts: [
-            "結論がなかなか見えない、ダラダラした長時間の打ち合わせ",
-            "「具体的にどう動けばいいか」が見えないフワッとした議論",
-            "前置きや形容詞が多すぎて、本題になかなかたどりつかない説明"
-        ]
-    }
-};
-
-// 組み合わせが未定義の場合の汎用フォローバック
-function getFallbackProfile(top1, top2) {
-    return {
-        title: `「${AXIS_NAMES[top1]} × ${AXIS_NAMES[top2]}」ハイブリッドタイプ`,
-        overview: `【${AXIS_NAMES[top1]}】の視点と【${AXIS_NAMES[top2]}】の視点を上手に切り替えながら、柔軟に情報を処理していくバランス感覚の持ち主です。`,
-        frequentBehaviors: [
-            `まず【${AXIS_NAMES[top1]}】の観点から「どういうことか」をピンポイントで捉える`,
-            `必要に応じて【${AXIS_NAMES[top2]}】の視点を足して、理解をより深める`
-        ],
-        cognitiveCosts: [
-            `自分の得意な【${AXIS_NAMES[top1]}】や【${AXIS_NAMES[top2]}】のアプローチが使えない極端な環境`
-        ]
+    // 定数・軸定義
+    const AXES = {
+        STRUCTURE: "STRUCTURE",
+        CONTEXT: "CONTEXT",
+        CONDITION: "CONDITION",
+        CONCRETE: "CONCRETE",
+        COMPRESS: "COMPRESS",
+        HOLD: "HOLD"
     };
-}
 
-function generateDiagnosticResult(raw) {
-    const normalized = normalizeScores(raw);
-    
-    // 【修正点4】同点時に並び順が不確定にならないソート処理
-    const sortedAxes = Object.entries(normalized)
-        .sort(([axisA, scoreA], [axisB, scoreB]) => {
-            if (scoreB !== scoreA) {
-                return scoreB - scoreA;
-            }
-            // 同点の場合は定義順にフォールバック
-            return Object.keys(AXES).indexOf(axisA) - Object.keys(AXES).indexOf(axisB);
-        })
-        .map(([axis]) => axis);
-
-    const top1 = sortedAxes[0];
-    const top2 = sortedAxes[1];
-
-    const distribution = analyzeDistribution(normalized);
-
-    const combinationKey = `${top1}_${top2}`;
-    const baseProfile = PROFILE_COMBINATIONS[combinationKey] || getFallbackProfile(top1, top2);
-
-    return {
-        scores: normalized,
-        primaryAxes: [top1, top2],
-        distribution: distribution,
-        display: {
-            title: `${AXIS_NAMES[top1]} × ${AXIS_NAMES[top2]}`,
-            distributionLabel: distribution.label,
-            overview: baseProfile.overview + ' ' + distribution.description,
-            frequentBehaviors: baseProfile.frequentBehaviors,
-            cognitiveCosts: baseProfile.cognitiveCosts
-        }
+    const AXIS_NAMES = {
+        [AXES.STRUCTURE]: "構造・分類",
+        [AXES.CONTEXT]: "背景・感情",
+        [AXES.CONDITION]: "条件・ルール",
+        [AXES.CONCRETE]: "具体・エピソード",
+        [AXES.COMPRESS]: "要約・本質",
+        [AXES.HOLD]: "保留・静観"
     };
-}
 
-let chartInstance = null;
-
-function showResult() {
-    document.getElementById('screen-quiz').classList.add('hidden');
-    document.getElementById('screen-result').classList.remove('hidden');
-
-    const result = generateDiagnosticResult(rawScores);
-
-    document.getElementById('result-title').textContent = result.display.title;
-    document.getElementById('result-distribution-tag').textContent = result.display.distributionLabel;
-    document.getElementById('result-overview').textContent = result.display.overview;
-
-    const sortedAxes = Object.entries(result.scores)
-        .sort(([axisA, scoreA], [axisB, scoreB]) => {
-            if (scoreB !== scoreA) return scoreB - scoreA;
-            return Object.keys(AXES).indexOf(axisA) - Object.keys(AXES).indexOf(axisB);
-        });
-
-    // 【修正点2】上位3軸のスコア表記を「XX / 100」に明確化
-    const top3List = document.getElementById('list-top-axes');
-    top3List.innerHTML = '';
-    sortedAxes.slice(0, 3).forEach(([axis, score]) => {
-        const li = document.createElement('li');
-        li.textContent = `${AXIS_NAMES[axis]} ${score} / 100`;
-        top3List.appendChild(li);
-    });
-
-    const frequentList = document.getElementById('list-frequent');
-    frequentList.innerHTML = '';
-    result.display.frequentBehaviors.forEach(item => {
-        const li = document.createElement('li');
-        li.textContent = item;
-        frequentList.appendChild(li);
-    });
-
-    const costsList = document.getElementById('list-costs');
-    costsList.innerHTML = '';
-    result.display.cognitiveCosts.forEach(item => {
-        const li = document.createElement('li');
-        li.textContent = item;
-        costsList.appendChild(li);
-    });
-
-    renderChart(result.scores);
-}
-
-function renderChart(normalizedScores) {
-    const ctx = document.getElementById('radarChart').getContext('2d');
-    
-    const labels = [
-        AXIS_NAMES[AXES.STRUCTURE],
-        AXIS_NAMES[AXES.CONDITION],
-        AXIS_NAMES[AXES.CONTEXT],
-        AXIS_NAMES[AXES.HOLD],
-        AXIS_NAMES[AXES.CONCRETE],
-        AXIS_NAMES[AXES.COMPRESS]
-    ];
-
-    const dataValues = [
-        normalizedScores[AXES.STRUCTURE],
-        normalizedScores[AXES.CONDITION],
-        normalizedScores[AXES.CONTEXT],
-        normalizedScores[AXES.HOLD],
-        normalizedScores[AXES.CONCRETE],
-        normalizedScores[AXES.COMPRESS]
-    ];
-
-    if (chartInstance) {
-        chartInstance.destroy();
-    }
-
-    chartInstance = new Chart(ctx, {
-        type: 'radar',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: '認知処理の選択傾向',
-                data: dataValues,
-                backgroundColor: 'rgba(37, 99, 235, 0.2)',
-                borderColor: 'rgba(37, 99, 235, 1)',
-                borderWidth: 2,
-                pointBackgroundColor: 'rgba(37, 99, 235, 1)'
-            }]
+    // 質問データ（全30問）
+    const QUESTIONS = [
+        {
+            text: "仕事やプロジェクトの「全体の流れ」を把握したい時、まず確認したいのは？",
+            options: [
+                { text: "全体の分類や、各要素の構造・関係性（マップや図解など）", axis: AXES.STRUCTURE },
+                { text: "その企画が立ち上がった経緯や背景、関わる人の思い", axis: AXES.CONTEXT },
+                { text: "どのような条件・前提のもとで進めるべきかというルール", axis: AXES.CONDITION },
+                { text: "具体的に『明日何をするのか』という行動レベルの例", axis: AXES.CONCRETE }
+            ]
         },
-        options: {
-            scales: {
-                r: {
-                    min: 0,
-                    max: 100,
-                    ticks: {
-                        stepSize: 20,
-                        display: false
-                    },
-                    pointLabels: {
-                        font: {
-                            size: 12
-                        }
-                    }
-                }
+        {
+            text: "新しいツールやソフトを使い始める時、どうアプローチする？",
+            options: [
+                { text: "メニュー構造や設定項目を一通り見て、全体像を理解する", axis: AXES.STRUCTURE },
+                { text: "一言で言うと『何ができるツールなのか』の要点を把握する", axis: AXES.COMPRESS },
+                { text: "まずは使わずに、他人の評判や実際の使用例をもう少し観察する", axis: AXES.HOLD },
+                { text: "実際に1つの作業を具体的に試しながら覚える", axis: AXES.CONCRETE }
+            ]
+        },
+        {
+            text: "会議や雑談で話が脱線した時、頭の中で考えていることは？",
+            options: [
+                { text: "「今の話は、本題のどの部分に紐づく話だろう？」と分類する", axis: AXES.STRUCTURE },
+                { text: "「なぜこの人は急にこの話をし始めたんだろう？」と背景を察する", axis: AXES.CONTEXT },
+                { text: "「脱線してもいい条件（時間的余裕など）はあるか」を気にする", axis: AXES.CONDITION },
+                { text: "「要するに結論は何？」と頭の中でまとめ直す", axis: AXES.COMPRESS }
+            ]
+        },
+        {
+            text: "複雑な問題が発生したとき、真っ先に取り取る行動は？",
+            options: [
+                { text: "情報を整理し、要因をいくつかのカテゴリーに分解する", axis: AXES.STRUCTURE },
+                { text: "焦って決めず、一旦状況を静観して情報を集める", axis: AXES.HOLD },
+                { text: "何がOKで何がNGか、適用されるルールや条件を確認する", axis: AXES.CONDITION },
+                { text: "過去に似たような具体事例がなかったかを思い出す", axis: AXES.CONCRETE }
+            ]
+        },
+        {
+            text: "説明上手な人だと感じるのは、どんな話し手？",
+            options: [
+                { text: "長文でも、短く一言で本質をズバッとまとめてくれる人", axis: AXES.COMPRESS },
+                { text: "具体的なエピソードや体験談を交えて話してくれる人", axis: AXES.CONCRETE },
+                { text: "「ここまでは前提条件、ここからは例外」と明確に分けてくれる人", axis: AXES.CONDITION },
+                { text: "なぜその結論に至ったのか、ストーリーや感情の背景を語る人", axis: AXES.CONTEXT }
+            ]
+        },
+        {
+            text: "文章を書く時（メールや報告書など）、意識して心がけていることは？",
+            options: [
+                { text: "箇条書きや見出しを使い、整理された構造にすること", axis: AXES.STRUCTURE },
+                { text: "要点を冒頭に書き、短くシンプルに仕上げること", axis: AXES.COMPRESS },
+                { text: "読み手がどう感じるか、相手の文脈や感情に配慮すること", axis: AXES.CONTEXT },
+                { text: "誤解のないよう、適用範囲や例外条件を明記すること", axis: AXES.CONDITION }
+            ]
+        },
+        {
+            text: "誰かから悩みを相談されたとき、自然ととりやすいスタンスは？",
+            options: [
+                { text: "「要するに一番の問題はここだね」と核心をまとめてあげる", axis: AXES.COMPRESS },
+                { text: "相手がそう感じるに至った経緯や気持ちを親身に聴く", axis: AXES.CONTEXT },
+                { text: "「具体的にどんなことが起きたの？」と事例を聞く", axis: AXES.CONCRETE },
+                { text: "すぐにアドバイスせず、相手の話をひと通り出し切るまで静かに待つ", axis: AXES.HOLD }
+            ]
+        },
+        {
+            text: "スケジュールや予定を立てる時、一番しっくりくる方法は？",
+            options: [
+                { text: "枠組みやカテゴリ（仕事・プライベート・学びなど）に分けて配置する", axis: AXES.STRUCTURE },
+                { text: "「〇〇の場合は延期」といった条件付きのルールを決めておく", axis: AXES.CONDITION },
+                { text: "具体的な時間刻みで、実際の行動イメージを細かく書き出す", axis: AXES.CONCRETE },
+                { text: "あまりガチガチに決めず、状況が変わるまで保留の枠を残しておく", axis: AXES.HOLD }
+            ]
+        },
+        {
+            text: "ニュースや記事を読むとき、惹かれやすい部分は？",
+            options: [
+                { text: "一言でポイントがわかるタイトルや要約サマリー", axis: AXES.COMPRESS },
+                { text: "実際に被害や影響を受けた個人のインタビュー・体験談", axis: AXES.CONCRETE },
+                { text: "その出来事が起きた時代背景や、社会的なコンテキスト", axis: AXES.CONTEXT },
+                { text: "データや図解で全体像がまとめられたインフォグラフィック", axis: AXES.STRUCTURE }
+            ]
+        },
+        {
+            text: "意思決定をしなければならない時、判断に困る理由は？",
+            options: [
+                { text: "判断基準やルール（条件）が曖昧なとき", axis: AXES.CONDITION },
+                { text: "まだ十分な材料が揃っておらず、今決める必要性を感じないとき", axis: AXES.HOLD },
+                { text: "全体像や将来的な構造が見えていないとき", axis: AXES.STRUCTURE },
+                { text: "関わる人々の気持ちや納得感が置き去りになっているとき", axis: AXES.CONTEXT }
+            ]
+        },
+        {
+            text: "セミナーや研修に参加したとき、満足度が高くなるのはどんな内容？",
+            options: [
+                { text: "複雑な概念が、体系的なモデルやチャートに整理されている", axis: AXES.STRUCTURE },
+                { text: "今日からすぐに現場で使える「具体的な手順・事例」が多い", axis: AXES.CONCRETE },
+                { text: "無駄な解説がなく、重要ポイントだけが提示される", axis: AXES.COMPRESS },
+                { text: "講師や参加者の想い、背景にあるストーリーに触れられる", axis: AXES.CONTEXT }
+            ]
+        },
+        {
+            text: "議論が噛み合っていないと感じる時、足りないと思うものは？",
+            options: [
+                { text: "「そもそも何の話をしているか」という全体のフレームワーク", axis: AXES.STRUCTURE },
+                { text: "「どんな条件の時の話か」という前提のすり合わせ", axis: AXES.CONDITION },
+                { text: "抽象論ばかりでなく、「具体的にどういうことか」という例示", axis: AXES.CONCRETE },
+                { text: "話の核心となる「一言の要点」", axis: AXES.COMPRESS }
+            ]
+        },
+        {
+            text: "自分自身の「考えがまとまった」と感じる瞬間はどんな時？",
+            options: [
+                { text: "頭の中の要素がキレイに分類・整理できた時", axis: AXES.STRUCTURE },
+                { text: "複雑な話が「要するに〇〇だ」とワンフレーズで表現できた時", axis: AXES.COMPRESS },
+                { text: "「こうなったらこうする」という分岐ルールが完成した時", axis: AXES.CONDITION },
+                { text: "自分の中で感情や背景のストーリーが腑に落ちた時", axis: AXES.CONTEXT }
+            ]
+        },
+        {
+            text: "周囲から頼まれることが多い役割は？",
+            options: [
+                { text: "散らかった議論や資料を、見やすく整理・分類すること", axis: AXES.STRUCTURE },
+                { text: "長文や複雑な資料を、短い要点にまとめること", axis: AXES.COMPRESS },
+                { text: "「こういうケースはどうする？」と抜け漏れや条件をチェックすること", axis: AXES.CONDITION },
+                { text: "状況を冷静に見守り、静かに状況を観察・判断すること", axis: AXES.HOLD }
+            ]
+        },
+        {
+            text: "他人の意見を聞いていて「少し受け入れがたい」と感じるのは？",
+            options: [
+                { text: "論理の飛躍があり、全体の構造から浮いている意見", axis: AXES.STRUCTURE },
+                { text: "背景や経緯を無視した、冷酷で思いやりのない意見", axis: AXES.CONTEXT },
+                { text: "前提条件やルールを無視した、極端な意見", axis: AXES.CONDITION },
+                { text: "抽象的すぎて、現実の行動や事例が何もイメージできない意見", axis: AXES.CONCRETE }
+            ]
+        },
+        {
+            text: "本や読書をする際のスタイルの特徴は？",
+            options: [
+                { text: "目次や体系を見て、全体の構成を掴んでから読む", axis: AXES.STRUCTURE },
+                { text: "「はじめに」や「おわりに」を読み、著者の想いや背景を知る", axis: AXES.CONTEXT },
+                { text: "要約サイトや見出しだけを追い、要点だけを短時間で掴む", axis: AXES.COMPRESS },
+                { text: "一気に結論を出さず、じっくり時間をかけて考えながら読む", axis: AXES.HOLD }
+            ]
+        },
+        {
+            text: "仕事でストレスを感じやすい場面はどれ？",
+            options: [
+                { text: "役割分担や構造があやふやで、カオスな状態のとき", axis: AXES.STRUCTURE },
+                { text: "理由や背景が説明されず、単発の指示だけが飛んでくるとき", axis: AXES.CONTEXT },
+                { text: "根拠がないのに「今すぐ直感で決めて」と判断を急かされるとき", axis: AXES.HOLD },
+                { text: "具体例がなく、概念的なフワッとした話ばかりが続くとき", axis: AXES.CONCRETE }
+            ]
+        },
+        {
+            text: "新しい企画やアイデアを出す時、重視するアプローチは？",
+            options: [
+                { text: "既存の要素を分解し、新しい組み合わせの構造を作ること", axis: AXES.STRUCTURE },
+                { text: "誰のどんな感情や背景（コンテキスト）に響くかを考えること", axis: AXES.CONTEXT },
+                { text: "「もし〇〇という条件なら」と、仮説の前提を立てること", axis: AXES.CONDITION },
+                { text: "実際の成功事例や、具体的なプロトタイプを提示すること", axis: AXES.CONCRETE }
+            ]
+        },
+        {
+            text: "記憶に残る「良い思い出」の残り方は？",
+            options: [
+                { text: "いつ、どこで、誰と…といった分類された整理データとして残る", axis: AXES.STRUCTURE },
+                { text: "その時の空気感や、関わった人との情緒的なストーリーとして残る", axis: AXES.CONTEXT },
+                { text: "具体的なエピソードや、印象的な言葉・出来事の場面で残る", axis: AXES.CONCRETE },
+                { text: "一言で表すなら「〇〇な年だった」というキャッチコピーで残る", axis: AXES.COMPRESS }
+            ]
+        },
+        {
+            text: "会議で意見を求められたとき、よく使うフレーズは？",
+            options: [
+                { text: "「要するに、核心は〇〇ということですよね」", axis: AXES.COMPRESS },
+                { text: "「具体的には、どのような事例を想定していますか？」", axis: AXES.CONCRETE },
+                { text: "「どういう経緯でこの案になったか、背景を聞けますか？」", axis: AXES.CONTEXT },
+                { text: "「もう少し材料が出揃うまで、様子を見ませんか？」", axis: AXES.HOLD }
+            ]
+        },
+        {
+            text: "買い物をするとき（家電や服など）、決め手になりやすいのは？",
+            options: [
+                { text: "スペックや機能の比較表（分類・構造）を見て納得すること", axis: AXES.STRUCTURE },
+                { text: "開発者の想いや、ブランドのストーリーに共感すること", axis: AXES.CONTEXT },
+                { text: "「保証期間が〇年なら買う」といった自分なりの条件に合うこと", axis: AXES.CONDITION },
+                { text: "「実際に使っている人の具体レビュー」を見ること", axis: AXES.CONCRETE }
+            ]
+        },
+        {
+            text: "自分の強み（思考のクセ）を一言で表すなら？",
+            options: [
+                { text: "情報をクリアに整理・整理統合できること", axis: AXES.STRUCTURE },
+                { text: "本質を素早く一言に絞り込めること", axis: AXES.COMPRESS },
+                { text: "物事の前提条件や見落としがちなリスクに気づけること", axis: AXES.CONDITION },
+                { text: "感情に流されず、状況を冷静に観察し続けられること", axis: AXES.HOLD }
+            ]
+        },
+        {
+            text: "誰かと意見が対立したとき、解決のためにどう振る舞う？",
+            options: [
+                { text: "対立点を可視化し、どこがズレているかを構造的に整理する", axis: AXES.STRUCTURE },
+                { text: "相手がなぜその意見を持つに至ったか、背景や想いを聴く", axis: AXES.CONTEXT },
+                { text: "「こういう条件なら妥協できるか」というルールを探る", axis: AXES.CONDITION },
+                { text: "お互いが納得できる「具体的な解決例」を1つ提示してみる", axis: AXES.CONCRETE }
+            ]
+        },
+        {
+            text: "複雑な作業手順を教わるとき、一番ありがたい教わり方は？",
+            options: [
+                { text: "全体像がわかるフローチャートを見せてもらう", axis: AXES.STRUCTURE },
+                { text: "「一言で言うと何をする作業か」の目的を教えてもらう", axis: AXES.COMPRESS },
+                { text: "講師が実際にやって見せる具体例を見せてもらう", axis: AXES.CONCRETE },
+                { text: "「〇〇の時はA、〇〇の時はB」という条件分岐を明確にしてもらう", axis: AXES.CONDITION }
+            ]
+        },
+        {
+            text: "予期せぬ変更やトラブルが発生した時、最初の反応は？",
+            options: [
+                { text: "「どの部分に影響が出るか」を構造的にチェックする", axis: AXES.STRUCTURE },
+                { text: "「変更に至った背景には何があったのか」を確認する", axis: AXES.CONTEXT },
+                { text: "あわてて動かず、状況が落ち着くまで静観・情報収集する", axis: AXES.HOLD },
+                { text: "「で、具体的に今何を変更すればいい？」と直近の行動を確認する", axis: AXES.CONCRETE }
+            ]
+        },
+        {
+            text: "「あの人とは仕事（コミュニケーション）がやりやすい」と感じる相手は？",
+            options: [
+                { text: "整理整頓が得意で、話が論理的に整理されている人", axis: AXES.STRUCTURE },
+                { text: "結論から話してくれて、無駄な長話がない人", axis: AXES.COMPRESS },
+                { text: "こちらの意図や状況（文脈）を察してくれる人", axis: AXES.CONTEXT },
+                { text: "約束事やルール（条件）をキッチリ守ってくれる人", axis: AXES.CONDITION }
+            ]
+        },
+        {
+            text: "情報を誰かに伝達する時、自分がやりがちな傾向は？",
+            options: [
+                { text: "図や箇条書きを使い、関係性をわかりやすく整えてしまう", axis: AXES.STRUCTURE },
+                { text: "「結論から言うと〇〇です」と短くまとめてしまう", axis: AXES.COMPRESS },
+                { text: "「例えば〇〇さんのケースだと…」と具体例を入れてしまう", axis: AXES.CONCRETE },
+                { text: "「これは〇〇の場合に限ります」と注記や条件をつけてしまう", axis: AXES.CONDITION }
+            ]
+        },
+        {
+            text: "何かについて深くリサーチする時、納得がいく着地点は？",
+            options: [
+                { text: "全体像を網羅したフレームワークが完成した時", axis: AXES.STRUCTURE },
+                { text: "「核心となるメッセージ」を一言に抽出できた時", axis: AXES.COMPRESS },
+                { text: "例外のないしっかりとした原則・条件が見つかった時", axis: AXES.CONDITION },
+                { text: "生データや具体的な事実・エピソードが集まった時", axis: AXES.CONCRETE }
+            ]
+        },
+        {
+            text: "長時間の会議に出ている時、頭の中で考えていることは？",
+            options: [
+                { text: "「今の意見は、マトリクスのどこに位置づけられるか」", axis: AXES.STRUCTURE },
+                { text: "「そろそろ話を保留にして、次回に回したほうがいいのでは」", axis: AXES.HOLD },
+                { text: "「みんな発言背景にどんな意図があるんだろう」", axis: AXES.CONTEXT },
+                { text: "「で、結局1行でまとめると何が決まったの？」", axis: AXES.COMPRESS }
+            ]
+        },
+        {
+            text: "自分自身の「思考のスタンス」に一番近いと感じるものは？",
+            options: [
+                { text: "複雑なものを、整理して見やすくするデザイナー", axis: AXES.STRUCTURE },
+                { text: "無駄を削ぎ落とし、核心を取り出す彫刻家", axis: AXES.COMPRESS },
+                { text: "背景にあるストーリーや想いを紡ぐナビゲーター", axis: AXES.CONTEXT },
+                { text: "安易に飛びつかず、じっくり様子を見る観察者", axis: AXES.HOLD }
+            ]
+        }
+    ];
+
+    // タイプごとの定義（組み合わせプロファイル）
+    const PROFILE_COMBINATIONS = {
+        [`${AXES.STRUCTURE}_${AXES.CONDITION}`]: {
+            title: "「整頓された設計図を求める」クラフトマンタイプ",
+            overview: "いきなり走るよりも『まず全体像とルールを完璧に把握したい』慎重派の職人さん。複雑な状況でも、頭の中でサクサク箱分けしてクリアにしていく整理の達人です。",
+            frequentBehaviors: [
+                "「で、結局全体で何をしようとしてるんだっけ？」と定期的に確認したくなる",
+                "話を聞きながら、頭の中で勝手に箇条書きやマインドマップを作っている",
+                "「それってどういう例外条件のときの話？」と抜け漏れをすぐ見つける"
+            ],
+            cognitiveCosts: [
+                "「理由はいいからノリでイイ感じにして！」と丸投げされたとき",
+                "前提やゴールがころころ変わって、軸がブレまくっている会議",
+                "仕組みやルールが整っていないカオスな状態でのぶっつけ本番"
+            ]
+        },
+        [`${AXES.STRUCTURE}_${AXES.CONTEXT}`]: {
+            title: "「ストーリーを描き切る」ナビゲータータイプ",
+            overview: "全体的な組み立てだけでなく、『なぜそれをするのか』という背景や感情のストーリーをとても大切にするタイプ。チームの方向性を優しく指し示す司令塔です。",
+            frequentBehaviors: [
+                "「どういう経緯でこの話になったの？」と歴史や背景をちゃんと聞きたがる",
+                "バラバラに見える出来事を「要するにこういう流れだよね」とつなぎ合わせる",
+                "相手の立場や心情を組み込んだ上で、納得感のある計画を立てる"
+            ],
+            cognitiveCosts: [
+                "背景やストーリーの説明がゼロで、単発の作業だけをポイ投げされたとき",
+                "人の気持ちやコンテキストを無視して、数字だけでバッサリ決められる瞬間",
+                "脈絡のない指示が次々と飛んでくるカオスな環境"
+            ]
+        },
+        [`${AXES.CONDITION}_${AXES.HOLD}`]: {
+            title: "「リスクを見逃さない」慎重派の鑑定士タイプ",
+            overview: "条件やルールをしっかり見極め、納得がいくまで焦って結論を出さない冷静な観察者。『一旦持ち帰って考えます』が最強の武器です。",
+            frequentBehaviors: [
+                "「まだ情報が足りないな」と感じたら、周りに流されず静観できる",
+                "うまい話を聞いたとき、真っ先に「裏の条件やデメリットは？」と探る",
+                "トラブルが起きたときほど、一歩引いて「で、何が起きてるの？」と冷静"
+            ],
+            cognitiveCosts: [
+                "根拠や情報がスカスカなのに「今すぐ決めて！」と詰められる場面",
+                "ノリと勢いだけで怪しい企画がどんどん進んでいく空間",
+                "結論を急かされて、じっくり検証する時間を奪われること"
+            ]
+        },
+        [`${AXES.COMPRESS}_${AXES.CONCRETE}`]: {
+            title: "「本質を即スナイプする」実践派リアリストタイプ",
+            overview: "『で、具体的に何をやればいいの？』を素早く見抜き、要点だけをズバッと掴む超実践派。無駄な長話は大嫌いで、スピーディーに成果を出したいタイプです。",
+            frequentBehaviors: [
+                "長すぎるメールやチャットを見ると、無意識に「結論はどこ？」と探す",
+                "抽象的な議論より「たとえばどんな例がある？」と具体例で理解する",
+                "学んだことや聞いた話を、一言のキャッチコピーに要約するのが得意"
+            ],
+            cognitiveCosts: [
+                "結論がなかなか見えない、ダラダラした長時間の打ち合わせ",
+                "「具体的にどう動けばいいか」が見えないフワッとした議論",
+                "前置きや形容詞が多すぎて、本題になかなかたどりつかない説明"
+            ]
+        }
+    };
+
+    // 組み合わせが未定義の場合の汎用フォローバック
+    function getFallbackProfile(top1, top2) {
+        return {
+            title: `「${AXIS_NAMES[top1]} × ${AXIS_NAMES[top2]}」ハイブリッドタイプ`,
+            overview: `【${AXIS_NAMES[top1]}】の視点と【${AXIS_NAMES[top2]}】の視点を上手に切り替えながら、柔軟に情報を処理していくバランス感覚の持ち主です。`,
+            frequentBehaviors: [
+                `まず【${AXIS_NAMES[top1]}】の観点から「どういうことか」をピンポイントで捉える`,
+                `必要に応じて【${AXIS_NAMES[top2]}】の視点を足して、理解をより深める`
+            ],
+            cognitiveCosts: [
+                `自分の得意な【${AXIS_NAMES[top1]}】や【${AXIS_NAMES[top2]}】のアプローチが使えない極端な環境`
+            ]
+        };
+    }
+
+    // 状態管理変数
+    let currentQuestionIndex = 0;
+    let scores = {
+        [AXES.STRUCTURE]: 0,
+        [AXES.CONTEXT]: 0,
+        [AXES.CONDITION]: 0,
+        [AXES.CONCRETE]: 0,
+        [AXES.COMPRESS]: 0,
+        [AXES.HOLD]: 0
+    };
+    let chartInstance = null;
+
+    // 初期化
+    document.addEventListener("DOMContentLoaded", () => {
+        showQuestion(currentQuestionIndex);
+    });
+
+    // 質問を表示する関数
+    function showQuestion(index) {
+        const q = QUESTIONS[index];
+        document.getElementById("question-text").innerText = `Q${index + 1}. ${q.text}`;
+        
+        // 進捗更新
+        const progressPercent = ((index + 1) / QUESTIONS.length) * 100;
+        document.getElementById("progress-fill").style.width = `${progressPercent}%`;
+        document.getElementById("progress-text").innerText = `${index + 1} / ${QUESTIONS.length}`;
+
+        // 選択肢を描画
+        const optionsContainer = document.getElementById("options-container");
+        optionsContainer.innerHTML = "";
+
+        q.options.forEach(opt => {
+            const btn = document.createElement("button");
+            btn.className = "option-btn";
+            btn.innerText = opt.text;
+            btn.onclick = () => selectOption(opt.axis);
+            optionsContainer.appendChild(btn);
+        });
+    }
+
+    // 選択肢クリック時処理
+    function selectOption(axis) {
+        scores[axis] = (scores[axis] || 0) + 1;
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < QUESTIONS.length) {
+            showQuestion(currentQuestionIndex);
+        } else {
+            showResult();
+        }
+    }
+
+    // 偏り（分散）の判定関数
+    function calculateDistribution(scoresArray) {
+        const mean = scoresArray.reduce((a, b) => a + b, 0) / scoresArray.length;
+        const variance = scoresArray.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / scoresArray.length;
+        const stdDev = Math.sqrt(variance);
+
+        if (stdDev >= 18) {
+            return {
+                label: "特化・尖り型プロファイル",
+                description: "特定の情報処理アプローチに強いこだわりと抜群の強みを持つタイプです。得意な環境では圧倒的なパフォーマンスを発揮します。"
+            };
+        } else if (stdDev <= 8) {
+            return {
+                label: "万能・バランス型プロファイル",
+                description: "状況や相手に合わせて、多面的な視点から柔軟に情報を処理できるオールラウンダータイプです。"
+            };
+        } else {
+            return {
+                label: "標準・ハイブリッド型プロファイル",
+                description: "状況に応じた柔軟性を保ちつつ、特定の得意な処理軸を核にして思考を組み立てるタイプです。"
+            };
+        }
+    }
+
+    // 診断結果ロジック
+    function generateDiagnosticResult(rawScores) {
+        // 全体の合計選択数を求める
+        const totalAnswers = Object.values(rawScores).reduce((sum, val) => sum + val, 0) || 1;
+        
+        // 100点満点換算（相対的割合）
+        const normalized = {};
+        for (const axis in rawScores) {
+            normalized[axis] = Math.round((rawScores[axis] / totalAnswers) * 100 * 2.5); // スケール調整
+        }
+
+        // スコア順にソート
+        const sortedAxes = Object.keys(rawScores).sort((a, b) => rawScores[b] - rawScores[a]);
+        const top1 = sortedAxes[0];
+        const top2 = sortedAxes[1];
+
+        // 組み合わせプロファイル取得（順不同検索）
+        const comboKey1 = `${top1}_${top2}`;
+        const comboKey2 = `${top2}_${top1}`;
+        const baseProfile = PROFILE_COMBINATIONS[comboKey1] || PROFILE_COMBINATIONS[comboKey2] || getFallbackProfile(top1, top2);
+
+        // 分散判定
+        const scoresValues = Object.values(normalized);
+        const distribution = calculateDistribution(scoresValues);
+
+        return {
+            scores: normalized,
+            primaryAxes: [top1, top2, sortedAxes[2]],
+            distribution: distribution,
+            display: {
+                title: baseProfile.title || `${AXIS_NAMES[top1]} × ${AXIS_NAMES[top2]}`,
+                distributionLabel: distribution.label,
+                overview: baseProfile.overview + ' ' + distribution.description,
+                frequentBehaviors: baseProfile.frequentBehaviors,
+                cognitiveCosts: baseProfile.cognitiveCosts
+            }
+        };
+    }
+
+    // 結果表示関数
+    function showResult() {
+        document.getElementById("screen-quiz").classList.add("hidden");
+        document.getElementById("screen-result").classList.remove("hidden");
+
+        const result = generateDiagnosticResult(scores);
+
+        // 各種テキスト埋め込み
+        document.getElementById("result-title").innerText = result.display.title;
+        document.getElementById("result-distribution-tag").innerText = result.display.distributionLabel;
+        document.getElementById("result-overview").innerText = result.display.overview;
+
+        // 上位軸リスト
+        const topAxesList = document.getElementById("list-top-axes");
+        topAxesList.innerHTML = "";
+        result.primaryAxes.forEach(axis => {
+            const li = document.createElement("li");
+            li.innerText = `${AXIS_NAMES[axis]} (${result.scores[axis]} pt)`;
+            topAxesList.appendChild(li);
+        });
+
+        // あるあるリスト
+        const frequentList = document.getElementById("list-frequent");
+        frequentList.innerHTML = "";
+        result.display.frequentBehaviors.forEach(item => {
+            const li = document.createElement("li");
+            li.innerText = item;
+            frequentList.appendChild(li);
+        });
+
+        // モヤッとコストリスト
+        const costsList = document.getElementById("list-costs");
+        costsList.innerHTML = "";
+        result.display.cognitiveCosts.forEach(item => {
+            const li = document.createElement("li");
+            li.innerText = item;
+            costsList.appendChild(li);
+        });
+
+        // レーダーチャート描画
+        renderChart(result.scores);
+    }
+
+    // Chart.js レーダーチャート
+    function renderChart(scores) {
+        const ctx = document.getElementById('radarChart').getContext('2d');
+        
+        if (chartInstance) {
+            chartInstance.destroy();
+        }
+
+        const labels = Object.keys(AXES).map(key => AXIS_NAMES[key]);
+        const dataValues = Object.keys(AXES).map(key => scores[key]);
+
+        chartInstance = new Chart(ctx, {
+            type: 'radar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: '思考処理傾向',
+                    data: dataValues,
+                    backgroundColor: 'rgba(37, 99, 235, 0.2)',
+                    borderColor: 'rgba(37, 99, 235, 1)',
+                    borderWidth: 2,
+                    pointBackgroundColor: 'rgba(37, 99, 235, 1)'
+                }]
             },
-            plugins: {
-                legend: {
-                    display: false
+            options: {
+                scales: {
+                    r: {
+                        angleLines: { color: '#e2e8f0' },
+                        grid: { color: '#e2e8f0' },
+                        suggestedMin: 0,
+                        suggestedMax: 50,
+                        ticks: { display: false }
+                    }
+                },
+                plugins: {
+                    legend: { display: false }
                 }
             }
-        }
-    });
-}
+        });
+    }
 
-function resetQuiz() {
-    document.getElementById('screen-result').classList.add('hidden');
-    document.getElementById('screen-start').classList.remove('hidden');
-}
+    // リセット（最初からやり直す）
+    function resetQuiz() {
+        currentQuestionIndex = 0;
+        scores = {
+            [AXES.STRUCTURE]: 0,
+            [AXES.CONTEXT]: 0,
+            [AXES.CONDITION]: 0,
+            [AXES.CONCRETE]: 0,
+            [AXES.COMPRESS]: 0,
+            [AXES.HOLD]: 0
+        };
+        document.getElementById("screen-result").classList.add("hidden");
+        document.getElementById("screen-quiz").classList.remove("hidden");
+        showQuestion(0);
+    }
 </script>
 
 </body>
