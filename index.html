@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>あなたの頭は、何に引っかかる？ | 認知パターン診断</title>
+  <style>
+    :root {
+      --bg-color: #f8f9fa;
+      --card-bg: #ffffff;
+      --text-main: #212529;
+      --text-sub: #6c757d;
+      --accent-color: #3b82f6;
+      --accent-hover: #2563eb;
+      --border-color: #e9ecef;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 680px;
+      background: var(--card-bg);
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+      padding: 32px;
+      transition: all 0.3s ease;
+    }
+
+    /* 共通コンポーネント */
+    h1 {
+      font-size: 1.6rem;
+      margin-bottom: 12px;
+      line-height: 1.4;
+      text-align: center;
+    }
+
+    p.description {
+      color: var(--text-sub);
+      font-size: 0.95rem;
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+
+    .btn {
+      display: inline-block;
+      width: 100%;
+      padding: 14px 20px;
+      background-color: var(--accent-color);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      transition: background-color 0.2s ease;
+    }
+
+    .btn:hover {
+      background-color: var(--accent-hover);
+    }
+
+    /* トップ画面 */
+    #start-screen {
+      text-align: center;
+    }
+
+    .badge {
+      display: inline-block;
+      background: #eff6ff;
+      color: var(--accent-color);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+
+    /* 診断画面 */
+    #quiz-screen {
+      display: none;
+    }
+
+    .progress-bar-container {
+      width: 100%;
+      height: 6px;
+      background-color: var(--border-color);
+      border-radius: 3px;
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background-color: var(--accent-color);
+      transition: width 0.3s ease;
+    }
+
+    .question-count {
+      font-size: 0.85rem;
+      color: var(--text-sub);
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .question-text {
+      font-size: 1.15rem;
+      font-weight: 600;
+      line-height: 1.5;
+      margin-bottom: 24px;
+      background: #f8fafc;
+      padding: 16px;
+      border-left: 4px solid var(--accent-color);
+      border-radius: 0 8px 8px 0;
+    }
+
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .option-btn {
+      background: #fff;
+      border: 1.5px solid var(--border-color);
+      border-radius: 10px;
+      padding: 16px;
+      text-align: left;
+      font-size: 0.95rem;
+      color: var(--text-main);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      line-height: 1.5;
+    }
+
+    .option-btn:hover {
+      border-color: var(--accent-color);
+      background-color: #f0f7ff;
+    }
+
+    /* 結果画面 */
+    #result-screen {
+      display: none;
+    }
+
+    .result-header {
+      text-align: center;
+      margin-bottom: 24px;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 20px;
+    }
+
+    .result-title {
+      font-size: 1.4rem;
+      color: var(--accent-color);
+      margin-top: 8px;
+    }
+
+    .result-body {
+      font-size: 0.95rem;
+      line-height: 1.7;
+      color: #334155;
+      margin-bottom: 24px;
+      white-space: pre-wrap;
+    }
+
+    .recommend-box {
+      background: #f1f5f9;
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 24px;
+    }
+
+    .recommend-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #475569;
+      margin-bottom: 8px;
+    }
+
+    .recommend-list {
+      list-style-type: disc;
+      padding-left: 20px;
+      font-size: 0.9rem;
+      color: #334155;
+    }
+
+    .recommend-list li {
+      margin-bottom: 4px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <!-- トップ画面 -->
+    <div id="start-screen">
+      <span class="badge">認知思考の実験プロジェクト</span>
+      <h1>あなたの頭は、何に引っかかる？</h1>
+      <p class="description">
+        これは一般的な性格診断ではありません。<br>
+        日常のさまざまな場面に対して「直感的にふと思うこと」を選ぶことで、あなたが情報を受け取った際に無意識に行っている認知・処理パターンを観察します。
+      </p>
+      <button class="btn" onclick="startQuiz()">診断をはじめる（全20問）</button>
+    </div>
+
+    <!-- 診断画面 -->
+    <div id="quiz-screen">
+      <div class="progress-bar-container">
+        <div class="progress-bar" id="progress-bar"></div>
+      </div>
+      <div class="question-count" id="question-count">Q1 / 20</div>
+      <div class="question-text" id="question-text"></div>
+      <div class="options" id="options"></div>
+    </div>
+
+    <!-- 結果画面 -->
+    <div id="result-screen">
+      <div class="result-header">
+        <span class="badge">分析結果</span>
+        <div class="result-title" id="result-title"></div>
+      </div>
+      <div class="result-body" id="result-body"></div>
+      <div class="recommend-box">
+        <div class="recommend-title">相性が良さそうなテーマ・ジャンル</div>
+        <ul class="recommend-list" id="recommend-list"></ul>
+      </div>
+      <button class="btn" onclick="restartQuiz()">もう一度やってみる</button>
+    </div>
+  </div>
+
+  <script>
+    // 質問データ（全20問）
+    const questions = [
+      {
+        text: "「この美容法を試した人の80%が『肌に自信がついた』と回答しました。」",
+        options: [
+          { label: "80%なら、かなり試す価値がありそうだな", axis: "none" },
+          { label: "「自信がついた」って、具体的に見た目のこと？気分のこと？", axis: "def" },
+          { label: "そもそもどういう年齢層や肌質の人に聞いたんだろう", axis: "pop" },
+          { label: "美容法だけじゃなくて、生活習慣も同時に変えてたりしないかな", axis: "cause" }
+        ]
+      },
+      {
+        text: "評判のいい映画を見て「正直、どこが面白かったのかよく分からなかった」時。",
+        options: [
+          { label: "自分の感覚がズレてるのかな、と少し不安になる", axis: "none" },
+          { label: "この映画を絶賛してる人と自分の「好みの共通点」を探す", axis: "apply" },
+          { label: "「面白い」の基準が演出なのか、ストーリーなのかを解体したくなる", axis: "def" },
+          { label: "まぁ、見るタイミングや前情報によっても受け取り方は変わるよね", axis: "uncertain" }
+        ]
+      },
+      {
+        text: "「売上が伸びないのは、チームのコミュニケーション不足が原因だ」と言われた。",
+        options: [
+          { label: "確かに、もっと話し合う時間を増やすべきだな", axis: "none" },
+          { label: "コミュニケーションの「量」の話？それとも「情報共有の仕組み」の話？", axis: "def" },
+          { label: "コミュニケーション以外の要因（市場変化や価格設定）はどうなんだろう", axis: "cause" },
+          { label: "「コミュニケーション不足」をどうやって測定したんだろう", axis: "uncertain" }
+        ]
+      },
+      {
+        text: "「本当に好きなら、連絡の返信くらいすぐするはずだ」",
+        options: [
+          { label: "それは一理ある。後回しにされると悲しい", axis: "none" },
+          { label: "相手の仕事の状況やスマホを見る習慣によって全然違うのでは", axis: "apply" },
+          { label: "「好き」の度合いと「返信速度」って、本当に直結するのかな", axis: "cause" },
+          { label: "そもそも「すぐ」って何分・何時間以内のこと言ってるんだろう", axis: "def" }
+        ]
+      },
+      {
+        text: "「東京から地方に移住して、生活の質（QOL）が上がりました！」",
+        options: [
+          { label: "豊かな自然の中で過ごす生活、うらやましいな", axis: "none" },
+          { label: "その人にとっての「生活の質」が何から何に変わったのか気になる", axis: "def" },
+          { label: "移住が理由なのか、単に仕事の負担が減ったからなのか気になる", axis: "cause" },
+          { label: "移住して後悔している人や、馴染めなかった人の割合はどれくらいだろう", axis: "pop" }
+        ]
+      },
+      {
+        text: "「最新の研究で、毎日リンゴを食後に食べると集中力が上がると分かった」",
+        options: [
+          { label: "明日からさっそく試してみよう", axis: "none" },
+          { label: "リンゴに含まれる成分の影響なのか、噛む動作によるものなのか", axis: "cause" },
+          { label: "「集中力」を何のテストで測ったのか知りたい", axis: "def" },
+          { label: "自分にも同じ効果が出るかは、やってみないと分からないな", axis: "apply" }
+        ]
+      },
+      {
+        text: "「若者の『読書離れ』が深刻化している」",
+        options: [
+          { label: "スマホばかり見ているから本を読まなくなるのは問題だ", axis: "none" },
+          { label: "調査対象の「若者」の年齢範囲と、Web記事やマンガも含まれるのか気になる", axis: "pop" },
+          { label: "文字を読む総量が減ったのか、単に「紙の書籍」を買わなくなっただけか", axis: "def" },
+          { label: "読書量が減ると具体的に何が困るのか、因果関係がよく分からない", axis: "cause" }
+        ]
+      },
+      {
+        text: "「満足度98%！大人気のクッション」",
+        options: [
+          { label: "98%が満足してるなら失敗しなさそう", axis: "none" },
+          { label: "満足しなかった残りの2%が何に不満を持ったのかが気になる", axis: "uncertain" },
+          { label: "自分の腰痛や座り方のクセに合うかどうかは別問題だな", axis: "apply" },
+          { label: "アンケートを買った直後に取ったのか、数ヶ月後に取ったのか気になる", axis: "cause" }
+        ]
+      },
+      {
+        text: "「成功している起業家はみんな、朝5時に起きている」",
+        options: [
+          { label: "早起きはやっぱり大事なんだな。明日から起きよう", axis: "none" },
+          { label: "朝起きるから成功したのか、成功した結果そういう習慣になったのか", axis: "cause" },
+          { label: "失敗した起業家の中にも、朝5時に起きていた人はどれくらいいるんだろう", axis: "pop" },
+          { label: "夜型で成功している例外の起業家はどのくらいいるんだろう", axis: "uncertain" }
+        ]
+      },
+      {
+        text: "「幼少期にピアノを習わせると、数学の成績が良くなる」",
+        options: [
+          { label: "脳の発達に良い刺激があるんだな", axis: "none" },
+          { label: "ピアノを習わせられる家庭の経済力や環境が影響してないかな", axis: "cause" },
+          { label: "「数学の成績」って、具体的に計算力のこと？論理的思考力のこと？", axis: "def" },
+          { label: "うちの子にも当てはまるかどうかはまた別の話だな", axis: "apply" }
+        ]
+      },
+      {
+        text: "「あなたは大ざっぱに見えて、実は繊細なところがありますね」と言われた。",
+        options: [
+          { label: "当たってる！自分でもそう思う", axis: "none" },
+          { label: "それって誰にでも当てはまる言い回しじゃないかな", axis: "pop" },
+          { label: "「大ざっぱ」と「繊細」の境目ってどこなんだろう", axis: "def" },
+          { label: "どういう状況のときに「繊細」が出ると言ってるのか聞いてみたい", axis: "apply" }
+        ]
+      },
+      {
+        text: "「食べログ4.2の超人気店に行ったら、全然美味しくなかった」",
+        options: [
+          { label: "口コミなんて当てにならないな", axis: "none" },
+          { label: "評価している人たちの舌や嗜好が自分と違うだけかも", axis: "apply" },
+          { label: "料理の味以外の要素（接客や雰囲気）で評価が引き上げられてないかな", axis: "cause" },
+          { label: "たまたま自分が頼んだメニューが外れだった可能性を考える", axis: "uncertain" }
+        ]
+      },
+      {
+        text: "「好きなことを仕事にすれば、毎日のストレスはなくなる」",
+        options: [
+          { label: "やっぱり好きなことを追求するのが一番の幸せだな", axis: "none" },
+          { label: "好きを仕事にしても、「仕事特有の制約（納期や人間関係）」は残るのでは", axis: "cause" },
+          { label: "「好きなこと」と「得意なこと」と「稼げること」の定義が混ざってそう", axis: "def" },
+          { label: "人によるだろうな、としか言いようがない", axis: "uncertain" }
+        ]
+      },
+      {
+        text: "「この街は外国人観光客が急増しており、地元経済が活性化しています」",
+        options: [
+          { label: "観光客が増えて街が潤うのはいいことだ", axis: "none" },
+          { label: "「活性化」って具体的にどの業界の売上や雇用のことを指してるんだろう", axis: "def" },
+          { label: "観光業以外の地元住民の暮らしへの影響やコストはどうなんだろう", axis: "pop" },
+          { label: "観光客が増えたことと経済効果の因果が直接結びついているのか気になる", axis: "cause" }
+        ]
+      },
+      {
+        text: "友人に「最近忙しすぎてマジで時間が足りないんだよね」と言われた。",
+        options: [
+          { label: "「大変そうだね、体調崩さないでね」と労う", axis: "none" },
+          { label: "「何に一番時間を使ってるの？」とスケジュールの内訳を聞きたくなる", axis: "def" },
+          { label: "やることが増えたのか、作業効率が落ちてるのか、どっちだろうと思う", axis: "cause" },
+          { label: "その忙しさは一時的なものなのか、ずっと続くものなのか確認したくなる", axis: "uncertain" }
+        ]
+      },
+      {
+        text: "「今期のトレンドカラーはグリーン。これを着ていれば間違いありません」",
+        options: [
+          { label: "今度服を買うときはグリーンを選んでみよう", axis: "none" },
+          { label: "「誰にとって」間違いがないのか（パーソナルカラーやTPO）が気になる", axis: "apply" },
+          { label: "「トレンド」って誰がどうやって決めてる仕組みなんだろう", axis: "def" },
+          { label: "トレンドに乗ることが本当に「お洒落」と言えるのか疑問に思う", axis: "cause" }
+        ]
+      },
+      {
+        text: "「この投資手法を使えば、初心者でも年利10%を目指せます」",
+        options: [
+          { label: "初心者でもできるならやってみようかな", axis: "none" },
+          { label: "「目指せる」であって保証ではないし、リスク側の説明はどうなってるか", axis: "uncertain" },
+          { label: "どんな相場環境でも成り立つ手法なのか、過去の特定の期間だけなのか", axis: "pop" },
+          { label: "年利10%を達成するための前提条件は何なのか探りたい", axis: "cause" }
+        ]
+      },
+      {
+        text: "「強豪校の練習量は他校の2倍。強さの理由はそこにある」",
+        options: [
+          { label: "やっぱり練習量と強さは比例するんだな", axis: "none" },
+          { label: "練習量が多いから強いのか、強い選手が集まるからハードな練習ができるのか", axis: "cause" },
+          { label: "「練習量」って時間のこと？カロリー消費のこと？メニューの密度のこと？", axis: "def" },
+          { label: "練習量が多くても強くならなかった学校のデータはないのかな", axis: "pop" }
+        ]
+      },
+      {
+        text: "「万伸びしているポスト：『人生を劇的に変える5つの習慣』」",
+        options: [
+          { label: "ためになる！ブックマークして実践してみよう", axis: "none" },
+          { label: "「劇的に変える」って主観的すぎるな、と感じる", axis: "def" },
+          { label: "万伸びしているのは「内容が良いから」か「共感しやすい極論だから」か考える", axis: "cause" },
+          { label: "自分に必要な習慣かどうかを1つずつ精査する", axis: "apply" }
+        ]
+      },
+      {
+        text: "「20個の質問に回答していただきました。あなたの認知傾向を集計中です……」",
+        options: [
+          { label: "どんな結果が出るか楽しみだな", axis: "none" },
+          { label: "この20問で自分の何がどこまで判定できるのか興味深い", axis: "apply" },
+          { label: "どんな計算ロジックで自分のタイプを分類しているのか気になる", axis: "cause" },
+          { label: "選択肢のバリエーションがどう設計されていたのか振り返りたくなる", axis: "def" }
+        ]
+      }
+    ];
+
+    // 結果データ
+    const resultDefinitions = {
+      def: {
+        name: "「輪郭の確定」を優先するタイプ（定義感度）",
+        desc: "あなたが出された主張を見た際、最初につっかえやすいのは「曖昧な言葉」や「概念の範囲」です。\n\n「成功」「満足」「効率」「良い」といった言葉が使われたとき、それをそのまま受容する前に『具体的に何を指しているのか？』という言葉の輪郭を確定させたくなる傾向があります。\n\n言葉の定義が曖昧なまま展開される議論に対して、居心地の悪さを感じやすい側面があります。",
+        recommends: ["言葉の定義に厳しい哲学・思想系コンテンツ", "契約や権利の境界線を扱う法律・社会構造の解説", "設定資料集や用語集のしっかりしたファンタジー作品"]
+      },
+      cause: {
+        name: "「接続と因果」を検証するタイプ（接続検証）",
+        desc: "あなたは、主張そのものよりも「AだからBである」という命題を結びつける「接続部分」に強く反応する傾向があります。\n\n相関関係と因果関係の混同や、飛躍した論理、隠された第三の要因にいち早く気がつきます。「結論」よりも「その結論に至る構造」が正当であるかを確かめたいという関心が強く働きます。",
+        recommends: ["伏線回収や構造が緻密なミステリー小説・映画", "科学的な仮説検証プロセスを描くドキュメンタリー", "歴史の因果関係を解き明かすノンフィクション"]
+      },
+      apply: {
+        name: "「適用可能性」を精査するタイプ（コンテキスト重視）",
+        desc: "あなたには、どれだけ説得力のある一般論であっても「それが『自分』や『特定の条件』に当てはまるか？」を常に見定める傾向があります。\n\n平均値や「みんなこうです」という主語の大きな主張に対して、個別の状況や環境条件との差分を丁寧に測ろうとします。情報をそのまま受け取るのではなく、自分ごとの文脈へ変換・精査してから判断を下します。",
+        recommends: ["レビューや評価の前提条件（嗜好・環境）を分析する記事", "個人に寄り添うカウンセリングや個別最適化の思想", "立場によって正義が変わる群像劇作品"]
+      },
+      pop: {
+        name: "「範囲と分母」を見逃さないタイプ（母集団感度）",
+        desc: "あなたが気になるのは、提示されたデータや主張の「対象範囲（母集団）」や「主語の大きさ」です。\n\n「若者」「みんな」「◯％」という言葉に接した際、『その対象はどう選ばれたのか？』『集計から漏れている例外はどれくらいいるのか？』といったサンプルの偏りや全体像の捉え方に自然と目がいきます。",
+        recommends: ["統計学やデータサイエンスの入門書", "社会調査や世論形成のカラクリを紐解く分析コンテンツ", "多様な視点が入り乱れる議論・討論番組"]
+      },
+      uncertain: {
+        name: "「未確定を保留」できるタイプ（不確実性許容）",
+        desc: "あなたは、情報が不足している段階で安易に結論を出さず、「分からないものは未確定のまま保持する」ことができる高い柔軟性を持っています。\n\n白黒つける極論や断定的な主張に飛びつかず、グラデーションや観察の余白を残したまま思考を続けることができます。不確実な状況に対する耐性が非常に高いタイプです。",
+        recommends: ["答えのない問いを扱い続ける哲学的対話", "観察型のネイチャードキュメンタリー", "明確なオチをつけないシュール・文学的映画作品"]
+      },
+      balanced: {
+        name: "「直感受容」または「柔軟バランス」タイプ",
+        desc: "あなたには特定の言葉や構造に対して極端につっかかる癖が少なく、提示された情報をフラットかつ柔軟に受け取る傾向が見られます。\n\n特定の認知上の引っ掛かりに囚われず、状況や文脈に応じて素直に情報を受容したり、その場の感情や雰囲気に合わせた判断を下すことができます。",
+        recommends: ["エンタメ性の高い娯楽コンテンツ全般", "感情の機微を描く人間ドラマ・エッセイ", "直感的に楽しめるスポーツや音楽活動"]
+      }
+    };
+
+    // 状態管理
+    let currentQuestionIndex = 0;
+    let scores = { def: 0, cause: 0, apply: 0, pop: 0, uncertain: 0 };
+
+    function startQuiz() {
+      document.getElementById('start-screen').style.display = 'none';
+      document.getElementById('quiz-screen').style.display = 'block';
+      showQuestion();
+    }
+
+    function showQuestion() {
+      const q = questions[currentQuestionIndex];
+      document.getElementById('question-count').innerText = `Q${currentQuestionIndex + 1} / ${questions.length}`;
+      document.getElementById('question-text').innerText = q.text;
+
+      // 進捗バー
+      const progressPercent = ((currentQuestionIndex) / questions.length) * 100;
+      document.getElementById('progress-bar').style.width = `${progressPercent}%`;
+
+      // 選択肢の表示（選択肢順の固定）
+      const optionsContainer = document.getElementById('options');
+      optionsContainer.innerHTML = '';
+
+      q.options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.innerText = opt.label;
+        btn.onclick = () => selectOption(opt.axis);
+        optionsContainer.appendChild(btn);
+      });
+    }
+
+    function selectOption(axis) {
+      if (axis && axis !== 'none') {
+        scores[axis] = (scores[axis] || 0) + 1;
+      }
+
+      currentQuestionIndex++;
+      if (currentQuestionIndex < questions.length) {
+        showQuestion();
+      } else {
+        showResult();
+      }
+    }
+
+    function showResult() {
+      document.getElementById('quiz-screen').style.display = 'none';
+      document.getElementById('result-screen').style.display = 'block';
+
+      // 最高スコアの軸を特定
+      let maxAxis = 'balanced';
+      let maxScore = 0;
+
+      for (const [axis, score] of Object.entries(scores)) {
+        if (score > maxScore) {
+          maxScore = score;
+          maxAxis = axis;
+        }
+      }
+
+      // スコアが2以下ならバランス型
+      if (maxScore <= 2) {
+        maxAxis = 'balanced';
+      }
+
+      const result = resultDefinitions[maxAxis];
+
+      document.getElementById('result-title').innerText = result.name;
+      document.getElementById('result-body').innerText = result.desc;
+
+      const listContainer = document.getElementById('recommend-list');
+      listContainer.innerHTML = '';
+      result.recommends.forEach(rec => {
+        const li = document.createElement('li');
+        li.innerText = rec;
+        listContainer.appendChild(li);
+      });
+    }
+
+    function restartQuiz() {
+      currentQuestionIndex = 0;
+      scores = { def: 0, cause: 0, apply: 0, pop: 0, uncertain: 0 };
+      document.getElementById('result-screen').style.display = 'none';
+      document.getElementById('start-screen').style.display = 'block';
+    }
+  </script>
+</body>
+</html>
