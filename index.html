@@ -198,7 +198,7 @@
             font-size: 0.8rem;
             color: var(--text-sub);
             margin-top: 24px;
-            line-height: 1.4;
+            line-height: 1.5;
             border-top: 1px solid var(--border-color);
             padding-top: 12px;
         }
@@ -243,7 +243,7 @@
         </div>
 
         <div class="section-box">
-            <h3>出やすい処理</h3>
+            <h3>出やすい処理の特徴</h3>
             <ul id="list-frequent"></ul>
         </div>
 
@@ -252,16 +252,15 @@
             <ul id="list-costs"></ul>
         </div>
 
-        <p class="note-text">※ この診断は個人の情報処理の好みを表すものであり、能力の優劣や適性を特定するものではありません。</p>
+        <p class="note-text">
+            ※ 0〜100の数値は能力の優劣や全体平均との比較（偏差値）ではなく、この診断で用意された選択肢の中で「その情報処理をどの程度の割合で選択したか」を表す傾向値です。<br>
+            ※ 本診断は個人の思考の癖や好みを可視化するものであり、能力の適性を特定するものではありません。
+        </p>
         <button class="btn" onclick="resetQuiz()">もう一度診断する</button>
     </div>
 </div>
 
 <script>
-// ==========================================
-// 定義データ
-// ==========================================
-
 const AXES = {
     STRUCTURE: 'STRUCTURE', // 構造化
     CONDITION: 'CONDITION', // 条件・検証
@@ -280,7 +279,6 @@ const AXIS_NAMES = {
     [AXES.COMPRESS]: '圧縮'
 };
 
-// 全30問（配点データ）
 const questions = [
   {
     id: 1,
@@ -584,10 +582,8 @@ const questions = [
   }
 ];
 
-// SCORE_BOUNDS の自動算出
 function calculateScoreBounds(questionList) {
     const bounds = {};
-    
     Object.values(AXES).forEach(axis => {
         bounds[axis] = { min: 0, max: 0 };
     });
@@ -607,7 +603,6 @@ function calculateScoreBounds(questionList) {
 
 const SCORE_BOUNDS = calculateScoreBounds(questions);
 
-// プロファイル組み合わせテキスト定義
 const PROFILE_COMBINATIONS = {
     [`${AXES.STRUCTURE}_${AXES.CONDITION}`]: {
         overview: "情報をそのまま受け取るより、全体の構造を組み立て、成立条件や前提を確認してから理解しようとする処理が出やすい傾向があります。",
@@ -673,10 +668,6 @@ function getFallbackProfile(top1, top2) {
     };
 }
 
-// ==========================================
-// 診断処理ロジック
-// ==========================================
-
 let currentQuestionIndex = 0;
 let rawScores = {};
 
@@ -701,7 +692,8 @@ function showQuestion() {
     document.getElementById('question-number').textContent = `質問 ${currentQuestionIndex + 1} / ${questions.length}`;
     document.getElementById('question-text').textContent = q.text;
     
-    const progressPercent = ((currentQuestionIndex) / questions.length) * 100;
+    // 【修正点1】進捗バー計算の修正 (1問目: 3.3% 〜 30問目: 100%)
+    const progressPercent = ((currentQuestionIndex + 1) / questions.length) * 100;
     document.getElementById('progress-bar').style.width = `${progressPercent}%`;
 
     const container = document.getElementById('options-container');
@@ -779,8 +771,15 @@ function analyzeDistribution(normalizedScores) {
 function generateDiagnosticResult(raw) {
     const normalized = normalizeScores(raw);
     
+    // 【修正点4】同点時に並び順が不確定にならないソート処理
     const sortedAxes = Object.entries(normalized)
-        .sort(([, a], [, b]) => b - a)
+        .sort(([axisA, scoreA], [axisB, scoreB]) => {
+            if (scoreB !== scoreA) {
+                return scoreB - scoreA;
+            }
+            // 同点の場合は定義順にフォールバック
+            return Object.keys(AXES).indexOf(axisA) - Object.keys(AXES).indexOf(axisB);
+        })
         .map(([axis]) => axis);
 
     const top1 = sortedAxes[0];
@@ -817,15 +816,18 @@ function showResult() {
     document.getElementById('result-distribution-tag').textContent = result.display.distributionLabel;
     document.getElementById('result-overview').textContent = result.display.overview;
 
-    // 上位3軸の表示処理（数値のみ表示）
     const sortedAxes = Object.entries(result.scores)
-        .sort(([, a], [, b]) => b - a);
+        .sort(([axisA, scoreA], [axisB, scoreB]) => {
+            if (scoreB !== scoreA) return scoreB - scoreA;
+            return Object.keys(AXES).indexOf(axisA) - Object.keys(AXES).indexOf(axisB);
+        });
 
+    // 【修正点2】上位3軸のスコア表記を「XX / 100」に明確化
     const top3List = document.getElementById('list-top-axes');
     top3List.innerHTML = '';
     sortedAxes.slice(0, 3).forEach(([axis, score]) => {
         const li = document.createElement('li');
-        li.textContent = `${AXIS_NAMES[axis]} ${score}`;
+        li.textContent = `${AXIS_NAMES[axis]} ${score} / 100`;
         top3List.appendChild(li);
     });
 
@@ -878,7 +880,7 @@ function renderChart(normalizedScores) {
         data: {
             labels: labels,
             datasets: [{
-                label: '認知処理の選択傾向 (0-100)',
+                label: '認知処理の選択傾向',
                 data: dataValues,
                 backgroundColor: 'rgba(37, 99, 235, 0.2)',
                 borderColor: 'rgba(37, 99, 235, 1)',
