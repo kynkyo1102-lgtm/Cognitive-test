@@ -191,7 +191,7 @@
             color: var(--text-main);
         }
 
-        .section-box ul {
+        .section-box ul, .section-box ol {
             padding-left: 20px;
             font-size: 0.9rem;
             color: var(--text-sub);
@@ -242,6 +242,11 @@
 
         <div class="chart-container">
             <canvas id="radarChart"></canvas>
+        </div>
+
+        <div class="section-box">
+            <h3>主に出やすい処理（上位3軸）</h3>
+            <ol id="list-top-axes" style="font-weight: 600; color: var(--text-main);"></ol>
         </div>
 
         <div class="section-box">
@@ -467,38 +472,25 @@ const QUESTIONS = [
 ];
 
 // ==========================================
-// 1. SCORE_BOUNDS の自動算出ロジック
+// 1. SCORE_BOUNDS の自動算出ロジック（修正版）
 // ==========================================
 
 function calculateScoreBounds(questions) {
     const bounds = {};
     
-    // 各軸を0で初期化
+    // 全軸のminを0, maxを0で初期化
     Object.values(AXES).forEach(axis => {
         bounds[axis] = { min: 0, max: 0 };
     });
 
-    // 設問ごとに各軸が取り得る最小・最大配点を加算
+    // 設問ごとに各軸の最大配点（選んだ場合の最大値）を加算
     questions.forEach(q => {
-        const qBounds = {};
-        
-        q.options.forEach(opt => {
-            Object.entries(opt.scores).forEach(([axis, score]) => {
-                if (!qBounds[axis]) {
-                    qBounds[axis] = { min: score, max: score };
-                } else {
-                    qBounds[axis].min = Math.min(qBounds[axis].min, score);
-                    qBounds[axis].max = Math.max(qBounds[axis].max, score);
-                }
-            });
-        });
-
-        // 全体バウンズに加算
-        Object.entries(qBounds).forEach(([axis, b]) => {
-            if (bounds[axis]) {
-                bounds[axis].min += b.min;
-                bounds[axis].max += b.max;
-            }
+        Object.values(AXES).forEach(axis => {
+            const maxForQuestion = Math.max(
+                0,
+                ...q.options.map(opt => (opt.scores && opt.scores[axis]) || 0)
+            );
+            bounds[axis].max += maxForQuestion;
         });
     });
 
@@ -665,7 +657,7 @@ function analyzeDistribution(normalizedScores) {
         return {
             type: 'PROMINENT',
             label: '特定処理が前に出るプロファイル',
-            description: '特定の情報処理スタイルが強く選択されやすく、状況によって処理の好みがはっきり分かれやすい傾向があります。'
+            description: '特定の情報処理スタイルが他の処理より前に出やすく、情報を見る際の入口が比較的はっきりしている傾向があります。'
         };
     } else if (stdDev < 8 && diffTop1Top2 < 10) {
         return {
@@ -676,8 +668,8 @@ function analyzeDistribution(normalizedScores) {
     } else {
         return {
             type: 'MODERATE',
-            label: 'バランス型のプロファイル',
-            description: '主軸となる処理を持ちつつも、状況に応じて他の処理スタイルも並行して使い分けやすい傾向があります。'
+            label: '複数の処理が組み合わさるプロファイル',
+            description: '特定の処理がやや前に出つつも、複数の情報処理スタイルが組み合わさって選択されやすい傾向があります。'
         };
     }
 }
@@ -723,6 +715,18 @@ function showResult() {
     document.getElementById('result-title').textContent = result.display.title;
     document.getElementById('result-distribution-tag').textContent = result.display.distributionLabel;
     document.getElementById('result-overview').textContent = result.display.overview;
+
+    // 上位3軸の表示処理
+    const sortedAxes = Object.entries(result.scores)
+        .sort(([, a], [, b]) => b - a);
+
+    const top3List = document.getElementById('list-top-axes');
+    top3List.innerHTML = '';
+    sortedAxes.slice(0, 3).forEach(([axis, score]) => {
+        const li = document.createElement('li');
+        li.textContent = `${AXIS_NAMES[axis]} (${score} pt)`;
+        top3List.appendChild(li);
+    });
 
     const frequentList = document.getElementById('list-frequent');
     frequentList.innerHTML = '';
