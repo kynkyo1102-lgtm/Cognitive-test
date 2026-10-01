@@ -225,13 +225,16 @@
     </div>
 
     <!-- 結果画面 -->
-    <div id="screen-result" class="hidden">
-        <div class="result-header">
-            <p style="font-size:0.85rem; color:var(--text-sub);">あなたの情報処理プロファイル</p>
-            <div id="result-title" class="result-title"></div>
-            <div id="result-distribution-tag" class="result-distribution-tag"></div>
-            <p id="result-overview" class="description" style="text-align:left;"></p>
-        </div>
+    <!-- 変更例 -->
+<div class="section-box">
+    <h3>あなたの思考の「あるある」特徴</h3>
+    <ul id="list-frequent"></ul>
+</div>
+
+<div class="section-box">
+    <h3>こんな場面、ちょっとモヤッとするかも？</h3>
+    <ul id="list-costs"></ul>
+</div>
 
         <div class="chart-container">
             <canvas id="radarChart"></canvas>
@@ -605,167 +608,76 @@ const SCORE_BOUNDS = calculateScoreBounds(questions);
 
 const PROFILE_COMBINATIONS = {
     [`${AXES.STRUCTURE}_${AXES.CONDITION}`]: {
-        overview: "情報をそのまま受け取るより、全体の構造を組み立て、成立条件や前提を確認してから理解しようとする処理が出やすい傾向があります。",
+        title: "「整頓された設計図を求める」クラフトマンタイプ",
+        overview: "いきなり走るよりも『まず全体像とルールを完璧に把握したい』慎重派の職人さん。複雑な状況でも、頭の中でサクサク箱分けしてクリアにしていく整理の達人です。",
         frequentBehaviors: [
-            "全体像を整理してから細部を見る",
-            "前提条件や根拠を確認する",
-            "論理の飛躍や条件の抜けを確認する"
+            "「で、結局全体で何をしようとしてるんだっけ？」と定期的に確認したくなる",
+            "話を聞きながら、頭の中で勝手に箇条書きやマインドマップを作っている",
+            "「それってどういう例外条件のときの話？」と抜け漏れをすぐ見つける"
         ],
         cognitiveCosts: [
-            "前提が共有されないまま結論を求められる場面",
-            "話が整理されていない状態で即答を求められる場面",
-            "「細かいことはいいから進めよう」と検証を飛ばされる場面"
+            "「理由はいいからノリでイイ感じにして！」と丸投げされたとき",
+            "前提やゴールがころころ変わって、軸がブレまくっている会議",
+            "仕組みやルールが整っていないカオスな状態でのぶっつけ本番"
         ]
     },
     [`${AXES.STRUCTURE}_${AXES.CONTEXT}`]: {
-        overview: "全体像の構造化と、その背景や経緯といった文脈情報の両方を重視して捉えようとする処理が出やすい傾向があります。",
+        title: "「ストーリーを描き切る」ナビゲータータイプ",
+        overview: "全体的な組み立てだけでなく、『なぜそれをするのか』という背景や感情のストーリーをとても大切にするタイプ。チームの方向性を優しく指し示す司令塔です。",
         frequentBehaviors: [
-            "関係性や位置づけを体系的に整理する",
-            "なぜその状況に至ったかの経緯を確認する",
-            "全体における意味付けを行う"
+            "「どういう経緯でこの話になったの？」と歴史や背景をちゃんと聞きたがる",
+            "バラバラに見える出来事を「要するにこういう流れだよね」とつなぎ合わせる",
+            "相手の立場や心情を組み込んだ上で、納得感のある計画を立てる"
         ],
         cognitiveCosts: [
-            "背景説明が一切なく単発の指示だけが出される場面",
-            "構造が見えないまま感覚的な判断を求められる場面"
+            "背景やストーリーの説明がゼロで、単発の作業だけをポイ投げされたとき",
+            "人の気持ちやコンテキストを無視して、数字だけでバッサリ決められる瞬間",
+            "脈絡のない指示が次々と飛んでくるカオスな環境"
         ]
     },
     [`${AXES.CONDITION}_${AXES.HOLD}`]: {
-        overview: "前提や成立条件を厳密に確認し、情報が不十分な場合は安易に結論を出さず判断を保留する処理が出やすい傾向があります。",
+        title: "「リスクを見逃さない」慎重派の鑑定士タイプ",
+        overview: "条件やルールをしっかり見極め、納得がいくまで焦って結論を出さない冷静な観察者。『一旦持ち帰って考えます』が最強の武器です。",
         frequentBehaviors: [
-            "判断に必要な条件を洗い出す",
-            "不確定要素がある場合に判断を一度留める",
-            "リスクや穴を事前にチェックする"
+            "「まだ情報が足りないな」と感じたら、周りに流されず静観できる",
+            "うまい話を聞いたとき、真っ先に「裏の条件やデメリットは？」と探る",
+            "トラブルが起きたときほど、一歩引いて「で、何が起きてるの？」と冷静"
         ],
         cognitiveCosts: [
-            "十分な情報がないまま即断即決を迫られる場面",
-            "根拠の薄い説をノリで採択させられそうな場面"
+            "根拠や情報がスカスカなのに「今すぐ決めて！」と詰められる場面",
+            "ノリと勢いだけで怪しい企画がどんどん進んでいく空間",
+            "結論を急かされて、じっくり検証する時間を奪われること"
         ]
     },
     [`${AXES.COMPRESS}_${AXES.CONCRETE}`]: {
-        overview: "実際の具体例を取り込みつつ、それを手短なポイントや本質へ素早く凝縮して捉えようとする処理が出やすい傾向があります。",
+        title: "「本質を即スナイプする」実践派リアリストタイプ",
+        overview: "『で、具体的に何をやればいいの？』を素早く見抜き、要点だけをズバッと掴む超実践派。無駄な長話は大嫌いで、スピーディーに成果を出したいタイプです。",
         frequentBehaviors: [
-            "手触りのある具体的な事例から理解する",
-            "複雑な内容を短い言葉に要約する",
-            "実用的なポイントに絞って把握する"
+            "長すぎるメールやチャットを見ると、無意識に「結論はどこ？」と探す",
+            "抽象的な議論より「たとえばどんな例がある？」と具体例で理解する",
+            "学んだことや聞いた話を、一言のキャッチコピーに要約するのが得意"
         ],
         cognitiveCosts: [
-            "具体例のない抽象論が長時間続く場面",
-            "要点が何かわからない長文や長話を聞く場面"
+            "結論がなかなか見えない、ダラダラした長時間の打ち合わせ",
+            "「具体的にどう動けばいいか」が見えないフワッとした議論",
+            "前置きや形容詞が多すぎて、本題になかなかたどりつかない説明"
         ]
     }
 };
 
+// 組み合わせが未定義の場合の汎用フォローバック
 function getFallbackProfile(top1, top2) {
     return {
-        overview: `${AXIS_NAMES[top1]}と${AXIS_NAMES[top2]}の視点を優先的に組み合わせ、情報を整理・解釈しようとする処理スタイルです。`,
+        title: `「${AXIS_NAMES[top1]} × ${AXIS_NAMES[top2]}」ハイブリッドタイプ`,
+        overview: `【${AXIS_NAMES[top1]}】の視点と【${AXIS_NAMES[top2]}】の視点を上手に切り替えながら、柔軟に情報を処理していくバランス感覚の持ち主です。`,
         frequentBehaviors: [
-            `${AXIS_NAMES[top1]}に関する要素を自発的に確認する`,
-            `${AXIS_NAMES[top2]}の観点から状況を補強・検証する`
+            `まず【${AXIS_NAMES[top1]}】の観点から「どういうことか」をピンポイントで捉える`,
+            `必要に応じて【${AXIS_NAMES[top2]}】の視点を足して、理解をより深める`
         ],
         cognitiveCosts: [
-            `${AXIS_NAMES[top1]}や${AXIS_NAMES[top2]}の処理が行いにくい環境や急な状況変化`
+            `自分の得意な【${AXIS_NAMES[top1]}】や【${AXIS_NAMES[top2]}】のアプローチが使えない極端な環境`
         ]
     };
-}
-
-let currentQuestionIndex = 0;
-let rawScores = {};
-
-function initScores() {
-    rawScores = {};
-    Object.values(AXES).forEach(axis => {
-        rawScores[axis] = 0;
-    });
-}
-
-function startQuiz() {
-    initScores();
-    currentQuestionIndex = 0;
-    document.getElementById('screen-start').classList.add('hidden');
-    document.getElementById('screen-result').classList.add('hidden');
-    document.getElementById('screen-quiz').classList.remove('hidden');
-    showQuestion();
-}
-
-function showQuestion() {
-    const q = questions[currentQuestionIndex];
-    document.getElementById('question-number').textContent = `質問 ${currentQuestionIndex + 1} / ${questions.length}`;
-    document.getElementById('question-text').textContent = q.text;
-    
-    // 【修正点1】進捗バー計算の修正 (1問目: 3.3% 〜 30問目: 100%)
-    const progressPercent = ((currentQuestionIndex + 1) / questions.length) * 100;
-    document.getElementById('progress-bar').style.width = `${progressPercent}%`;
-
-    const container = document.getElementById('options-container');
-    container.innerHTML = '';
-
-    q.options.forEach(opt => {
-        const btn = document.createElement('button');
-        btn.className = 'option-btn';
-        btn.textContent = opt.text;
-        btn.onclick = () => selectOption(opt.scores);
-        container.appendChild(btn);
-    });
-}
-
-function selectOption(scores) {
-    Object.entries(scores).forEach(([axis, val]) => {
-        if (rawScores[axis] !== undefined) {
-            rawScores[axis] += val;
-        }
-    });
-
-    currentQuestionIndex++;
-    if (currentQuestionIndex < questions.length) {
-        showQuestion();
-    } else {
-        showResult();
-    }
-}
-
-function normalizeScores(raw) {
-    const normalized = {};
-    Object.keys(raw).forEach(axis => {
-        const { min, max } = SCORE_BOUNDS[axis];
-        if (max === min) {
-            normalized[axis] = 0;
-        } else {
-            const score = Math.max(min, Math.min(max, raw[axis]));
-            normalized[axis] = Math.round(((score - min) / (max - min)) * 100);
-        }
-    });
-    return normalized;
-}
-
-function analyzeDistribution(normalizedScores) {
-    const values = Object.values(normalizedScores);
-    const sorted = [...values].sort((a, b) => b - a);
-    
-    const mean = values.reduce((sum, val) => sum + val, 0) / values.length;
-    const variance = values.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / values.length;
-    const stdDev = Math.sqrt(variance);
-    
-    const diffTop1Top2 = sorted[0] - sorted[1];
-
-    if (stdDev > 16 || diffTop1Top2 >= 18) {
-        return {
-            type: 'PROMINENT',
-            label: '特定処理が前に出るプロファイル',
-            description: '特定の情報処理スタイルが他の処理より前に出やすく、情報を見る際の入口が比較的はっきりしている傾向があります。'
-        };
-    } else if (stdDev < 8 && diffTop1Top2 < 10) {
-        return {
-            type: 'BALANCED',
-            label: '複数の処理が近いプロファイル',
-            description: '特定の処理だけに偏らず、複数の情報処理スタイルを近い頻度で選択しやすい傾向があります。'
-        };
-    } else {
-        return {
-            type: 'MODERATE',
-            label: '複数の処理が組み合わさるプロファイル',
-            description: '特定の処理がやや前に出つつも、複数の情報処理スタイルが組み合わさって選択されやすい傾向があります。'
-        };
-    }
 }
 
 function generateDiagnosticResult(raw) {
