@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>あなたの頭は、何に引っかかる？ | 認知癖診断 v0.5</title>
+    <title>認知スタイル診断 | 30問でわかる情報処理プロファイル</title>
     <!-- Chart.js (レーダーチャート描画用) -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
-            --bg-color: #f0f4f8;
+            --bg-color: #f8fafc;
             --card-bg: #ffffff;
-            --text-main: #1e293b;
-            --text-sub: #64748b;
-            --accent-color: #4f46e5;
-            --accent-hover: #4338ca;
+            --text-main: #0f172a;
+            --text-sub: #475569;
+            --accent-color: #3b82f6;
+            --accent-hover: #2563eb;
             --border-color: #e2e8f0;
         }
 
@@ -72,12 +72,12 @@
         }
 
         /* 質問エリア */
-        .scenario-badge {
+        .category-badge {
             display: inline-block;
             font-size: 0.75rem;
             font-weight: 700;
             color: var(--accent-color);
-            background-color: #eef2ff;
+            background-color: #eff6ff;
             padding: 4px 8px;
             border-radius: 4px;
             margin-bottom: 8px;
@@ -88,17 +88,6 @@
             font-weight: 700;
             line-height: 1.5;
             margin-bottom: 20px;
-            background: #f8fafc;
-            padding: 16px;
-            border-radius: 8px;
-            border-left: 4px solid var(--accent-color);
-        }
-
-        .instruction-prompt {
-            font-size: 0.9rem;
-            font-weight: 700;
-            color: var(--text-sub);
-            margin-bottom: 12px;
         }
 
         .options-container {
@@ -158,8 +147,8 @@
         }
 
         .instruction-header {
-            font-size: 1.15rem;
-            font-weight: 700;
+            font-size: 1.2rem;
+            font-weight: 800;
             color: var(--accent-color);
             margin-bottom: 16px;
             padding-bottom: 8px;
@@ -188,6 +177,7 @@
             color: #334155;
             line-height: 1.6;
             margin: 0;
+            white-space: pre-wrap;
         }
 
         .restart-btn {
@@ -217,49 +207,48 @@
     <!-- 診断画面 -->
     <div id="quiz-screen">
         <div class="progress-container">
-            <div class="progress-text" id="progress-text">Q1 / 40</div>
+            <div class="progress-text" id="progress-text">Q1 / 30</div>
             <div class="progress-bar-bg">
                 <div class="progress-bar-fill" id="progress-bar"></div>
             </div>
         </div>
-        <div class="scenario-badge">シナリオ問題</div>
-        <div class="question-title" id="question-text">シナリオ文がここに表示されます</div>
-        <div class="instruction-prompt">あなたが最も真っ先に引っかかる（モヤッとする）ポイントは？</div>
+        <div class="category-badge" id="category-badge">Ⅰ. 情報の受け取り方</div>
+        <div class="question-title" id="question-text">質問文がここに表示されます</div>
         <div class="options-container" id="options-container">
-            <!-- 5つの選択肢ボタン -->
+            <!-- 4つの選択肢ボタン -->
         </div>
     </div>
 
     <!-- 結果画面 -->
     <div id="result-screen" class="hidden">
-        <div class="result-title">あなたの認知癖・思考傾向</div>
-        <div class="result-subtitle">無意識の着眼点分析 ＆ あなたの取扱説明書</div>
+        <div class="result-title">あなたの認知プロファイル</div>
+        <div class="result-subtitle">30問の回答から分析された「情報処理の癖」</div>
         
         <div class="chart-container">
             <canvas id="radarChart"></canvas>
         </div>
 
         <div class="instruction-card">
-            <div class="instruction-header" id="type-title">あなたのメイン思考タイプ</div>
+            <div class="instruction-header" id="type-title">メインスタイル</div>
             
             <div class="section-box">
-                <div class="section-title">💪 強み・発揮できる才能</div>
+                <div class="section-title">🧠 情報処理の特徴</div>
+                <p class="section-content" id="type-feature"></p>
+            </div>
+
+            <div class="section-box">
+                <div class="section-title">⚡ 得意になりやすい処理</div>
                 <p class="section-content" id="type-strength"></p>
             </div>
 
             <div class="section-box">
-                <div class="section-title">⚠ 陥りがちな罠・コミュニケーションの摩擦</div>
-                <p class="section-content" id="type-trap"></p>
+                <div class="section-title">⚠ 負荷がかかりやすい処理（認知コスト高）</div>
+                <p class="section-content" id="type-cost"></p>
             </div>
 
             <div class="section-box">
-                <div class="section-title">💡 トラブルを防ぐ処方箋・活用術</div>
-                <p class="section-content" id="type-prescription"></p>
-            </div>
-
-            <div class="section-box">
-                <div class="section-title">🚀 輝く環境・向いているポジション</div>
-                <p class="section-content" id="type-environment"></p>
+                <div class="section-title">💡 認知の取扱説明書（アドバイス）</div>
+                <p class="section-content" id="type-advice"></p>
             </div>
         </div>
 
@@ -268,561 +257,387 @@
 </div>
 
 <script>
-    // 40問のシナリオ問題（各問題に5つの思考軸の選択肢を用意）
+    // 6つの認知スタイル軸
+    // 1. 構造化型 (Structure): 全体像・論理・整理を重視
+    // 2. 条件分析型 (Analysis): 前提・因果・境界・検証を重視
+    // 3. 文脈読解型 (Context): 背景・心理・他者・関係性を重視
+    // 4. 保留・慎重型 (Hold): 拙速な判断の回避・不確実さへの耐性
+    // 5. 探索・試行型 (Explore): とりあえず行動・具体例・体験重視
+    // 6. 圧縮・要約型 (Compress): 結論・要約・効率重視
+
     const questions = [
+        // Ⅰ. 情報の受け取り方
         {
-            text: "同僚「この新商品はSNSで大人気で、満足度98%なんです！すぐに我が社でも導入しましょう！」",
+            category: "Ⅰ. 情報の受け取り方",
+            text: "ある出来事について、AさんとBさんの説明が食い違っています。あなたなら？",
             options: [
-                { axis: "definition", text: "「満足度」ってどういう設問で聞いた結果のこと？" },
-                { axis: "causality", text: "SNSで人気なことと我が社で成功する理屈が繋がってなくない？" },
-                { axis: "population", text: "それって何人を対象に調査したデータなの？" },
-                { axis: "applicability", text: "他社の客層と我が社の客層の違いを考慮した？" },
-                { axis: "uncertainty_low", text: "もし失敗した時のリスクや撤退基準は決まってる？" }
+                { text: "A. どちらか一方の説明をひとまず採用する", style: "Compress" },
+                { text: "B. 両方の話を聞いて共通点を探す", style: "Structure" },
+                { text: "C. 情報が足りないので判断を保留する", style: "Hold" },
+                { text: "D. なぜ説明が食い違ったのかを考える", style: "Context" }
             ]
         },
         {
-            text: "上司「来期の目標は『チーム全員でイノベーションを起こす』ことに決まったから、よろしく！」",
+            category: "Ⅰ. 情報の受け取り方",
+            text: "長い文章を読むとき、あなたは？",
             options: [
-                { axis: "definition", text: "具体的に何をもって『イノベーション』と呼ぶのか定義してほしい。" },
-                { axis: "causality", text: "どういうアクションを起こせばイノベーションに繋がるのか仕組みが見えない。" },
-                { axis: "population", text: "全員って言っても、部署や職種によって状況が全く違うのでは？" },
-                { axis: "applicability", text: "うちの現行業務のリソースで、本当にその目標が適用できるのか？" },
-                { axis: "uncertainty_low", text: "評価基準や達成目標が曖昧すぎて何をすればいいかわからない。" }
+                { text: "A. 最初から最後まで順番に読む", style: "Explore" },
+                { text: "B. まず結論を探す", style: "Compress" },
+                { text: "C. 必要そうなところだけ拾い読む", style: "Analysis" },
+                { text: "D. 全体の構造を把握してから読む", style: "Structure" }
             ]
         },
         {
-            text: "ネット記事「成功者はみんな朝5時に起きている！あなたも明日から朝型になろう」",
+            category: "Ⅰ. 情報の受け取り方",
+            text: "初めて聞く話に知らない言葉がたくさん出てきた。",
             options: [
-                { axis: "definition", text: "ここで言う「成功者」の定義って年収？ポジション？何のこと？" },
-                { axis: "causality", text: "「朝起きること」が「成功」に繋がる直接の因果関係はあるの？" },
-                { axis: "population", text: "夜型で成功した人のデータや全体の割合は無視されてない？" },
-                { axis: "applicability", text: "体質や生活リズムが違う自分にも再現できる話なのだろうか？" },
-                { axis: "uncertainty_low", text: "いきなり生活習慣を変えて体調を崩すリスクはないのだろうか？" }
+                { text: "A. とりあえず読み進める", style: "Explore" },
+                { text: "B. その言葉の意味を調べる", style: "Analysis" },
+                { text: "C. 前後の文脈から推測する", style: "Context" },
+                { text: "D. 全体が分かれば細部は気にしない", style: "Structure" }
             ]
         },
         {
-            text: "友人「このサプリ飲んだら1ヶ月で5キロ痩せたよ！絶対に試した方がいい！」",
+            category: "Ⅰ. 情報の受け取り方",
+            text: "「最近こういう人が増えた」と言われた。",
             options: [
-                { axis: "definition", text: "脂肪が減ったのか水分が抜けたのか、何の5キロなのか気になる。" },
-                { axis: "causality", text: "サプリのどんな成分がどう作用して痩せたのかメカニズムを知りたい。" },
-                { axis: "population", text: "たった1人の体験談（N=1）で効果があると決めつけるのは危険。" },
-                { axis: "applicability", text: "食事制限や運動など、友人と同じ条件を自分も揃えられるか？" },
-                { axis: "uncertainty_low", text: "副作用や健康被害のリスクがないか安全性が確定していない。" }
+                { text: "A. そういうこともあると思う", style: "Explore" },
+                { text: "B. 何を根拠に「増えた」と言っているのか気になる", style: "Analysis" },
+                { text: "C. 自分の周囲でもそうか確認する", style: "Context" },
+                { text: "D. そういう一般論はあまり信用しない", style: "Hold" }
             ]
         },
         {
-            text: "後輩「〇〇さん（先輩）がこう言っていたので、このやり方で進めておきました！」",
+            category: "Ⅰ. 情報の受け取り方",
+            text: "説明を聞いていて「なんとなく違う気がする」と感じた。",
             options: [
-                { axis: "definition", text: "先輩の発言のニュアンスや具体的な言葉の意図を正確に確認した？" },
-                { axis: "causality", text: "なぜそのやり方が最適と言えるのか、筋道立てて説明できる？" },
-                { axis: "population", text: "1人の先輩の意見だけで進めず、他の人の意見も聞いた？" },
-                { axis: "applicability", text: "今回のケースと先輩が言っていたケースは前提条件が違わない？" },
-                { axis: "uncertainty_low", text: "事前に進めてトラブルが起きた時の責任はどうするつもり？" }
+                { text: "A. その感覚を一旦置いておく", style: "Hold" },
+                { text: "B. どこが違うのか言葉にしてみる", style: "Compress" },
+                { text: "C. 自分の理解が間違っていないか確認する", style: "Structure" },
+                { text: "D. 説明の前提から見直す", style: "Analysis" }
+            ]
+        },
+
+        // Ⅱ. 推論・問題の組み立て方
+        {
+            category: "Ⅱ. 推論・問題の組み立て方",
+            text: "ある方法を試したら、予想と違う結果になった。",
+            options: [
+                { text: "A. 結果をそのまま受け入れる", style: "Explore" },
+                { text: "B. 自分の予想のどこが間違っていたか考える", style: "Structure" },
+                { text: "C. 条件によって結果が変わった可能性を考える", style: "Analysis" },
+                { text: "D. そもそもの前提が間違っていなかったか考える", style: "Hold" }
             ]
         },
         {
-            text: "ニュース「〇〇業界が空前の大ブーム！参入企業が相次いでいます」",
+            category: "Ⅱ. 推論・問題の組み立て方",
+            text: "複雑な問題を解くことになった。",
             options: [
-                { axis: "definition", text: "何をもって「空前の大ブーム」と表現しているのか基準がわからない。" },
-                { axis: "causality", text: "なぜ今そのブームが起きているのか構造的な理由が知りたい。" },
-                { axis: "population", text: "一部の注目企業だけでなく業界全体の何%が儲かっているのか？" },
-                { axis: "applicability", text: "今から自社が参入して本当に先行者と同じように通用するのか？" },
-                { axis: "uncertainty_low", text: "ブームが去った後の撤退リスクや損失の対策はあるのか？" }
+                { text: "A. とりあえず手を動かしてみる", style: "Explore" },
+                { text: "B. 問題を細かく分解する", style: "Analysis" },
+                { text: "C. まず全体像を把握する", style: "Structure" },
+                { text: "D. 似た問題の解決方法を探す", style: "Compress" }
             ]
         },
         {
-            text: "コンサルタント「他社で大成功したこのフレームワークを導入すれば、業務効率が劇的に上がります」",
+            category: "Ⅱ. 推論・問題の組み立て方",
+            text: "「この方法なら絶対うまくいく」と説明された。",
             options: [
-                { axis: "definition", text: "ここで言う「業務効率」とは具体的にどの指標のことか？" },
-                { axis: "causality", text: "フレームワークを当てはめるだけで効率が上がる理屈が不明。" },
-                { axis: "population", text: "成功した他社は何社中何社？失敗事例の割合は？" },
-                { axis: "applicability", text: "自社の独特な現場オペレーションにそのまま適用できるのか？" },
-                { axis: "uncertainty_low", text: "導入途中で現場が混乱したり停滞するリスクのケアはあるのか？" }
+                { text: "A. 成功例があるなら試してみる", style: "Explore" },
+                { text: "B. どういう条件ならうまくいくのか聞く", style: "Analysis" },
+                { text: "C. 「絶対」という言葉が気になる", style: "Hold" },
+                { text: "D. 自分の場合にも当てはまるか考える", style: "Context" }
             ]
         },
         {
-            text: "店員「当店で一番人気のメニューです！迷ったらこれにすれば間違いありません！」",
+            category: "Ⅱ. 推論・問題の組み立て方",
+            text: "二つの出来事が続けて起きた。「Aの後にBが起きた」という事実がある。",
             options: [
-                { axis: "definition", text: "「一番人気」とは注文数のこと？売上金額のこと？" },
-                { axis: "causality", text: "なぜ人気なのか、味やコスパなどの理由がわからない。" },
-                { axis: "population", text: "どんな客層（男女比や年齢層）に人気なのかで話が変わる。" },
-                { axis: "applicability", text: "他人の好みが自分の好みにそのまま当てはまるとは限らない。" },
-                { axis: "uncertainty_low", text: "万が一好みに合わなかった時のガッカリ感を避けたい。" }
+                { text: "A. AがBに影響した可能性を考える", style: "Structure" },
+                { text: "B. 他にも原因がないか考える", style: "Analysis" },
+                { text: "C. 関係があるかどうかはまだ分からないと思う", style: "Hold" },
+                { text: "D. まずAとBそれぞれの事情を見る", style: "Context" }
             ]
         },
         {
-            text: "セミナー講師「自由で柔軟な思考こそが、これからの時代に求められるスキルです」",
+            category: "Ⅱ. 推論・問題の組み立て方",
+            text: "問題の解決策を考えるとき、一番気になるのは？",
             options: [
-                { axis: "definition", text: "「自由で柔軟な思考」の具体的な定義や状態とは？" },
-                { axis: "causality", text: "それがなぜ成果や結果に繋がるのか論理的説明が欲しい。" },
-                { axis: "population", text: "自由な思考を求めていない職種や業界もたくさんあるのでは？" },
-                { axis: "applicability", text: "明日からの自分の日常業務で具体的にどう使えばいいのか？" },
-                { axis: "uncertainty_low", text: "ルールや基準がない中で動くのは危険ではないのか？" }
+                { text: "A. すぐ実行できるか", style: "Explore" },
+                { text: "B. なぜその問題が起きているのか", style: "Analysis" },
+                { text: "C. 他にどんな方法があるか", style: "Structure" },
+                { text: "D. その方法が別の問題を生まないか", style: "Hold" }
+            ]
+        },
+
+        // Ⅲ. 不確実さとの付き合い方
+        {
+            category: "Ⅲ. 不確実さとの付き合い方",
+            text: "情報が十分ではないけれど、今日中に判断しなければならない。",
+            options: [
+                { text: "A. 今ある情報で決める", style: "Compress" },
+                { text: "B. 重要な情報だけ追加で集める", style: "Analysis" },
+                { text: "C. 不確実な部分を残したまま決める", style: "Explore" },
+                { text: "D. 判断そのものを延期できないか考える", style: "Hold" }
             ]
         },
         {
-            text: "取引先「とりあえずざっくりとした見積もりだけ先に送ってください！」",
+            category: "Ⅲ. 不確実さとの付き合い方",
+            text: "「この話、本当かどうか分からない」と言われた。",
             options: [
-                { axis: "definition", text: "「ざっくり」の範囲や必要な項目の定義をすり合わせたい。" },
-                { axis: "causality", text: "要件が決まっていないのに金額が出る理屈が通らない。" },
-                { axis: "population", text: "他社にはどんな基準で見積もりを出しているのか知りたい。" },
-                { axis: "applicability", text: "過去の案件の金額を今回のケースにそのまま適用して良いのか？" },
-                { axis: "uncertainty_low", text: "後から「話が違う」と揉めるリスクを絶対に避けたい。" }
-            ]
-        },
-        // 11〜40問目（同様に5つの着眼点を網羅したシナリオ）
-        {
-            text: "書籍「これ1冊でOK！誰でもわかるマーケティングの基本」",
-            options: [
-                { axis: "definition", text: "「マーケティングの基本」の範囲がどこまでか不明。" },
-                { axis: "causality", text: "なぜこれを読めば「わかる」ようになるのか根拠が薄い。" },
-                { axis: "population", text: "「誰でも」は言い過ぎで、人によって難易度は違うはず。" },
-                { axis: "applicability", text: "BtoBや専門的な自分のビジネスにも適用できるのか？" },
-                { axis: "uncertainty_low", text: "情報が古かったり間違っていたりするリスクはないか。" }
+                { text: "A. 分からないなら保留する", style: "Hold" },
+                { text: "B. 本当だとしたら何が起きるか考える", style: "Structure" },
+                { text: "C. 嘘だとしたら何が起きるか考える", style: "Analysis" },
+                { text: "D. 確認できる情報を探す", style: "Explore" }
             ]
         },
         {
-            text: "企画書「AIを活用して、業務時間を50%削減します」",
+            category: "Ⅲ. 不確実さとの付き合い方",
+            text: "自分の予想と現実が食い違った。",
             options: [
-                { axis: "definition", text: "削減対象の「業務時間」とはどの作業のこと？" },
-                { axis: "causality", text: "AI導入から50%削減に至る具体的なプロセスが見えない。" },
-                { axis: "population", text: "一部の作業だけ50%減っても全体では数%じゃないか？" },
-                { axis: "applicability", text: "現場の担当者がAIを使いこなせる前提になっているか？" },
-                { axis: "uncertainty_low", text: "AIの誤回答によるやり直しリスクは計算されているか？" }
+                { text: "A. 現実を優先する", style: "Explore" },
+                { text: "B. 予想が外れた理由を探す", style: "Analysis" },
+                { text: "C. どちらにも成立する条件があると考える", style: "Structure" },
+                { text: "D. しばらく様子を見る", style: "Hold" }
             ]
         },
         {
-            text: "面接官「あなたの強みは一言で言うと何ですか？」",
+            category: "Ⅲ. 不確実さとの付き合い方",
+            text: "ある問題について専門家の意見が二つに分かれている。",
             options: [
-                { axis: "definition", text: "一言でまとめると本来の意味やニュアンスが削ぎ落とされる。" },
-                { axis: "causality", text: "強みそのものより「なぜそれが強みと言えるか」の背景が重要。" },
-                { axis: "population", text: "他者と比較した相対的な強みなのか自分の中での強みなのか。" },
-                { axis: "applicability", text: "御社のどんな業務環境でその強みが発揮できるのか。" },
-                { axis: "uncertainty_low", text: "抽象的な回答をして誤解されるリスクを避けたい。" }
+                { text: "A. より信頼できそうな方を選ぶ", style: "Compress" },
+                { text: "B. それぞれの前提を比較する", style: "Analysis" },
+                { text: "C. まだ結論が出ていないと考える", style: "Hold" },
+                { text: "D. 自分に関係する部分だけ考える", style: "Context" }
             ]
         },
         {
-            text: "友人「あのカフェ、料理の提供が遅くて最悪だったよ」",
+            category: "Ⅲ. 不確実さとの付き合い方",
+            text: "「分からない」と答えることについて、一番近いのは？",
             options: [
-                { axis: "definition", text: "「遅い」って具体的に何分待たされたの？" },
-                { axis: "causality", text: "混雑していたからなのかスタッフ不足なのか理由は？" },
-                { axis: "population", text: "たまたまその時だけ遅かった可能性はない？" },
-                { axis: "applicability", text: "自分が空いている時間に行っても同じ状態になるか？" },
-                { axis: "uncertainty_low", text: "自分が行って嫌な思いをするリスクは避けたい。" }
+                { text: "A. できれば避けたい", style: "Compress" },
+                { text: "B. 情報がなければ普通にそう答える", style: "Analysis" },
+                { text: "C. 分からない状態のほうが気になる", style: "Structure" },
+                { text: "D. 分からないまま考え続けることも多い", style: "Hold" }
+            ]
+        },
+
+        // Ⅳ. 自分の認知を見る
+        {
+            category: "Ⅳ. 自分の認知を見る",
+            text: "自分の考えと反対の意見を見つけた。",
+            options: [
+                { text: "A. まず反論を考える", style: "Compress" },
+                { text: "B. なぜその人がそう考えるのか考える", style: "Context" },
+                { text: "C. 自分の考えに修正できるところがないか考える", style: "Analysis" },
+                { text: "D. 自分とは関係ない意見として流す", style: "Hold" }
             ]
         },
         {
-            text: "上司「この件、臨機応変に対応しておいて」",
+            category: "Ⅳ. 自分の認知を見る",
+            text: "誰かから「考え方が偏っている」と言われた。",
             options: [
-                { axis: "definition", text: "「臨機応変」の許容範囲や限界ルールを教えてほしい。" },
-                { axis: "causality", text: "どのような判断基準で分岐させればいいのか論理が知りたい。" },
-                { axis: "population", text: "他のメンバーはどういう対応をしているのか？" },
-                { axis: "applicability", text: "前回の似た事例の対応を今回も適用して良いか？" },
-                { axis: "uncertainty_low", text: "自分の判断で失敗した時のリスクが大きすぎる。" }
+                { text: "A. 具体的にどこが偏っているのか聞く", style: "Analysis" },
+                { text: "B. その人自身の偏りも考える", style: "Context" },
+                { text: "C. 自分では判断できないので保留する", style: "Hold" },
+                { text: "D. 自分の考えには自分なりの理由があると思う", style: "Structure" }
             ]
         },
         {
-            text: "SNS投稿「口コミ☆4.8の大人気ホテルに泊まりました！最高でした！」",
+            category: "Ⅳ. 自分の認知を見る",
+            text: "あとから考えると、自分の判断が間違っていた。",
             options: [
-                { axis: "definition", text: "「最高」って具体的に部屋？接客？立地？" },
-                { axis: "causality", text: "なぜそこまで評価が高いのか客観的な理由が知りたい。" },
-                { axis: "population", text: "評価件数は何件？サクラの口コミは含まれてない？" },
-                { axis: "applicability", text: "自分の旅の目的（ビジネス/観光）にも合うか？" },
-                { axis: "uncertainty_low", text: "写真と実際のギャップで後悔したくない。" }
+                { text: "A. 間違っていたと認める", style: "Explore" },
+                { text: "B. 何が判断を誤らせたのか分析する", style: "Analysis" },
+                { text: "C. 当時の状況なら仕方なかったと思う", style: "Context" },
+                { text: "D. 次に同じことが起きたときの対策を考える", style: "Structure" }
             ]
         },
         {
-            text: "先輩「とにかく量をこなせば、後から質はついてくるよ」",
+            category: "Ⅳ. 自分の認知を見る",
+            text: "自分が何かを嫌いだと気づいた。",
             options: [
-                { axis: "definition", text: "どれくらいの「量」をやれば「質」に転化するの？" },
-                { axis: "causality", text: "量から質へ変化する論理的なメカニズムは何？" },
-                { axis: "population", text: "量をこなしても質が上がらなかった人の割合は？" },
-                { axis: "applicability", text: "頭を使わない単純作業にもその法則は当てはまる？" },
-                { axis: "uncertainty_low", text: "無駄な努力に終わるリスクや体調を壊す危険は？" }
+                { text: "A. 嫌いなのだからそれでいい", style: "Explore" },
+                { text: "B. なぜ嫌いなのか考える", style: "Analysis" },
+                { text: "C. 自分の経験が影響しているか考える", style: "Context" },
+                { text: "D. 嫌いでも必要なら受け入れる", style: "Compress" }
             ]
         },
         {
-            text: "プレゼンター「我が社のサービスを使えば、顧客満足度が大幅にアップします」",
+            category: "Ⅳ. 自分の認知を見る",
+            text: "自分について考えていて、「自分はこういう人間だ」と思った。",
             options: [
-                { axis: "definition", text: "「大幅」とは具体的に何%アップを指しているのか。" },
-                { axis: "causality", text: "サービス導入と満足度向上を結ぶ因果の証明は？" },
-                { axis: "population", text: "導入した全企業のうち、アップした企業は何%？" },
-                { axis: "applicability", text: "我が社のような規模や業界でも効果が出るか？" },
-                { axis: "uncertainty_low", text: "効果が出なかった場合の保証やリスクヘッジはあるか。" }
+                { text: "A. それまでの経験を振り返って確かめる", style: "Structure" },
+                { text: "B. 反例がないか探す", style: "Analysis" },
+                { text: "C. 今の自分についてはそうだと思う", style: "Explore" },
+                { text: "D. 状況によって変わるものだと思う", style: "Context" }
+            ]
+        },
+
+        // Ⅴ. 他者・文脈の読み取り
+        {
+            category: "Ⅴ. 他者・文脈の読み取り",
+            text: "友人が「別にいいよ」と言った。でも、少し不機嫌そうに見える。",
+            options: [
+                { text: "A. 言葉どおり受け取る", style: "Compress" },
+                { text: "B. 表情や状況も含めて考える", style: "Context" },
+                { text: "C. 本人に確認する", style: "Explore" },
+                { text: "D. 自分の思い込みかもしれないので判断しない", style: "Hold" }
             ]
         },
         {
-            text: "ニュース「AIの台頭により、10年後に人の仕事の半分がなくなる」",
+            category: "Ⅴ. 他者・文脈の読み取り",
+            text: "誰かが突然、普段と違う行動をした。",
             options: [
-                { axis: "definition", text: "「仕事がなくなる」とは職種消滅のこと？作業の自動化？" },
-                { axis: "causality", text: "どのような技術的・経済的メカニズムで代替されるのか。" },
-                { axis: "population", text: "調査対象となった職種や国の母集団の偏りは？" },
-                { axis: "applicability", text: "自分が就いている具体的な業務にも当てはまるか？" },
-                { axis: "uncertainty_low", text: "自分の将来の雇用リスクに対してどう備えれば良いのか。" }
+                { text: "A. その行動だけを見る", style: "Compress" },
+                { text: "B. 直前に何があったか考える", style: "Context" },
+                { text: "C. その人の普段の傾向と比較する", style: "Structure" },
+                { text: "D. 本人に聞かないと分からないと思う", style: "Hold" }
             ]
         },
         {
-            text: "同僚「このプロジェクト、絶対に上手くいく気がする！」",
+            category: "Ⅴ. 他者・文脈の読み取り",
+            text: "ある発言が失礼に聞こえた。",
             options: [
-                { axis: "definition", text: "何をもって「プロジェクトの成功（上手くいく）」とするか。" },
-                { axis: "causality", text: "「気がする」ではなく根拠や根回しの筋道はあるのか。" },
-                { axis: "population", text: "チームメンバー全員が同じ感触を持っているか。" },
-                { axis: "applicability", text: "過去の成功体験が今回の案件にも適用できるか。" },
-                { axis: "uncertainty_low", text: "根拠のない楽観論で進めてトラブルが起きないか。" }
+                { text: "A. 発言内容そのものを問題にする", style: "Compress" },
+                { text: "B. 言った人の意図を考える", style: "Context" },
+                { text: "C. その場の状況を考える", style: "Structure" },
+                { text: "D. 自分がどう受け取ったかをまず考える", style: "Analysis" }
             ]
         },
         {
-            text: "求人票「風通しがよく、アットホームで働きやすい職場です」",
+            category: "Ⅴ. 他者・文脈の読み取り",
+            text: "同じ言葉なのに、人によって印象が違う。",
             options: [
-                { axis: "definition", text: "「風通しが良い」「アットホーム」の具体的な状態とは？" },
-                { axis: "causality", text: "なぜ離職率が低いのかなどの具体的な理由が知りたい。" },
-                { axis: "population", text: "全社員アンケートの結果などのデータはあるのか。" },
-                { axis: "applicability", text: "自分の性格や働き方の希望にマッチする環境か。" },
-                { axis: "uncertainty_low", text: "人間関係の粘着質さや残業の隠蔽リスクはないか。" }
+                { text: "A. 言葉そのものより言い方の問題だと思う", style: "Context" },
+                { text: "B. 受け取る側の経験も関係すると思う", style: "Analysis" },
+                { text: "C. 関係性や状況が大きいと思う", style: "Structure" },
+                { text: "D. 人によって違うので一概には言えない", style: "Hold" }
             ]
         },
         {
-            text: "広告「モデルの〇〇さんも愛用！飲むだけで毎朝スッキリ」",
+            category: "Ⅴ. 他者・文脈の読み取り",
+            text: "誰かの行動に「なんでそんなことするんだろう」と思った。",
             options: [
-                { axis: "definition", text: "「毎朝スッキリ」とは健康上のどういう状態を指す？" },
-                { axis: "causality", text: "成分が体内でどう作用するのか科学的説明はあるか。" },
-                { axis: "population", text: "特定モデル1人の感想（N=1）に過ぎないのではないか。" },
-                { axis: "applicability", text: "モデルとは体質や生活習慣が違う一般人にも効くか。" },
-                { axis: "uncertainty_low", text: "定期購入の縛りや解約トラブルのリスクはないか。" }
+                { text: "A. 自分ならしないと思う", style: "Compress" },
+                { text: "B. その人にとっての合理性を考える", style: "Analysis" },
+                { text: "C. その人が置かれている状況を見る", style: "Context" },
+                { text: "D. 本人にしか分からないと思う", style: "Hold" }
+            ]
+        },
+
+        // Ⅵ. 情報の整理・圧縮
+        {
+            category: "Ⅵ. 情報の整理・圧縮",
+            text: "人から長い相談をされた。話があちこちに飛んでいる。",
+            options: [
+                { text: "A. とりあえず最後まで聞く", style: "Context" },
+                { text: "B. 要点を整理して確認する", style: "Structure" },
+                { text: "C. 一番困っていることを聞く", style: "Compress" },
+                { text: "D. 話の流れから全体像を組み立てる", style: "Analysis" }
             ]
         },
         {
-            text: "会議「競合のA社が値下げしたから、うちも値下げして対抗しよう」",
+            category: "Ⅵ. 情報の整理・圧縮",
+            text: "複数の情報を人に説明することになった。",
             options: [
-                { axis: "definition", text: "対抗すべき「市場シェア」や「ターゲット層」の定義は？" },
-                { axis: "causality", text: "値下げによって売上や利益がどう変化するかの試算は？" },
-                { axis: "population", text: "値下げを求めている顧客は全体の何%くらい存在するのか？" },
-                { axis: "applicability", text: "A社のコスト構造と自社のコスト構造は同じなのか？" },
-                { axis: "uncertainty_low", text: "価格競争に巻き込まれて利益率が悪化するリスクは？" }
+                { text: "A. 時系列順に説明する", style: "Explore" },
+                { text: "B. 結論から説明する", style: "Compress" },
+                { text: "C. 重要度の高い順に説明する", style: "Structure" },
+                { text: "D. 相手が知っていることに合わせて変える", style: "Context" }
             ]
         },
         {
-            text: "上司「最近の若手はみんなストレスに弱いよね」",
+            category: "Ⅵ. 情報の整理・圧縮",
+            text: "情報が多すぎて整理できない。",
             options: [
-                { axis: "definition", text: "ここで言う「若手」や「ストレスに弱い」の定義は？" },
-                { axis: "causality", text: "時代の変化や労働環境の何が原因でそう見えるのか。" },
-                { axis: "population", text: "一部の目立つ社員だけを見て「みんな」と言っていないか。" },
-                { axis: "applicability", text: "自分の部署の目の前の新人にも当てはまる話なのか。" },
-                { axis: "uncertainty_low", text: "偏見で指導してパワハラになるリスクはないか。" }
+                { text: "A. まず全部書き出す", style: "Explore" },
+                { text: "B. 不要な情報を捨てる", style: "Compress" },
+                { text: "C. 分類してグループ化する", style: "Structure" },
+                { text: "D. そもそも何を決めるための情報なのか考える", style: "Analysis" }
             ]
         },
         {
-            text: "本「成功したいなら、とにかくアウトプットを増やしなさい」",
+            category: "Ⅵ. 情報の整理・圧縮",
+            text: "誰かに説明するとき、「分かりやすくして」と言われた。",
             options: [
-                { axis: "definition", text: "ここで言う「アウトプット」とは発信？行動？成果物？" },
-                { axis: "causality", text: "なぜインプットよりアウトプットが成長を生むのか。" },
-                { axis: "population", text: "アウトプット重視で失敗した人の事例は考慮されているか。" },
-                { axis: "applicability", text: "質の低いアウトプットを連発しても意味があるのか。" },
-                { axis: "uncertainty_low", text: "誤った情報を発信してしまうリスクの対策は。" }
+                { text: "A. 難しい言葉を簡単な言葉に変える", style: "Compress" },
+                { text: "B. 情報量を減らす", style: "Structure" },
+                { text: "C. 具体例を出す", style: "Explore" },
+                { text: "D. 相手がどこでつまずいているのか確認する", style: "Context" }
             ]
         },
         {
-            text: "友人「人生なんて、なるようになるから深く考えても無駄だよ」",
+            category: "Ⅵ. 情報の整理・圧縮",
+            text: "複雑なことを一言で表す必要がある。",
             options: [
-                { axis: "definition", text: "「深く考える」と「考えるのをやめる」の境界線はどこ？" },
-                { axis: "causality", text: "準備や思考を放棄して上手くいく理屈がわからない。" },
-                { axis: "population", text: "それで上手く行った人と詰んだ人の割合はどのくらい？" },
-                { axis: "applicability", text: "友人と同じポジティブさや環境がない自分にも適用できる？" },
-                { axis: "uncertainty_low", text: "無計画で将来詰むリスクを放置することはできない。" }
-            ]
-        },
-        {
-            text: "セミナー「顧客の感情を動かすストーリーテリングが最強の営業術です」",
-            options: [
-                { axis: "definition", text: "営業における「ストーリー」の定義や具体的構成とは？" },
-                { axis: "causality", text: "感情が動くことでなぜ購買行動に至るのかの購買心理。" },
-                { axis: "population", text: "論理重視の顧客（BtoBなど）にもストーリーは効くのか。" },
-                { axis: "applicability", text: "自分が扱う扱いにくい商材でも再現できる手法か。" },
-                { axis: "uncertainty_low", text: "過度な演出で誇大広告になるリスクはないか。" }
-            ]
-        },
-        {
-            text: "同僚「会議の時間を半分に減らして、チャット連絡メインにしましょう！」",
-            options: [
-                { axis: "definition", text: "「会議で決めるべきこと」と「チャットでいいこと」の定義。" },
-                { axis: "causality", text: "テキスト化することで認識ズレが起きて遅くなる懸念は？" },
-                { axis: "population", text: "テキストコミュニケーションが得意でないメンバーの割合は？" },
-                { axis: "applicability", text: "複雑な交渉や緊急案件でもチャット化を適用するのか。" },
-                { axis: "uncertainty_low", text: "重要な決定事項のログが流れるリスクへの対策は。" }
-            ]
-        },
-        {
-            text: "ビジネス書「成功するチームの共通点は『心理的安全性』があることだ」",
-            options: [
-                { axis: "definition", text: "「心理的安全性」と「ただの馴れ合い」の違いの定義。" },
-                { axis: "causality", text: "発言しやすさがどうやってチームの業績向上へ繋がるのか。" },
-                { axis: "population", text: "どれくらいの調査対象チームから導き出された共通点か。" },
-                { axis: "applicability", text: "厳格な規律が求められる現場でも同じことが言えるのか。" },
-                { axis: "uncertainty_low", text: "緩くなりすぎて締まりがなくなるリスクはないか。" }
-            ]
-        },
-        {
-            text: "後輩「新しいツールの使い方がよく分からないので教えてください」",
-            options: [
-                { axis: "definition", text: "どの機能の何が分からないのか（問題の切り分け）。" },
-                { axis: "causality", text: "マニュアルのどこを読んでどう試したかの思考プロセス。" },
-                { axis: "population", text: "他の新人たちも同じところで躓いているのか。" },
-                { axis: "applicability", text: "一度教えたら別の作業の時にも応用できる教え方にする。" },
-                { axis: "uncertainty_low", text: "自分が間違った教え方をして混乱させるリスクを避けたい。" }
-            ]
-        },
-        {
-            text: "ニュース「〇〇（地方都市）が移住者数No.1！今大人気の街」",
-            options: [
-                { axis: "definition", text: "「移住者数」とは転入届の数？一時的な滞在も含まれる？" },
-                { axis: "causality", text: "なぜその街が選ばれているのか自治体の施策や背景理由。" },
-                { axis: "population", text: "移住した後に定着した人と後悔して戻った人の割合は？" },
-                { axis: "applicability", text: "リモートワークができない自分の職種でも住める街なのか。" },
-                { axis: "uncertainty_low", text: "現地の人間関係やインフラ不足のリスクはないか。" }
-            ]
-        },
-        {
-            text: "社長「わが社はこれからデジタルファーストで生まれ変わります！」",
-            options: [
-                { axis: "definition", text: "具体的にどの業務をどう数字化するかの定義。" },
-                { axis: "causality", text: "デジタル化によってどうやって収益が伸びるかのロードマップ。" },
-                { axis: "population", text: "ついていける社員と取り残される社員の割合は。" },
-                { axis: "applicability", text: "アナログでしか成り立たない現場業務にどう適用するのか。" },
-                { axis: "uncertainty_low", text: "移行期間中のシステムトラブルや業務停止のリスクは。" }
-            ]
-        },
-        {
-            text: "友人「この投資案件、月利5%で元本保証らしいよ！」",
-            options: [
-                { axis: "definition", text: "「元本保証」の主体は誰なのか（契約の定義）。" },
-                { axis: "causality", text: "月利5%という高利回りを生み出す事業の仕組み。" },
-                { axis: "population", text: "実際に配当を受け取れている投資家の母集団データ。" },
-                { axis: "applicability", text: "そんなに旨い話がなぜ一般の自分にまで回ってくるのか。" },
-                { axis: "uncertainty_low", text: "詐欺や強奪のリスクが極めて高い（絶対に乗らない）。" }
-            ]
-        },
-        {
-            text: "ネット記事「読書習慣がない人は年収が低いという衝撃の事実」",
-            options: [
-                { axis: "definition", text: "「読書」には漫画や雑誌、ビジネス書が含まれるのか。" },
-                { axis: "causality", text: "読書が年収を上げるのか、高年収だから本を買う余裕があるのか。" },
-                { axis: "population", text: "本を読まなくても高年収な人の割合やサンプル数。" },
-                { axis: "applicability", text: "自分が今から本を読み始めれば年収が上がるのか。" },
-                { axis: "uncertainty_low", text: "不確かな相関関係に振り回されるリスク。" }
-            ]
-        },
-        {
-            text: "上司「ミスをした時は怒られる前に速攻で謝るのが社会人の基本だ」",
-            options: [
-                { axis: "definition", text: "ただ謝ることと「事態の報告・対処」の定義の区別。" },
-                { axis: "causality", text: "なぜ謝るだけでは問題の根本解決にならないのか。" },
-                { axis: "population", text: "謝罪を重視する上司と、事実報告を重視する上司の割合。" },
-                { axis: "applicability", text: "自分に過失がないグレーなトラブルでも謝るべきなのか。" },
-                { axis: "uncertainty_low", text: "早期に謝ったことで全責任を負わされるリスク。" }
-            ]
-        },
-        {
-            text: "口コミ「このアプリ、UIが直感的で誰でも簡単に使えます！」",
-            options: [
-                { axis: "definition", text: "デザインにおける「直感的」とは具体的な操作の何？" },
-                { axis: "causality", text: "なぜ説明書なしで操作できるデザインになっているのか。" },
-                { axis: "population", text: "ITリテラシーが低い高齢者層でも簡単に使えるのか。" },
-                { axis: "applicability", text: "自分がやろうとしている複雑な業務タスクにも使えるか。" },
-                { axis: "uncertainty_low", text: "誤操作をしてデータが消えるリスクはないか。" }
-            ]
-        },
-        {
-            text: "先輩「アイデアは悩むより、数を出すことが一番大切だよ」",
-            options: [
-                { axis: "definition", text: "何をもって「1つのアイデア」とカウントするのか。" },
-                { axis: "causality", text: "なぜ質より量が良いアイデアの採用に繋がるのか。" },
-                { axis: "population", text: "質を重視して一発で成功させた人のデータはないのか。" },
-                { axis: "applicability", text: "厳格な制約があるプロジェクトでも数打てば当たるのか。" },
-                { axis: "uncertainty_low", text: "駄案を連発して自分の評価が下がるリスク。" }
-            ]
-        },
-        {
-            text: "同僚「あの部署の〇〇さん、いつも定時で帰っててずるいよね」",
-            options: [
-                { axis: "definition", text: "「ずるい」って、業務量をこなした上の定時退社でも？" },
-                { axis: "causality", text: "なぜ定時で帰れるのか業務効率化の工夫理由。" },
-                { axis: "population", text: "その部署全体の残業時間の平均データは？" },
-                { axis: "applicability", text: "自分たちの部署の業務内容でも定時退社は可能なのか。" },
-                { axis: "uncertainty_low", text: "不満を溜めて人間関係が険悪になるリスク。" }
-            ]
-        },
-        {
-            text: "広告「受講生満足度99%！未経験からプロのWebデザイナーになれるスクール」",
-            options: [
-                { axis: "definition", text: "「プロになれる」とは就職？副業で数千円稼ぐこと？" },
-                { axis: "causality", text: "どんなカリキュラムが未経験者をプロに変えるのか。" },
-                { axis: "population", text: "受講生全体の何%が実際に案件を獲得できているのか。" },
-                { axis: "applicability", text: "デザインセンスやパソコン操作に不安がある自分でも大丈夫？" },
-                { axis: "uncertainty_low", text: "高額な受講料を支払って挫折するリスク。" }
-            ]
-        },
-        {
-            text: "上司「細かいデータの整合性より、全体の勢いが大事だ」",
-            options: [
-                { axis: "definition", text: "ここで言う「勢い」や「整合性」の許容範囲。" },
-                { axis: "causality", text: "データが間違っているのに勢いで進めて成功する理屈。" },
-                { axis: "population", text: "過去に勢いで押し切って成功した案件の割合。" },
-                { axis: "applicability", text: "精密さが求められる今回の案件にその考えは危険では。" },
-                { axis: "uncertainty_low", text: "数字のミスで後から大問題になるリスク。" }
-            ]
-        },
-        {
-            text: "友人「SNSのフォロワー数が多い人＝信頼できる人だよ」",
-            options: [
-                { axis: "definition", text: "ここで言っている「信頼」とは人柄？スキルの専門性？" },
-                { axis: "causality", text: "フォロワー数と個人の信頼性がどう結びつくのか。" },
-                { axis: "population", text: "フォロワーを買っている人や炎上系の割合は考慮した？" },
-                { axis: "applicability", text: "実社会での信頼関係にもその基準は適用できるか。" },
-                { axis: "uncertainty_low", text: "フォロワー数に騙されて悪徳商法に引っかかるリスク。" }
-            ]
-        },
-        {
-            text: "ビジネス書「成功したければ、過去の成功体験は今すぐすべて捨てろ」",
-            options: [
-                { axis: "definition", text: "「捨てるべき体験」と「活かすべきノウハウ」の定義。" },
-                { axis: "causality", text: "なぜ過去の成功を捨てることが次の成功を生むのか。" },
-                { axis: "population", text: "成功体験を持ち続けてさらに成功した人のデータは？" },
-                { axis: "applicability", text: "自分の職務の基礎スキルまで捨ててしまって良いのか。" },
-                { axis: "uncertainty_low", text: "蓄積した強みを失ってゼロからスタートするリスク。" }
-            ]
-        },
-        {
-            text: "ニュース「〇〇（大手企業）が週休3日制を導入！時代の最先端へ」",
-            options: [
-                { axis: "definition", text: "「週休3日」は給料維持？それとも給料減額？" },
-                { axis: "causality", text: "休日が増えることでなぜ生産性が維持・向上するのか。" },
-                { axis: "population", text: "実際に活用できている社員は全体の中で何%？" },
-                { axis: "applicability", text: "中小企業や自分の業界でも適用できる制度なのか。" },
-                { axis: "uncertainty_low", text: "休日が増えた分、1日の業務密度が過密になるリスク。" }
-            ]
-        },
-        {
-            text: "後輩「完璧を目指すより、まずは提出することが重要ですよね！」",
-            options: [
-                { axis: "definition", text: "「最低限満たすべき品質レベル」の定義はどこにある？" },
-                { axis: "causality", text: "未完成なものを出すことで起きる手戻りの時間ロス。" },
-                { axis: "population", text: "世の優秀なビジネスパーソンはどのレベルで出しているか。" },
-                { axis: "applicability", text: "今回のクライアント提出用資料でもそのスタンスで行く気？" },
-                { axis: "uncertainty_low", text: "雑な仕事を提出して信頼を失うリスク。" }
-            ]
-        },
-        {
-            text: "セミナー「これからの時代、個人のセルフブランディングが不可欠です」",
-            options: [
-                { axis: "definition", text: "会社員における「セルフブランディング」の定義とは。" },
-                { axis: "causality", text: "ブランディングすることがどうやって個人の成果につながるか。" },
-                { axis: "population", text: "ブランディングなしで黙々と成果を出している人の割合。" },
-                { axis: "applicability", text: "裏方業務や専門職の自分にも必要な話なのか。" },
-                { axis: "uncertainty_low", text: "目立ちすぎて社内で浮いたり叩かれたりするリスク。" }
-            ]
-        },
-        {
-            text: "上司「もっと全体を大きく俯瞰して物事を見なさい」",
-            options: [
-                { axis: "definition", text: "「大きく俯瞰する」とは具体的にどの視点や範囲のこと？" },
-                { axis: "causality", text: "俯瞰することで、今抱えている問題のどういう解決に繋がる？" },
-                { axis: "population", text: "他のメンバーはどれくらいの解像度で業務を見ている？" },
-                { axis: "applicability", text: "細かい数値管理が必要な今のタスクにもその視点は必要？" },
-                { axis: "uncertainty_low", text: "大枠ばかり見て現場の細部のミスを見落とすリスク。" }
-            ]
-        },
-        {
-            text: "同僚「〇〇さん（上司）は機嫌が良い時に相談するのが一番通るよ」",
-            options: [
-                { axis: "definition", text: "「機嫌が良い」をどうやって客観的に判断するの？" },
-                { axis: "causality", text: "提案の質ではなく上司の感情で決まる組織構造の歪み。" },
-                { axis: "population", text: "他の上司や役員にもその法則は通用するのか。" },
-                { axis: "applicability", text: "緊急の案件でも上司の機嫌を待つ必要があるのか。" },
-                { axis: "uncertainty_low", text: "タイミングを見誤って怒られるリスク。" }
-            ]
-        },
-        {
-            text: "ネット記事「若者の〇〇離れが深刻化…その理由とは？」",
-            options: [
-                { axis: "definition", text: "「〇〇離れ」の具体的な減少数値や定義はあるのか。" },
-                { axis: "causality", text: "金銭的理由なのか価値観の変化なのか因果の特定。" },
-                { axis: "population", text: "一部の都市部のデータだけで若者全体と言っていないか。" },
-                { axis: "applicability", text: "自社の若手ターゲットのマーケティングに使える話か。" },
-                { axis: "uncertainty_low", text: "メディアの誘導に乗せられて誤った商品開発をするリスク。" }
-            ]
-        },
-        {
-            text: "友人「人間関係は、合わないと思ったら即リセットするのが一番楽だよ」",
-            options: [
-                { axis: "definition", text: "「合わない」の定義（一時の不快感か根本の価値観か）。" },
-                { axis: "causality", text: "リセットし続けることで孤立していく長期的メカニズム。" },
-                { axis: "population", text: "人間関係を維持して乗り越えた人とリセット派の幸福度。" },
-                { axis: "applicability", text: "プライベートだけでなく仕事の職場環境でも適用できる？" },
-                { axis: "uncertainty_low", text: "リセットしたことで大切なコミュニティを失うリスク。" }
-            ]
-        },
-        {
-            text: "企画会議「競合がやっていない斬新なアイデアだけを出してください」",
-            options: [
-                { axis: "definition", text: "「斬新」とは市場にないこと？組み合わせが珍しいこと？" },
-                { axis: "causality", text: "「競合がやっていない＝ニーズがないから」という可能性。" },
-                { axis: "population", text: "他社が過去に挑戦して撤退した失敗事例のデータ調査。" },
-                { axis: "applicability", text: "斬新なアイデアを実現・運用できる技術リソースはあるか。" },
-                { axis: "uncertainty_low", text: "奇をてらいすぎてユーザーに置き去りにされるリスク。" }
+                { text: "A. 一番重要な部分だけ残す", style: "Compress" },
+                { text: "B. 誤解されない表現を優先する", style: "Analysis" },
+                { text: "C. あえて一言にしない", style: "Hold" },
+                { text: "D. 前提を含めて短くまとめる", style: "Structure" }
             ]
         }
     ];
 
-    // 取扱説明書データ
+    // プロファイル定義
     const profiles = {
-        definition: {
-            title: "【定義感度・厳密派】言語定義の魔術師",
-            strength: "言葉のニュアンスや前提の曖昧さを絶対に見逃さない「要件定義の天才」です。契約書の確認、マニュアル作成、議論の整理で抜群の精度を発揮します。",
-            trap: "会議で「その言葉ってどういう意味？」と確認しすぎて、場のテンポを止めてしまったり、相手に「詰められている」と警戒させることがあります。",
-            prescription: "相手が口頭で感覚的に話している時はその場で即座に突っ込まず、後から「箇条書きのテキスト」にして確認を入れると無用な摩擦を防げます。",
-            environment: "法務、システム要件定義、品質管理、契約交渉、学術・リサーチ分野"
+        Structure: {
+            title: "【構造化思考型】全体像と枠組みの建築家",
+            feature: "散らかった情報を分類し、全体像やシステムとして捉えることを重視します。関係性や構造が明確になると頭がスッキリするタイプです。",
+            strength: "・情報の分類や整理整頓\n・ロードマップや全体像の可視化\n・複雑な問題のロードマップ化",
+            cost: "・構造化できない混沌とした状態の放置\n・目的や枠組みが定まらないフワッとした会話",
+            advice: "完璧な分類にこだわりすぎず、時には「未分類のまま進める柔軟さ」を持つことで意思決定が加速します。"
         },
-        causality: {
-            title: "【因果接続・論理派】仕組みと筋道の探求者",
-            strength: "「なぜそうなるのか」という論理的メカニズムを見抜く力に長けています。トラブルの根本原因究明や構造改革で圧倒的な強みを発揮します。",
-            trap: "直感や感情で動く相手に対して「理屈が通っていない」と切り捨ててしまい、感情的な対立を生んでしまうことがあります。",
-            prescription: "正しい理屈であっても人間は感情で動く生き物だと割り切り、「ロジック7割：感情への配慮3割」を意識すると説得力が跳ね上がります。",
-            environment: "業務改善コンサルタント、エンジニア、プロダクトマネージャー、戦略立案"
+        Analysis: {
+            title: "【条件・検証分析型】前提と境界線の解剖医",
+            feature: "「なぜ？」「どういう条件で成立する？」と前提や因果関係を深掘りします。見逃されがちな矛盾や適用条件に敏感です。",
+            strength: "・前提条件や例外パターンの洗い出し\n・論理的な矛盾やリスクの早期発見\n・客観的なファクトベースの議論",
+            cost: "・根拠の薄い状態での即断即決\n・「とりあえずやってみよう」というノリ重視の進行",
+            advice: "分析そのものが目的にならないよう、「今の目的を達成するには何割の検証で十分か」の線引きをあらかじめ決めましょう。"
         },
-        population: {
-            title: "【母集団・客観派】データと全体像の鑑定士",
-            strength: "「それって何例中の話？」と常にサンプル数や全体像を疑うことができ、偏った意見や噂話に騙されない圧倒的な客観性を持っています。",
-            trap: "相手が熱量を持って話す「個人的な熱い体験談」に対して、「でもそれって単なる一例ですよね」と冷静に水を差してしまうことがあります。",
-            prescription: "「客観的な事実」と「個人の熱量」を切り分け、共感を示す場面ではあえてデータの突っ込みを封印する使い分けが有効です。",
-            environment: "データアナリスト、マーチャンダイザー、リスク管理、市場調査・マーケティング"
+        Context: {
+            title: "【文脈・関係読解型】背景と場の空気の解読者",
+            feature: "言葉そのものだけでなく、相手の立場、背景、場の空気、これまでの経緯など「行間（文脈）」を読み取って処理します。",
+            strength: "・他者の意図や感情の汲み取り\n・状況に応じた柔軟なコミュニケーション\n・背景やストーリーを考慮した調整",
+            cost: "・文脈が断絶された箇条書きのみの機械的な指示\n・感情や意図を完全に無視した合理的すぎる決定",
+            advice: "深読みしすぎて判断が複雑化することがあります。「文字通りの意味」でシンプルに受け取る練習も効果的です。"
         },
-        applicability: {
-            title: "【適用可能性・境界派】再現性と検証のプロ",
-            strength: "「うちの環境でも再現できるか？」と境界条件を見抜く目を持っています。成功事例をそのまま鵜呑みにせず、現場に合わせて最適化するのが得意です。",
-            trap: "アイデアが出た時に「うちの環境だとここが無理」と条件の壁を先に提示しすぎて、周囲から「否定から入る人」と思われるリスクがあります。",
-            prescription: "「無理な理由」を提示した後は、必ず「こう条件を組み替えればうちでも通用する」という代替案をセットで提示しましょう。",
-            environment: "業務ローカライズ、新規事業の実現性検証（PoC）、運用構築、現場監督"
+        Hold: {
+            title: "【保留・慎重探索型】不確実さへの耐性と観察者",
+            feature: "情報が揃っていない時に無理に結論を出さず、「分からないものは分からない」として保留・観察を維持できます。",
+            strength: "・拙速な誤断を防ぐストッパー機能\n・思い込みを排除した冷静な観察\n・複雑で不確実な状況下での耐久性",
+            cost: "・その場での素早い決断やコミットメント\n・白黒をハッキリつけることを求められるプレッシャー",
+            advice: "保留は強みですが、時には「暫定の仮説」を1つ置いて動いてみることで、新しい情報が得られやすくなります。"
         },
-        uncertainty_low: {
-            title: "【不確実性回避・堅実派】リスクゼロの守護神",
-            strength: "曖昧さや不確定要素を徹底的に排除し、計画の細部まで詰める「圧倒的な確実性」を作れます。漏れのない進行管理でチームに安心感を与えます。",
-            trap: "予測不能な変化やアジャイルな進行に対してストレスを感じやすく、答えのない状態に直面すると足が止まってしまうことがあります。",
-            prescription: "「不確定な状態も計画の一部」と割り切り、あらかじめ「想定外が起きた時の遊び（バッファ）」を3割確保する癖をつけましょう。",
-            environment: "プロジェクトマネジメント（PMO）、経理・財務、安全管理、イベント進行管理"
+        Explore: {
+            title: "【試行・具体体験型】実践とフィードバックの探求者",
+            feature: "頭の中でこねくり回すよりも、「まずやってみる」「具体例を見る」ことでリアルタイムに情報を処理・学習します。",
+            strength: "・圧倒的な行動力とプロトタイピング\n・現実のフィードバックからの高速学習\n・現場感のある具体的なアイデア出し",
+            cost: "・事前のアブストラクト（抽象論）や長時間の議論\n・マニュアルや規律をきっちり読み込む作業",
+            advice: "動きながら考えるのが得意ですが、大きな決定の前には「一度立ち止まって全体を見渡す」時間を作ると安全です。"
+        },
+        Compress: {
+            title: "【要約・核心圧縮型】結論ファーストの優先順位決定者",
+            feature: "「結局何が重要か？」に素早く焦点を合わせ、余分な情報を削ぎ落として結論や核心を短くまとめます。",
+            strength: "・迅速な意思決定と実行\n・簡潔で分かりやすい要点伝達\n・重要度の低い情報のカット",
+            cost: "・長々とまとまりなく続く話の傾聴\n・細部やニュアンスをじっくり吟味する作業",
+            advice: "効率を重視するあまり、重要だが目立たない前提条件や他者の感情を削ぎ落としすぎないよう一呼吸おきましょう。"
         }
     };
 
     let currentQuestionIndex = 0;
     let scores = {
-        definition: 0,
-        causality: 0,
-        population: 0,
-        applicability: 0,
-        uncertainty_low: 0
+        Structure: 0,
+        Analysis: 0,
+        Context: 0,
+        Hold: 0,
+        Explore: 0,
+        Compress: 0
     };
 
     const quizScreen = document.getElementById("quiz-screen");
     const resultScreen = document.getElementById("result-screen");
+    const categoryBadge = document.getElementById("category-badge");
     const questionText = document.getElementById("question-text");
     const optionsContainer = document.getElementById("options-container");
     const progressBar = document.getElementById("progress-bar");
@@ -830,19 +645,9 @@
 
     let radarChartInstance = null;
 
-    // 配列のシャッフル関数（選択肢の位置によるバイアスを排除）
-    function shuffleArray(array) {
-        const arr = [...array];
-        for (let i = arr.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [arr[i], arr[j]] = [arr[j], arr[i]];
-        }
-        return arr;
-    }
-
     function initQuiz() {
         currentQuestionIndex = 0;
-        scores = { definition: 0, causality: 0, population: 0, applicability: 0, uncertainty_low: 0 };
+        scores = { Structure: 0, Analysis: 0, Context: 0, Hold: 0, Explore: 0, Compress: 0 };
         quizScreen.classList.remove("hidden");
         resultScreen.classList.add("hidden");
         showQuestion();
@@ -850,6 +655,7 @@
 
     function showQuestion() {
         const q = questions[currentQuestionIndex];
+        categoryBadge.textContent = q.category;
         questionText.textContent = `Q${currentQuestionIndex + 1}. ${q.text}`;
         
         progressText.textContent = `Q${currentQuestionIndex + 1} / ${questions.length}`;
@@ -857,21 +663,18 @@
 
         optionsContainer.innerHTML = "";
         
-        // 選択肢の並び順をランダム化
-        const shuffledOptions = shuffleArray(q.options);
-
-        shuffledOptions.forEach(opt => {
+        q.options.forEach(opt => {
             const btn = document.createElement("button");
             btn.className = "option-btn";
             btn.textContent = opt.text;
-            btn.onclick = () => selectOption(opt.axis);
+            btn.onclick = () => selectOption(opt.style);
             optionsContainer.appendChild(btn);
         });
     }
 
-    function selectOption(axis) {
-        if (axis && scores.hasOwnProperty(axis)) {
-            scores[axis]++;
+    function selectOption(style) {
+        if (style && scores.hasOwnProperty(style)) {
+            scores[style]++;
         }
         currentQuestionIndex++;
 
@@ -887,22 +690,22 @@
         resultScreen.classList.remove("hidden");
 
         // 最高スコアの軸を判定
-        let maxAxis = "definition";
+        let maxStyle = "Structure";
         let maxScore = -1;
-        for (const axis in scores) {
-            if (scores[axis] > maxScore) {
-                maxScore = scores[axis];
-                maxAxis = axis;
+        for (const style in scores) {
+            if (scores[style] > maxScore) {
+                maxScore = scores[style];
+                maxStyle = style;
             }
         }
 
         // 取扱説明書の描画
-        const profile = profiles[maxAxis];
+        const profile = profiles[maxStyle];
         document.getElementById("type-title").textContent = profile.title;
+        document.getElementById("type-feature").textContent = profile.feature;
         document.getElementById("type-strength").textContent = profile.strength;
-        document.getElementById("type-trap").textContent = profile.trap;
-        document.getElementById("type-prescription").textContent = profile.prescription;
-        document.getElementById("type-environment").textContent = profile.environment;
+        document.getElementById("type-cost").textContent = profile.cost;
+        document.getElementById("type-advice").textContent = profile.advice;
 
         // チャートの描画
         renderChart();
@@ -918,20 +721,21 @@
         radarChartInstance = new Chart(ctx, {
             type: 'radar',
             data: {
-                labels: ['定義感度', '因果接続', '母集団意識', '適用可能性', '不確実性回避'],
+                labels: ['構造化', '条件・検証', '文脈読解', '保留・慎重', '試行・具体', '要約・圧縮'],
                 datasets: [{
-                    label: '思考の引っかかり感度（出現回数）',
+                    label: '処理の出現回数',
                     data: [
-                        scores.definition,
-                        scores.causality,
-                        scores.population,
-                        scores.applicability,
-                        scores.uncertainty_low
+                        scores.Structure,
+                        scores.Analysis,
+                        scores.Context,
+                        scores.Hold,
+                        scores.Explore,
+                        scores.Compress
                     ],
-                    backgroundColor: 'rgba(79, 70, 229, 0.2)',
-                    borderColor: 'rgba(79, 70, 229, 1)',
+                    backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                    borderColor: 'rgba(59, 130, 246, 1)',
                     borderWidth: 2,
-                    pointBackgroundColor: 'rgba(79, 70, 229, 1)'
+                    pointBackgroundColor: 'rgba(59, 130, 246, 1)'
                 }]
             },
             options: {
@@ -940,12 +744,12 @@
                         angleLines: { color: '#e2e8f0' },
                         grid: { color: '#e2e8f0' },
                         pointLabels: {
-                            font: { size: 12, weight: 'bold' },
-                            color: '#1e293b'
+                            font: { size: 11, weight: 'bold' },
+                            color: '#0f172a'
                         },
                         suggestedMin: 0,
-                        suggestedMax: 15,
-                        ticks: { stepSize: 3 }
+                        suggestedMax: 10,
+                        ticks: { stepSize: 2 }
                     }
                 },
                 plugins: {
